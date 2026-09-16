@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar — Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .login-grid { display:grid; grid-template-columns:1.2fr 1fr; min-height:calc(100vh - 65px); }
+    .login-side { position:relative; background:var(--ink); color:var(--bg); overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; padding:64px 56px; }
+    .login-side__bg { position:absolute; inset:0; opacity:.55; filter:grayscale(20%); }
+    .login-side__scrim { position:absolute; inset:0; background:linear-gradient(135deg,rgba(14,14,15,.92),rgba(14,14,15,.65) 60%,rgba(14,14,15,.45)); }
+    .login-form { padding:64px 56px; display:flex; flex-direction:column; justify-content:center; max-width:520px; width:100%; margin:0 auto; }
+    .role-tabs { display:flex; border:1px solid var(--ink); margin-bottom:32px; }
+    .role-tab { flex:1; height:44px; cursor:pointer; background:transparent; color:var(--ink); border:none; font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.06em; text-decoration:none; display:flex; align-items:center; justify-content:center; }
+    .role-tab.is-active { background:var(--ink); color:var(--bg); }
+    @media (max-width:900px){ .login-grid{ grid-template-columns:1fr } .login-side{ display:none } }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-simple-header></div>
+
+  <div class="login-grid">
+    <!-- Lado: branding -->
+    <aside class="login-side" aria-hidden="true">
+      <div class="login-side__bg pele-bg"></div>
+      <div class="login-side__scrim"></div>
+      <div style="position:relative">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:24px;height:1px;background:var(--accent)"></span>
+          <span class="tag tag--accent" data-side-tag></span>
+        </div>
+        <h1 class="display" style="font-size:clamp(56px,6vw,96px);line-height:.9;margin:24px 0 0" data-side-title></h1>
+        <p class="lead" style="margin-top:24px;max-width:480px;color:rgba(245,244,238,.78)" data-side-sub></p>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;gap:10px" data-side-tips></div>
+    </aside>
+
+    <!-- Lado: formulário -->
+    <main id="conteudo" tabindex="-1" class="login-form">
+      <div class="role-tabs">
+        <a class="role-tab" href="login.html?tipo=jogador" data-role="jogador">Jogador</a>
+        <a class="role-tab" href="login.html?tipo=olheiro" data-role="olheiro">Olheiro</a>
+        <a class="role-tab" href="login.html?tipo=academia" data-role="academia">Academia</a>
+      </div>
+
+      <div class="kicker" style="text-transform:uppercase" data-form-kicker></div>
+      <h2 class="display h3" style="margin:6px 0 24px">Bem-vindo<br>de volta.</h2>
+
+      <form style="display:flex;flex-direction:column;gap:16px" data-login-form>
+        <label class="field">
+          <div class="field__label"><span data-id-label></span></div>
+          <input class="input" data-id-input autocomplete="username">
+        </label>
+        <label class="field">
+          <div class="field__label"><span>Senha</span></div>
+          <div style="position:relative">
+            <input class="input" type="password" placeholder="••••••••" autocomplete="current-password" data-pwd>
+            <button type="button" data-toggle-pwd style="position:absolute;right:8px;top:50%;transform:translateY(-50%);height:32px;padding:0 10px;background:transparent;border:none;cursor:pointer;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)">Mostrar</button>
+          </div>
+        </label>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--accent)">Manter conectado</label>
+          <a href="recuperar.html" style="font-size:13px;color:var(--ink);text-decoration:underline;text-underline-offset:3px">Esqueci a senha</a>
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg btn--full">Entrar →</button>
+
+        <div style="display:flex;align-items:center;gap:12px;margin:12px 0">
+          <div style="flex:1;height:1px;background:var(--line-soft)"></div>
+          <span class="mono text-mute">Ou</span>
+          <div style="flex:1;height:1px;background:var(--line-soft)"></div>
+        </div>
+        <button type="button" data-google class="btn btn--ghost btn--lg btn--full" style="font-family:var(--font-body);font-weight:600;text-transform:none;letter-spacing:0;gap:10px">
+          <span style="width:18px;height:18px;background:#fff;border:1px solid var(--ink);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:11px">G</span>
+          Entrar com Google
+        </button>
+      </form>
+
+      <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px" data-bottom-row></div>
+
+      <p class="mono text-mute" style="margin-top:24px;text-transform:none;line-height:1.6">Ao entrar, você concorda com nossos <a href="privacidade.html" style="color:var(--ink)">Termos</a> e <a href="privacidade.html" style="color:var(--ink)">Política de Privacidade</a>.</p>
+    </main>
+  </div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/login.js"></script>
+</body>
+</html>

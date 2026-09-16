@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Peneiras On — Onde o talento encontra o jogo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="index.html">
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-site-header></div>
+
+  <main id="conteudo" tabindex="-1">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg pele-bg"></div>
+    <div class="hero__scrim"></div>
+    <div class="hero__top-fade"></div>
+    <div class="container hero__inner">
+      <div>
+        <h1 class="display h-hero" style="color:#F5F4EE">
+          Onde o<br>
+          <span class="mark" style="display:inline-block;line-height:.95">talento</span><br>
+          encontra<br>o&nbsp;jogo<span style="font-size:.6em">.</span>
+        </h1>
+        <p class="lead" style="max-width:520px;margin-top:32px;color:rgba(245,244,238,.78)">
+          Peneiras On é a plataforma que descentraliza a captação de talentos no Brasil. De Manaus a Caxias, do Piauí ao Rio Grande do Sul — o olheiro chega até você.
+        </p>
+        <div style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap">
+          <a href="atleta.html?tela=cadastro" class="btn btn--accent btn--lg">Inscreva-se agora</a>
+          <a href="atleta.html?tela=peneiras" class="btn btn--gold btn--lg">Encontrar peneiras →</a>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div class="glass g g-2" style="gap:24px">
+          <div><div class="glass-stat__label">Inscritos ativos</div><div class="glass-stat__value">18.420</div><div class="glass-stat__delta">+412 hoje</div></div>
+          <div><div class="glass-stat__label">Peneiras 2026</div><div class="glass-stat__value" data-season-events></div><div class="glass-stat__label" data-season-states></div></div>
+          <div><div class="glass-stat__label">Cidades atingidas</div><div class="glass-stat__value">127</div><div class="glass-stat__delta">+24 vs 2025</div></div>
+          <div><div class="glass-stat__label">Aprovados</div><div class="glass-stat__value">187</div><div class="glass-stat__label">seguem em formação</div></div>
+        </div>
+        <div class="glass" style="padding:0;border-color:var(--accent)">
+          <div style="padding:20px 24px;display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid rgba(245,244,238,.2)">
+            <span class="glass-stat__label">Próxima peneira</span>
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--accent)" data-next-status></span>
+          </div>
+          <div style="padding:24px">
+            <div class="display" style="font-size:32px;letter-spacing:-.02em">Rio · Caxias</div>
+            <div style="display:flex;justify-content:space-between;margin-top:16px;font-family:var(--font-mono);font-size:13px">
+              <span data-next-date></span><span data-next-age></span>
+            </div>
+            <div style="margin-top:20px">
+              <div data-next-progress></div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:var(--font-mono);font-size:11px;opacity:.7">
+                <span data-next-registered></span><span data-next-capacity></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Marquee -->
+    <div class="marquee" style="position:relative;border-top:1px solid rgba(245,244,238,.2);background:rgba(8,8,9,.7);color:#F5F4EE">
+      <div class="marquee__track" id="marquee-track"></div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section id="como-funciona" class="section">
+    <div class="container section__pad">
+      <div class="grid-2" style="align-items:end;margin-bottom:48px">
+        <div>
+          <span class="tag tag--outline">Como funciona</span>
+          <h2 class="display h2" style="margin-top:12px">Três passos.<br>Um campo aberto.</h2>
+        </div>
+        <p style="font-size:16px;line-height:1.6;color:var(--ink-soft)">Sem boca a boca. Sem conexão. Sem precisar conhecer quem está no clube. O sistema organiza tudo: inscrição, alocação geográfica e ranking pelo olheiro.</p>
+      </div>
+      <div class="grid-3" style="gap:0;border-top:1px solid var(--line)">
+        <div class="pad" style="border-right:1px solid var(--line);display:flex;flex-direction:column;gap:16px">
+          <div class="mono text-mute">01</div>
+          <div class="display h3">Inscreva-se</div>
+          <p style="font-size:14px;line-height:1.5;color:var(--ink-soft)">Formulário em 4 minutos. Pré-validação automática de idade (07–19) e termo de responsável.</p>
+          <div style="margin-top:auto;font-family:var(--font-mono);font-size:11px;color:var(--accent-ink);background:var(--accent);align-self:flex-start;padding:6px 10px">Score 0 → 100% em tempo real.</div>
+        </div>
+        <div class="pad" style="border-right:1px solid var(--line);display:flex;flex-direction:column;gap:16px">
+          <div class="mono text-mute">02</div>
+          <div class="display h3">Seja convocado</div>
+          <p style="font-size:14px;line-height:1.5;color:var(--ink-soft)">O algoritmo aloca os inscritos na peneira mais próxima com vaga, priorizando regiões historicamente esquecidas.</p>
+          <div style="margin-top:auto;font-family:var(--font-mono);font-size:11px;color:var(--accent-ink);background:var(--accent);align-self:flex-start;padding:6px 10px">Notificação por SMS + e-mail.</div>
+        </div>
+        <div class="pad" style="display:flex;flex-direction:column;gap:16px">
+          <div class="mono text-mute">03</div>
+          <div class="display h3">Mostre seu futebol</div>
+          <p style="font-size:14px;line-height:1.5;color:var(--ink-soft)">O olheiro chega ao campo com sua lista. Você joga. Avaliação por critério: técnica, físico, tático, atitude.</p>
+          <div style="margin-top:auto;font-family:var(--font-mono);font-size:11px;color:var(--accent-ink);background:var(--accent);align-self:flex-start;padding:6px 10px">Pipeline rastreável para sempre.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section id="manifesto" style="position:relative;background:var(--ink);color:var(--bg);overflow:hidden">
+    <div class="pele-bg" style="position:absolute;inset:0;background-position:left center;opacity:.35;filter:grayscale(40%)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(270deg,rgba(14,14,15,.95) 0%,rgba(14,14,15,.7) 35%,rgba(14,14,15,.2) 80%)"></div>
+    <div class="container" style="position:relative;padding:96px 32px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <span style="width:24px;height:1px;background:var(--accent)"></span>
+        <span class="kicker accent">MANIFESTO</span>
+      </div>
+      <p class="display" style="font-size:clamp(28px,4vw,56px);line-height:1.05;letter-spacing:-.02em;max-width:1100px;text-transform:none">
+        O Brasil é o país do futebol — mas não para todo mundo. Milhares de crianças com talento real nunca serão vistas por um olheiro. Não por falta de habilidade. Por falta de <span class="accent">acesso</span>. O Peneiras On existe para mudar isso.
+      </p>
+      <div style="margin-top:48px;padding-top:24px;border-top:1px solid rgba(245,244,238,.2);display:flex;justify-content:space-between;align-items:baseline">
+        <span class="kicker" style="color:rgba(245,244,238,.5)">Em parceria com</span>
+        <span class="display gold" style="font-size:24px;letter-spacing:.04em">Pelé Academia</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANOS -->
+  <section id="planos">
+    <div class="container section__pad">
+      <div class="grid-2" style="align-items:end;margin-bottom:48px">
+        <div>
+          <span class="tag tag--outline">Planos</span>
+          <h2 class="display h2" style="margin-top:12px">Inscrição<br>sempre gratuita.<br><span class="accent">Visibilidade</span> opcional.</h2>
+        </div>
+        <p style="font-size:16px;line-height:1.6;color:var(--ink-soft)">Você nunca paga para se inscrever em uma peneira — isso é inegociável. O modelo premium oferece visibilidade adicional, e quem não pode pagar entra automaticamente na trilha de inclusão social. <strong>Sem barreira de entrada.</strong></p>
+      </div>
+
+      <div class="plans">
+        <!-- Gratuito -->
+        <div class="plan">
+          <div class="mono text-mute">Gratuito</div>
+          <div>
+            <h3 class="display h3" style="margin:0">Acesso</h3>
+            <p style="margin-top:8px;font-size:14px;line-height:1.5;color:var(--ink-soft)">O básico que ninguém precisa pagar.</p>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;padding-top:16px;border-top:1px solid var(--line-soft)">
+            <span class="plan__price">R$ 0</span><span class="mono text-mute">/ sempre</span>
+          </div>
+          <ul class="plan__features">
+            <li><span class="plan__check">✓</span><span>Inscrição em todas as peneiras abertas</span></li>
+            <li><span class="plan__check">✓</span><span>Acompanhamento de status (convocado · não convocado)</span></li>
+            <li><span class="plan__check">✓</span><span>Notificações básicas por SMS e e-mail</span></li>
+            <li><span class="plan__check">✓</span><span>Score simplificado em faixas</span></li>
+            <li><span class="plan__check">✓</span><span>Termo do responsável digital</span></li>
+            <li><span class="plan__check">✓</span><span>Histórico das peneiras em que participou</span></li>
+          </ul>
+          <div style="margin-top:auto;padding-top:16px"><a href="atleta.html?tela=cadastro" class="btn btn--primary btn--full">Comece grátis →</a></div>
+        </div>
+
+        <!-- Premium -->
+        <div class="plan plan--featured">
+          <div class="plan__ribbon"><span>Mais escolhido</span><span>★</span></div>
+          <div class="mono" style="color:rgba(245,244,238,.55);margin-top:18px">Premium</div>
+          <div>
+            <h3 class="display h3" style="margin:0">Visibilidade</h3>
+            <p style="margin-top:8px;font-size:14px;line-height:1.5;color:rgba(245,244,238,.75)">Para quem quer maximizar a chance de ser visto.</p>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;padding-top:16px;border-top:1px solid rgba(245,244,238,.15)">
+            <span class="plan__price gold">R$ 14,90</span><span class="mono" style="color:rgba(245,244,238,.55)">/ mês</span>
+          </div>
+          <ul class="plan__features">
+            <li><span class="plan__check">✓</span><span>Tudo do plano Acesso, mais:</span></li>
+            <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Score completo detalhado por critério</span></li>
+            <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Posição no ranking em tempo real</span></li>
+            <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Destaque visual do perfil para olheiros</span></li>
+            <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Histórico completo de avaliações</span></li>
+            <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Acesso antecipado a novas peneiras</span></li>
+            <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Dicas personalizadas para subir o score</span></li>
+          </ul>
+          <div style="margin-top:auto;padding-top:16px"><a href="atleta.html?tela=cadastro" class="btn btn--gold btn--full">Assinar Premium →</a></div>
+        </div>
+
+        <!-- Inclusão social -->
+        <div class="plan">
+          <div class="mono text-mute">Inclusão social</div>
+          <div>
+            <h3 class="display h3" style="margin:0">Premium subsidiado</h3>
+            <p style="margin-top:8px;font-size:14px;line-height:1.5;color:var(--ink-soft)">Premium completo, sem custo, para o público vulnerável.</p>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;padding-top:16px;border-top:1px solid var(--line-soft)">
+            <span class="plan__price gold">Gratuito</span><span class="mono text-mute">para quem precisa</span>
+          </div>
+          <ul class="plan__features">
+            <li><span class="plan__check">✓</span><span>Premium completo, 100% gratuito</span></li>
+            <li><span class="plan__check">✓</span><span>Alunos de escolas parceiras incluídos</span></li>
+            <li><span class="plan__check">✓</span><span>Validação via CadÚnico ou autodeclaração</span></li>
+            <li><span class="plan__check">✓</span><span>Sem etapas de cobrança ou cartão</span></li>
+            <li><span class="plan__check">✓</span><span>Suporte humano dedicado ao responsável</span></li>
+            <li><span class="plan__check">✓</span><span>Renovação automática enquanto durar a condição</span></li>
+          </ul>
+          <div style="margin-top:auto;padding-top:16px"><a href="atleta.html?tela=cadastro" class="btn btn--primary btn--full">Verificar elegibilidade →</a></div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;padding:16px;background:var(--bg-alt);display:flex;gap:16px;align-items:flex-start">
+        <span class="display accent" style="font-size:24px;line-height:1">※</span>
+        <p style="margin:0;font-size:13px;line-height:1.6;color:var(--ink-soft)">A inscrição em qualquer peneira é sempre gratuita, em todos os planos. O Premium é um adicional opcional de visibilidade — nunca uma barreira de entrada. Pagamentos processados via gateway externo (Stripe/PagSeguro); cancelamento a qualquer momento. Sem fidelidade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section" style="border-top:1px solid var(--line)">
+    <div class="container g g-faq" style="padding:64px 32px;gap:64px;align-items:start">
+      <div>
+        <span class="tag tag--outline">FAQ</span>
+        <h3 class="display" style="font-size:56px;margin-top:12px">Dúvidas que todo mundo tem.</h3>
+      </div>
+      <div class="faq">
+        <details><summary>A inscrição é mesmo gratuita?<span style="font-family:var(--font-mono);font-size:18px">+</span></summary><p>Sim. Sempre. O plano premium só dá visibilidade extra. Inscrição é gratuita — para sempre.</p></details>
+        <details><summary>Tenho 12 anos, posso me inscrever?<span style="font-family:var(--font-mono);font-size:18px">+</span></summary><p>Sim. A faixa é 07 a 19 anos. Para menores de 18, o responsável aceita o termo na mesma tela.</p></details>
+        <details><summary>Não moro perto de uma peneira.<span style="font-family:var(--font-mono);font-size:18px">+</span></summary><p>O sistema usa sua localização para alocar você na peneira mais próxima com vaga, e abre novas peneiras onde detecta demanda.</p></details>
+        <details><summary>Posso enviar vídeos?<span style="font-family:var(--font-mono);font-size:18px">+</span></summary><p>Sim. Anexe seus vídeos e fotos, ou cole o link do Instagram ou YouTube no perfil. Vídeos aumentam seu score em até 25 pontos.</p></details>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <div data-site-footer></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script>
+    mountSiteHeader('index.html');
+    mountSiteFooter();
+
+    // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
+    const season = MOCK.SEASON;
+    document.querySelector('[data-season-events]').textContent = season.events;
+    document.querySelector('[data-season-states]').textContent = `em ${season.states} estados`;
+
+    // Card da próxima peneira — data e prazo calculados, nunca chumbados
+    const next = season.nextEvent;
+    const dayMs = 86400000;
+    const daysLeft = Math.ceil((new Date(next.date + 'T00:00:00') - new Date(new Date().toDateString())) / dayMs);
+    // Com as inscrições encerradas, o status do evento ("aberta") deixa de valer:
+    // vira uma tag legível de relance, como a "encerrada" do countdown do atleta.
+    const closed = daysLeft < 1;
+    const statusEl = document.querySelector('[data-next-status]');
+    if (closed) statusEl.innerHTML = tagHTML('Inscrições encerradas', 'outline-on-dark');
+    else statusEl.textContent = '● ' + next.status.toUpperCase();
+    document.querySelector('[data-next-date]').textContent = fmtDotDate(next.date, 'full').split('·').join(' · ');
+    document.querySelector('[data-next-age]').textContent = `Sub-${next.age.split('-')[0]} → Sub-${next.age.split('-')[1]}`;
+    document.querySelector('[data-next-progress]').innerHTML =
+      progressHTML(Math.min(next.registered, next.capacity * 5), next.capacity * 5);
+    document.querySelector('[data-next-registered]').textContent = `${fmtNum(next.registered)} inscritos`;
+    document.querySelector('[data-next-capacity]').textContent =
+      `${next.capacity} vagas${daysLeft > 1 ? ' · ' + daysLeft + ' dias restantes' : daysLeft === 1 ? ' · último dia' : ''}`;
+
+    // Marquee
+    const items = ['07 → 19 anos',`${season.states} estados`,'Inscrição gratuita','Score em tempo real','Anexe seus vídeos e fotos','Inteligência na análise dos seus dados esportivos','Tecnologia de alocação automática'];
+    const track = document.getElementById('marquee-track');
+    let html = '';
+    for (let k=0;k<3;k++) items.forEach((t,i)=>{ html += `<span>${t}</span><span style="color:${i%2?'var(--gold)':'var(--accent)'}">●</span>`; });
+    track.innerHTML = html;
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recuperar senha — Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .step-bars { display:flex; gap:6px; margin-bottom:24px; }
+    .step-bars > div { flex:1; height:4px; background:var(--line-soft); }
+    .step-bars > div.is-done { background:var(--ink); }
+    .step-bars > div.is-final { background:var(--accent); }
+    .code-input { flex:1; height:64px; font-family:var(--font-display); font-weight:900; font-size:32px; text-align:center; letter-spacing:-.02em; background:var(--card); color:var(--ink); border:1px solid var(--ink); border-radius:var(--radius); outline:none; }
+    .code-input:focus, .code-input.filled { border:2px solid var(--ink); }
+    .strength-bar { height:4px; background:var(--bg-alt); display:flex; gap:2px; }
+    .strength-bar > div { flex:1; }
+    .req { display:flex; align-items:center; gap:6px; }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-simple-header></div>
+
+  <main id="conteudo" tabindex="-1" class="container container--tight" style="padding:64px 32px">
+    <div class="step-bars" data-bars></div>
+    <div class="kicker" style="text-transform:uppercase" data-step-label></div>
+    <div data-step-content></div>
+
+    <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);display:flex;align-items:center;gap:10px">
+      <span style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ink);font-family:var(--font-display);font-weight:900;font-size:14px">?</span>
+      <div>
+        <div class="kicker" style="text-transform:uppercase">Não está recebendo o código?</div>
+        <div style="font-size:13px;margin-top:2px">Fale com a gente: <strong>contato@exemplo.com</strong></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/recuperar.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Política de Privacidade — Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .priv-block { scroll-margin-top: 100px; }
+    .priv-block:focus { outline: none; }
+    .priv-block__head { display:flex; align-items:baseline; gap:16px; margin-bottom:16px; border-bottom:1px solid var(--line); padding-bottom:10px; }
+    .priv-block__head h2 { font-family:var(--font-display); font-weight:900; font-size:28px; line-height:1; letter-spacing:-.02em; text-transform:uppercase; margin:0; }
+    .priv-p { font-size:15px; line-height:1.65; color:var(--ink); margin:0; text-wrap:pretty; }
+    .priv-bullets { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .priv-bullets li { display:grid; grid-template-columns:14px 1fr; gap:12px; font-size:15px; line-height:1.55; }
+    .priv-bullets li .b { color:var(--accent-text); font-family:var(--font-display); font-weight:900; padding-top:2px; }
+    .priv-callout { padding:16px; background:var(--bg-alt); border-left:4px solid var(--accent); font-size:14px; line-height:1.6; }
+    .priv-callout--danger { background:transparent; border-left-color:var(--danger); }
+    .dt { border:1px solid var(--line); }
+    .dt__head, .dt__row { display:grid; grid-template-columns:180px 1.4fr 1fr; }
+    .dt__head { border-bottom:1px solid var(--line); background:var(--bg-alt); }
+    .dt__head > div { padding:10px 14px; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-mute); }
+    .dt__row { border-top:1px solid var(--line-soft); }
+    .dt__row:first-child { border-top:none; }
+    .dt__row > div:first-child { padding:14px; font-family:var(--font-display); font-weight:800; font-size:13px; text-transform:uppercase; }
+    .dt__row > div:nth-child(2) { padding:14px; font-size:14px; line-height:1.5; }
+    .dt__row > div:nth-child(3) { padding:14px; font-size:13px; line-height:1.5; color:var(--ink-soft); }
+    .rights { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); }
+    .rights__item { padding:14px; display:grid; grid-template-columns:40px 1fr; gap:12px; align-items:baseline; }
+    .rights__item:nth-child(odd) { border-right:1px solid var(--line-soft); }
+    .rights__item:nth-child(n+3) { border-top:1px solid var(--line-soft); }
+    .rights__n { font-family:var(--font-mono); font-size:11px; color:var(--accent-text); font-weight:700; }
+    .toc-btn { display:grid; grid-template-columns:32px 1fr; gap:8px; align-items:baseline; padding:10px 0; cursor:pointer; background:transparent; border:none; border-top:1px solid var(--line-soft); text-align:left; color:var(--ink); width:100%; }
+    @media (max-width:900px) {
+      /* tabela de dados vira lista: o cabecalho de colunas perde sentido */
+      .dt__head { display:none; }
+      .dt__row { grid-template-columns:1fr; }
+      .dt__row > div:first-child { padding-bottom:0; }
+      .dt__row > div:nth-child(2), .dt__row > div:nth-child(3) { padding-top:6px; }
+      .rights { grid-template-columns:1fr; }
+      .rights__item:nth-child(odd) { border-right:none; }
+      .rights__item:nth-child(n+2) { border-top:1px solid var(--line-soft); }
+      .priv-block__head h2 { font-size:22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-simple-header></div>
+
+  <main id="conteudo" tabindex="-1">
+
+  <!-- HERO -->
+  <section class="section">
+    <div class="container" style="padding:64px 32px 48px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <span style="width:24px;height:1px;background:var(--ink)"></span>
+        <span class="kicker" style="color:var(--ink)">Documento legal · vigente</span>
+      </div>
+      <h1 class="display" style="font-size:clamp(34px,8vw,120px);line-height:.86;letter-spacing:-.05em;max-width:1100px;margin:0">
+        Política de<br><span class="mark">privacidade</span>.
+      </h1>
+      <p class="lead" style="max-width:720px;margin-top:32px">Esta política explica, em português claro, quais dados o <strong>Peneiras On</strong> coleta, por que coleta, com quem compartilha e quais são os seus direitos. Estamos sujeitos à <strong>LGPD (Lei nº 13.709/2018)</strong> e ao <strong>ECA (Lei nº 8.069/1990)</strong>.</p>
+      <div style="display:flex;gap:32px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line-soft);flex-wrap:wrap" data-meta></div>
+    </div>
+  </section>
+
+  <!-- TOC + BODY -->
+  <section>
+    <div class="container g g-aside-sm" style="padding:64px 32px;gap:64px;align-items:start">
+      <aside style="position:sticky;top:96px">
+        <div class="section-label"><span class="section-label__title">Sumário</span></div>
+        <nav data-toc></nav>
+        <div class="card--dark" style="margin-top:24px;padding:20px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle at top right,rgba(200,164,21,.4),transparent 70%)"></div>
+          <div style="position:relative">
+            <div class="kicker gold">Resumo da LGPD</div>
+            <div class="display" style="font-size:22px;line-height:1;margin-top:8px">Os dados são seus.</div>
+            <p style="margin-top:10px;font-size:12px;line-height:1.5;opacity:.85">Você pode acessar, corrigir, anonimizar ou apagar seus dados a qualquer momento — e cancelar nosso uso deles, mesmo sem dar motivo.</p>
+          </div>
+        </div>
+      </aside>
+
+      <article style="display:flex;flex-direction:column;gap:48px;max-width:760px" data-body></article>
+    </div>
+  </section>
+
+  </main>
+
+  <div data-site-footer></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/privacidade.js"></script>
+</body>
+</html>
