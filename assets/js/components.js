@@ -196,7 +196,9 @@ function bindSiteHeader(host, activePage) {
 }
 
 /* ---------- Header simples (páginas internas: login, sobre, etc.) ---------- */
-function mountSimpleHeader(crumb, backHref, backLabel) {
+/* opts.cta === false suprime o "Quero me inscrever →" — na própria página de
+   cadastro ele apontaria para onde a pessoa já está. */
+function mountSimpleHeader(crumb, backHref, backLabel, opts = {}) {
   const host = document.querySelector('[data-simple-header]');
   if (!host) return;
   host.innerHTML = `
@@ -207,7 +209,7 @@ function mountSimpleHeader(crumb, backHref, backLabel) {
         <span class="site-header__crumb">/ ${crumb}</span>
         <div class="site-header__actions">
           <a href="${backHref || 'index.html'}" style="background:transparent;border:none;cursor:pointer;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);text-decoration:none">← ${backLabel || 'Voltar à home'}</a>
-          <a href="cadastro.html" class="btn btn--accent btn--sm">Quero me inscrever →</a>
+          ${opts.cta === false ? '' : '<a href="cadastro.html" class="btn btn--accent btn--sm">Quero me inscrever →</a>'}
         </div>
       </div>
     </header>`;

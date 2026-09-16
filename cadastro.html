@@ -10,10 +10,21 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/css/styles.css">
   <style>
+    /* Alturas medidas pelo JS (cabeçalho e bloco de score) — nada chumbado */
+    :root { --header-h: 65px; --cad-head-h: 0px; }
+    /* Ao focar um campo por Tab, o navegador rola deixando espaço para o bloco
+       sticky em cima e para a barra fixa embaixo, em vez de esconder o campo. */
+    html { scroll-padding-top: calc(var(--header-h) + var(--cad-head-h) + 16px); scroll-padding-bottom: 110px; }
+    /* A página ocupa a viewport: a barra de ações encosta no fim do conteúdo
+       mesmo no passo curto; passos longos rolam normalmente. */
+    main[data-screen] { min-height: calc(100vh - var(--header-h)); min-height: calc(100dvh - var(--header-h)); display:flex; flex-direction:column; }
+    .cad-body { flex:1; }
+    /* Bloco de score gruda sob o cabeçalho; em telas baixas vira estático para
+       não comer a viagem útil junto com a barra fixa. */
+    .cad-head { position:sticky; top:var(--header-h); z-index:5; border-bottom:1px solid var(--line); background:var(--bg); }
+    @media (max-height:640px) { .cad-head { position:static; } html { scroll-padding-top: calc(var(--header-h) + 16px); } }
     /* Barra de ações do wizard, fixa no rodapé da viewport (veio de atleta.html) */
     .cad-footer { position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); padding:16px 32px; z-index:20; }
-    /* O rodapé do site precisa ficar visível acima da barra fixa */
-    .site-footer--compact { margin-bottom:80px; }
     @media (max-width:900px) {
       .cad-footer { padding:12px 20px; }
     }
@@ -25,8 +36,6 @@
   <div data-simple-header></div>
 
   <main id="conteudo" tabindex="-1" data-screen></main>
-
-  <div data-site-footer></div>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/components.js"></script>
