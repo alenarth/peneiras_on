@@ -191,7 +191,7 @@ function renderStep4() {
     <h1 class="display h3" style="font-size:44px;margin:24px 0 16px">Senha<br>atualizada.</h1>
     <p style="font-size:15px;line-height:1.6;color:var(--ink-soft);margin-bottom:32px">Sua senha foi alterada com sucesso. Por segurança, todas as outras sessões foram encerradas — você precisará entrar de novo em qualquer outro dispositivo.</p>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <a href="atleta.html?tela=status" class="btn btn--primary btn--lg btn--full">Entrar agora →</a>
+      <a href="login.html?tipo=jogador" class="btn btn--primary btn--lg btn--full">Entrar agora →</a>
       <a href="index.html" class="btn btn--ghost btn--full">Voltar à home</a>
     </div>`;
 }

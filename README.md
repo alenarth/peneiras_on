@@ -23,16 +23,18 @@ Ou qualquer servidor estático (Live Server do VS Code, `npx serve`, etc.).
 | `index.html` | Landing pública (hero, planos, FAQ) | — |
 | `sobre.html` | Institucional (missão, equipe, parceria) | — |
 | `peneiras.html` | Calendário público da temporada (filtros por status e estado, CTA para login) | — |
+| `cadastro.html` | Criar perfil — wizard público de 5 passos | `?evento=<id>` (contexto vindo de `login.html`; id inválido cai no cadastro normal) |
 | `privacidade.html` | Política de Privacidade (LGPD/ECA) | — |
 | `login.html` | Login (3 perfis) | `?tipo=jogador\|olheiro\|academia` · `?evento=<id>` (contexto vindo de `peneiras.html`; id inválido cai no login normal) |
 | `recuperar.html` | Recuperação de senha (4 passos) | — |
-| `atleta.html` | Área do atleta | `?tela=status\|perfil\|peneiras\|cadastro` |
+| `atleta.html` | Área do atleta | `?tela=status\|perfil\|peneiras` (`?tela=cadastro` redireciona para `cadastro.html`) |
 | `olheiro.html` | Painel do olheiro | `?tela=lista\|checkin\|avaliacao` · `?tela=perfil&id=<id>` |
 | `gestora.html` | Painel da gestão | `?tela=dashboard\|mapa\|pipeline\|eventos` |
 
-`atleta.html?tela=cadastro` não tem aba na navegação: o wizard é um fluxo isolado,
-alcançado pelos CTAs "Quero me inscrever". O perfil do olheiro é aberto pela lista de
-inscritos, que passa o `id` do atleta. Um `?tela=` desconhecido cai na tela padrão da persona.
+O wizard de cadastro é público (`cadastro.html`), alcançado pelos CTAs "Quero me inscrever";
+o link antigo `atleta.html?tela=cadastro` redireciona para lá preservando `?evento=`. O perfil
+do olheiro é aberto pela lista de inscritos, que passa o `id` do atleta. Um `?tela=` desconhecido
+cai na tela padrão da persona.
 
 ## Estrutura
 

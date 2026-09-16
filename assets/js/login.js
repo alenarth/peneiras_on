@@ -80,7 +80,7 @@ document.querySelector('[data-toggle-pwd]').addEventListener('click', function()
 const bottom = document.querySelector('[data-bottom-row]');
 if (role === 'jogador') {
   bottom.innerHTML = `<span style="font-size:13px;color:var(--ink-soft)">Ainda não se inscreveu?</span>
-    <a href="atleta.html?tela=cadastro" style="font-family:var(--font-mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);text-decoration:none">Inscreva-se grátis →</a>`;
+    <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" style="font-family:var(--font-mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);text-decoration:none">Inscreva-se grátis →</a>`;
 } else {
   const alts = Object.keys(ROLES).filter(r => r !== role);
   bottom.innerHTML = `<span style="font-size:13px;color:var(--ink-soft)">É outro perfil?</span>

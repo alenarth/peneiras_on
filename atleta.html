@@ -15,11 +15,9 @@
     .atleta-tab { height:38px; padding:0 16px; cursor:pointer; background:transparent; color:var(--ink); border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.06em; text-decoration:none; }
     .atleta-tab.is-active { background:var(--ink); color:var(--bg); border-color:var(--ink); }
     .atleta-main { max-width:1280px; margin:0 auto; padding:32px; }
-    .cad-footer { position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); padding:16px 32px; z-index:20; }
     @media (max-width:900px) {
       .atleta-main { padding:20px; }
       .atleta-tabs { margin-left:0; order:10; flex-basis:100%; overflow-x:auto; }
-      .cad-footer { padding:12px 20px; }
     }
   </style>
 </head>
@@ -31,7 +29,7 @@
     <div class="container site-header__inner" style="max-width:1280px">
       <a href="index.html" class="wordmark"><span class="wordmark__diamond"></span><span class="wordmark__text">Peneiras<span class="dot">·</span>On</span></a>
       <span class="site-header__crumb">/ Minha conta</span>
-      <nav class="atleta-tabs" data-tabs>
+      <nav class="atleta-tabs">
         <a class="atleta-tab" href="atleta.html?tela=status" data-tab="status"><span style="font-size:14px">◐</span> Status</a>
         <a class="atleta-tab" href="atleta.html?tela=perfil" data-tab="perfil"><span style="font-size:14px">✦</span> Perfil</a>
         <a class="atleta-tab" href="atleta.html?tela=peneiras" data-tab="peneiras"><span style="font-size:14px">◆</span> Peneiras</a>

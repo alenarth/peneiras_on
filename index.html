@@ -33,7 +33,7 @@
           Peneiras On é a plataforma que descentraliza a captação de talentos no Brasil. De Manaus a Caxias, do Piauí ao Rio Grande do Sul — o olheiro chega até você.
         </p>
         <div style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap">
-          <a href="atleta.html?tela=cadastro" class="btn btn--accent btn--lg">Inscreva-se agora</a>
+          <a href="cadastro.html" class="btn btn--accent btn--lg">Inscreva-se agora</a>
           <a href="peneiras.html" class="btn btn--gold btn--lg">Encontrar peneiras →</a>
         </div>
       </div>
@@ -155,7 +155,7 @@
             <li><span class="plan__check">✓</span><span>Termo do responsável digital</span></li>
             <li><span class="plan__check">✓</span><span>Histórico das peneiras em que participou</span></li>
           </ul>
-          <div style="margin-top:auto;padding-top:16px"><a href="atleta.html?tela=cadastro" class="btn btn--primary btn--full">Comece grátis →</a></div>
+          <div style="margin-top:auto;padding-top:16px"><a href="cadastro.html" class="btn btn--primary btn--full">Comece grátis →</a></div>
         </div>
 
         <!-- Premium -->
@@ -178,7 +178,7 @@
             <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Acesso antecipado a novas peneiras</span></li>
             <li style="border-top-color:rgba(245,244,238,.08)"><span class="plan__check">✓</span><span>Dicas personalizadas para subir o score</span></li>
           </ul>
-          <div style="margin-top:auto;padding-top:16px"><a href="atleta.html?tela=cadastro" class="btn btn--gold btn--full">Assinar Premium →</a></div>
+          <div style="margin-top:auto;padding-top:16px"><a href="cadastro.html" class="btn btn--gold btn--full">Assinar Premium →</a></div>
         </div>
 
         <!-- Inclusão social -->
@@ -199,7 +199,7 @@
             <li><span class="plan__check">✓</span><span>Suporte humano dedicado ao responsável</span></li>
             <li><span class="plan__check">✓</span><span>Renovação automática enquanto durar a condição</span></li>
           </ul>
-          <div style="margin-top:auto;padding-top:16px"><a href="atleta.html?tela=cadastro" class="btn btn--primary btn--full">Verificar elegibilidade →</a></div>
+          <div style="margin-top:auto;padding-top:16px"><a href="cadastro.html" class="btn btn--primary btn--full">Verificar elegibilidade →</a></div>
         </div>
       </div>
 
@@ -252,7 +252,7 @@
     if (closed) statusEl.innerHTML = tagHTML('Inscrições encerradas', 'outline-on-dark');
     else statusEl.textContent = '● ' + next.status.toUpperCase();
     // "Peneira Rio — Caxias" → "Rio · Caxias": o nome curto acompanha o evento, como o resto do card
-    document.querySelector('[data-next-name]').textContent = next.name.replace(/^Peneira\s+/, '').replace(/\s+—\s+/g, ' · ');
+    document.querySelector('[data-next-name]').textContent = eventShortName(next);
     document.querySelector('[data-next-date]').textContent = fmtDotDate(next.date, 'full').split('·').join(' · ');
     document.querySelector('[data-next-age]').textContent = `Sub-${next.age.split('-')[0]} → Sub-${next.age.split('-')[1]}`;
     document.querySelector('[data-next-progress]').innerHTML =

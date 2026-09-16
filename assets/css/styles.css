@@ -265,6 +265,9 @@ a { color: inherit; }
   outline: none; width: 100%;
 }
 .input:focus-visible, .select:focus-visible, .textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+/* <input type="date">: ao tabular para o segmento do mês/ano o Chromium deixa de
+   casar :focus e :focus-visible no input; só :focus-within segue casando. */
+.input[type="date"]:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
 .select {
   appearance: none; cursor: pointer;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><polyline points='1,1 6,7 11,1' fill='none' stroke='%230E0E0F' stroke-width='1.5'/></svg>");

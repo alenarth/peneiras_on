@@ -80,11 +80,11 @@ function mountSiteHeader(active) {
               </a>
               <div class="entrar__foot">
                 <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">Sem conta?</span>
-                <a href="atleta.html?tela=cadastro" style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.08em;text-decoration:none">Inscreva-se →</a>
+                <a href="cadastro.html" style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.08em;text-decoration:none">Inscreva-se →</a>
               </div>
             </div>
           </div>
-          <a href="atleta.html?tela=cadastro" class="btn btn--accent btn--sm">Quero me inscrever →</a>
+          <a href="cadastro.html" class="btn btn--accent btn--sm">Quero me inscrever →</a>
         </div>
       </div>
     </header>`;
@@ -207,7 +207,7 @@ function mountSimpleHeader(crumb, backHref, backLabel) {
         <span class="site-header__crumb">/ ${crumb}</span>
         <div class="site-header__actions">
           <a href="${backHref || 'index.html'}" style="background:transparent;border:none;cursor:pointer;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);text-decoration:none">← ${backLabel || 'Voltar à home'}</a>
-          <a href="atleta.html?tela=cadastro" class="btn btn--accent btn--sm">Quero me inscrever →</a>
+          <a href="cadastro.html" class="btn btn--accent btn--sm">Quero me inscrever →</a>
         </div>
       </div>
     </header>`;
@@ -247,7 +247,7 @@ function mountSiteFooter(opts = {}) {
             <h3 class="display" style="font-size:clamp(36px,5vw,72px);margin-top:12px">Inscreva-se em<br>menos de 4 minutos.</h3>
           </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end">
-            <a href="atleta.html?tela=cadastro" class="btn btn--accent btn--lg">Quero me inscrever →</a>
+            <a href="cadastro.html" class="btn btn--accent btn--lg">Quero me inscrever →</a>
             <a href="login.html?tipo=jogador" class="btn btn--ghost btn--lg btn--on-dark">Já sou inscrito · Entrar</a>
           </div>
         </div>
@@ -277,7 +277,7 @@ function mountSiteFooter(opts = {}) {
         <div>
           <div class="foot-col__title">Conta</div>
           <div class="foot-col__links">
-            <a href="atleta.html?tela=cadastro">Quero me inscrever</a>
+            <a href="cadastro.html">Quero me inscrever</a>
             <a href="login.html?tipo=jogador">Entrar</a>
             <a href="recuperar.html">Recuperar senha</a>
             <a href="login.html?tipo=olheiro">Acesso do olheiro</a>
@@ -463,6 +463,11 @@ function eventCardHTML(e, mode, opts = {}) {
     </div>
     <div style="padding:12px;border-top:1px solid var(--line-soft)">${cta}</div>
   </article>`;
+}
+
+/* "Peneira Rio — Caxias" → "Rio · Caxias" (rótulo curto, usado em kickers e cards) */
+function eventShortName(e) {
+  return e.name.replace(/^Peneira\s+/, '').replace(/\s+—\s+/g, ' · ');
 }
 
 /* Estado vazio da grade — ocupa a linha inteira em vez de deixar o grid em branco. */

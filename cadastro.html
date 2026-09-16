@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Criar perfil — Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* Barra de ações do wizard, fixa no rodapé da viewport (veio de atleta.html) */
+    .cad-footer { position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); padding:16px 32px; z-index:20; }
+    /* O rodapé do site precisa ficar visível acima da barra fixa */
+    .site-footer--compact { margin-bottom:80px; }
+    @media (max-width:900px) {
+      .cad-footer { padding:12px 20px; }
+    }
+  </style>
+</head>
+<body data-page="cadastro.html">
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-simple-header></div>
+
+  <main id="conteudo" tabindex="-1" data-screen></main>
+
+  <div data-site-footer></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/cadastro.js"></script>
+</body>
+</html>
