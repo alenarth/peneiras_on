@@ -24,11 +24,6 @@ function fmtDotDate(iso, year) {
   const tail = year === 'full' ? '·' + y : year === 'short' ? '·' + y.slice(2) : '';
   return d + '·' + M[+m - 1] + tail;
 }
-function el(html) {
-  const t = document.createElement('template');
-  t.innerHTML = html.trim();
-  return t.content.firstElementChild;
-}
 
 /* ---------- Wordmark ---------- */
 function wordmarkHTML(onDark) {
@@ -219,6 +214,16 @@ function mountSimpleHeader(crumb, backHref, backLabel, opts = {}) {
 /* ---------- Site footer ----------
    mountSiteFooter()                        → rodapé completo (landing)
    mountSiteFooter({compact:true, lines:[]}) → variante reduzida (sobre, privacidade) */
+/* O rodapé é a última coisa injetada: se a URL veio com #hash, o navegador já
+   rolou antes de a página ter a altura final e pode ter parado curto. */
+function scrollToHashAfterMount() {
+  if (!location.hash || location.hash.length < 2) return;
+  try {
+    const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (t) t.scrollIntoView({ behavior: 'instant', block: 'start' });
+  } catch (e) { /* hash sem elemento: nada a fazer */ }
+}
+
 function mountSiteFooter(opts = {}) {
   const host = document.querySelector('[data-site-footer]');
   if (!host) return;
@@ -238,6 +243,7 @@ function mountSiteFooter(opts = {}) {
         </div>
       </div>
     </footer>`;
+    scrollToHashAfterMount();
     return;
   }
   host.innerHTML = `
@@ -259,12 +265,13 @@ function mountSiteFooter(opts = {}) {
         <div>
           ${wordmarkHTML(true)}
           <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo — independentemente de onde estiver.</p>
-          <div class="social">
-            <a href="#" aria-label="Instagram">IG</a>
-            <a href="#" aria-label="YouTube">YT</a>
-            <a href="#" aria-label="TikTok">TT</a>
-            <a href="#" aria-label="LinkedIn">IN</a>
-            <a href="#" aria-label="WhatsApp">WA</a>
+          <!-- Sem perfis reais ainda: marcas não interativas, fora da ordem de tabulação -->
+          <div class="social" aria-label="Redes sociais (em breve)">
+            <span title="Instagram · em breve">IG</span>
+            <span title="YouTube · em breve">YT</span>
+            <span title="TikTok · em breve">TT</span>
+            <span title="LinkedIn · em breve">IN</span>
+            <span title="WhatsApp · em breve">WA</span>
           </div>
         </div>
         <div>
@@ -295,8 +302,8 @@ function mountSiteFooter(opts = {}) {
         <div>
           <div class="foot-col__title">Ajuda</div>
           <div class="foot-col__links">
-            <a href="#">Central de ajuda</a>
-            <a href="#">Documentação</a>
+            <a href="index.html#faq">Perguntas frequentes</a>
+            <a href="sobre.html#contato">Fale com a gente</a>
           </div>
         </div>
       </div>
@@ -309,6 +316,7 @@ function mountSiteFooter(opts = {}) {
         </div>
       </div>
     </footer>`;
+  scrollToHashAfterMount();
 }
 
 /* ---------- Componentes HTML reutilizáveis ---------- */

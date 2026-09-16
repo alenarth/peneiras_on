@@ -165,7 +165,7 @@ function renderCadastro() {
 
   function bindFields() {
     const n=screenEl.querySelector('#f-name'); if(n) n.oninput=()=>{ form.name=n.value; updateLive(); };
-    const dob=screenEl.querySelector('#f-dob'); if(dob) dob.onchange=()=>{ form.dob=dob.value; render(); };
+    const dob=screenEl.querySelector('#f-dob'); if(dob) dob.oninput=()=>{ form.dob=dob.value; updateLive(); paintDobHint(dob); };
     const cpf=screenEl.querySelector('#f-cpf'); if(cpf) cpf.oninput=()=>{ form.cpf=cpf.value.replace(/\D/g,'').slice(0,11); cpf.value=form.cpf; updateLive(); };
     const st=screenEl.querySelector('#f-state'); if(st) st.onchange=()=>{ form.state=st.value; updateLive(); };
     const city=screenEl.querySelector('#f-city'); if(city) city.oninput=()=>{ form.city=city.value; updateLive(); };
@@ -209,6 +209,18 @@ function renderCadastro() {
     window.scrollTo(0, 0);
     title.focus({ preventScroll: true });
     announce('Inscrição enviada. Perfil criado com ' + sc + '% de completude.');
+  }
+
+  /* Idade calculada sem redesenhar o passo: redesenhar recriava o <input type="date">
+     e derrubava o foco no meio da digitação por teclado (o Chromium dispara o
+     evento a cada segmento dia/mês/ano). Só a dica e o erro são trocados. */
+  function paintDobHint(dob) {
+    const wrap = dob.closest('.field'); if (!wrap) return;
+    const a = age(), bad = a != null && (a < 7 || a > 19);
+    wrap.querySelectorAll('.field__hint, .field__error').forEach(e => e.remove());
+    if (bad) dob.setAttribute('aria-invalid', 'true'); else dob.removeAttribute('aria-invalid');
+    if (bad) wrap.insertAdjacentHTML('beforeend', '<span class="field__error" role="alert">Idade fora da faixa permitida (07–19)</span>');
+    else if (a != null) wrap.insertAdjacentHTML('beforeend', `<span class="field__hint">Você tem ${a} anos</span>`);
   }
 
   /* Atualiza o que muda a cada tecla sem recriar os campos:

@@ -147,7 +147,7 @@ function renderPerfil() {
             <div class="player-img" style="width:100px;height:130px">3x4</div>
             <div style="flex:1">
               ${tagHTML(MOCK.posLabel(a).toUpperCase(),'accent')}
-              <div class="display" style="font-size:24px;margin-top:8px;letter-spacing:-.02em">${a.name}</div>
+              <h1 class="display" style="font-size:24px;margin:8px 0 0;letter-spacing:-.02em">${a.name}</h1>
               <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:4px">${a.age} anos · ${a.city}/${a.state}</div>
               <div style="display:flex;gap:6px;margin-top:10px"><button class="btn ${a.favorite?'btn--gold':'btn--ghost'} btn--sm" id="fav">★ ${a.favorite?'Favorito':'Favoritar'}</button></div>
             </div>
@@ -187,7 +187,8 @@ function renderPerfil() {
           </div>
           <div class="card" style="padding:20px">
             <div class="section-label"><span class="section-label__title">Suas notas</span><span class="section-label__action">${tagHTML('Privado','outline')}</span></div>
-            <textarea class="textarea" style="min-height:120px" placeholder="Notas internas do olheiro…">${esc(a.notes||'')}</textarea>
+            <label class="sr-only" for="notes">Suas notas sobre ${esc(a.name)}</label>
+            <textarea class="textarea" id="notes" style="min-height:120px" placeholder="Notas internas do olheiro…">${esc(a.notes||'')}</textarea>
             <div style="display:flex;justify-content:space-between;margin-top:8px"><span class="mono text-mute" style="text-transform:none">privado</span><button class="btn btn--primary btn--sm" data-save-note>Salvar</button></div>
           </div>
         </div>
@@ -225,7 +226,8 @@ function renderCheckin() {
       <div class="g g-panel-sm pad" style="gap:24px;align-items:start">
         <div class="card card--flush">
           <div style="padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
-            <input class="input" placeholder="Buscar nome…" style="height:40px;width:280px">
+            <label class="sr-only" for="ci-q">Buscar atleta por nome</label>
+            <input class="input" id="ci-q" placeholder="Buscar nome…" style="height:40px;width:280px">
             <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">${present} de ${list.length} presentes</span>
           </div>
           ${list.map((a,i)=>`<div class="ci-row" data-id="${a.id}" style="border-top:${i?'1px solid var(--line-soft)':'none'};background:${a.present?'var(--accent-soft)':'transparent'}">
@@ -300,6 +302,7 @@ function renderAvaliacao() {
 
           <div style="margin-top:16px" class="card" data-pad><div style="padding:20px">
             <div class="section-label"><span class="section-label__title">Observações</span></div>
+            <label class="sr-only" for="comments">Observações da avaliação</label>
             <textarea class="textarea" id="comments" placeholder="Pontos fortes, áreas de melhoria, intangíveis…">${esc(ev.comments)}</textarea>
           </div></div>
 

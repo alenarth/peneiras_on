@@ -49,7 +49,8 @@ function renderDashboard() {
     <div class="page-head">
       <div><div class="kicker" style="text-transform:uppercase">Boa tarde, Marina</div><h1 class="display h2" style="margin:6px 0">Dashboard</h1></div>
       <div class="page-head__actions" style="display:flex;gap:8px">
-        <select class="sel2"><option>Temporada 2026 · até hoje</option><option>Últimos 30 dias</option><option>Comparar com 2025</option></select>
+        <label class="sr-only" for="period">Período do dashboard</label>
+        <select class="sel2" id="period"><option>Temporada 2026 · até hoje</option><option>Últimos 30 dias</option><option>Comparar com 2025</option></select>
         <button class="btn btn--ghost btn--sm">Exportar PDF</button>
         <a href="gestora.html?tela=eventos" class="btn btn--primary btn--sm">+ Nova peneira</a>
       </div>
