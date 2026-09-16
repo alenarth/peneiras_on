@@ -18,22 +18,6 @@ if (tela === 'cadastro') document.querySelector('[data-tabs]').style.display = '
 
 SCREENS[tela]();
 
-/* Quebra o tempo restante até uma data em dias/horas/minutos/segundos.
-   Retorna tudo zerado quando a data já passou. */
-function countdownParts(target) {
-  const ms = Math.max(0, target.getTime() - Date.now());
-  const pad = n => String(n).padStart(2, '0');
-  return {
-    over: ms === 0,
-    cells: [
-      [pad(Math.floor(ms / 86400000)), 'dias'],
-      [pad(Math.floor(ms / 3600000) % 24), 'h'],
-      [pad(Math.floor(ms / 60000) % 60), 'min'],
-      [pad(Math.floor(ms / 1000) % 60), 's'],
-    ],
-  };
-}
-
 /* ---------------- STATUS ---------------- */
 function renderStatus() {
   const nextEvent = MOCK.SEASON.nextEvent;
@@ -111,29 +95,8 @@ function renderStatus() {
     </div>
   </div>`;
 
-  startCountdown(eventDate);
-}
-
-/* Atualiza a contagem a cada segundo. Respeita prefers-reduced-motion:
-   com movimento reduzido, renderiza uma vez e não fica piscando números —
-   e avisa no rótulo que a atualização automática está desligada. */
-function startCountdown(target) {
-  const host = screenEl.querySelector('[data-countdown]');
-  const state = screenEl.querySelector('[data-countdown-state]');
-  if (!host) return;
-  const paint = () => {
-    const { over, cells } = countdownParts(target);
-    host.innerHTML = cells.map(c => `<div style="text-align:center;padding:12px;background:var(--bg-alt);border:1px solid var(--line-soft)"><div class="display" style="font-size:36px">${c[0]}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-soft);text-transform:uppercase;margin-top:4px">${c[1]}</div></div>`).join('');
-    state.innerHTML = over ? tagHTML('encerrada', 'outline') : '';
-    return over;
-  };
-  if (paint()) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    state.innerHTML = tagHTML('atualização automática desligada', 'outline');
-    state.title = 'Contagem congelada porque o sistema pede movimento reduzido. Recarregue a página para atualizar.';
-    return;
-  }
-  const id = setInterval(() => { if (paint()) clearInterval(id); }, 1000);
+  // contagem regressiva compartilhada com peneiras.html (components.js)
+  startCountdown(eventDate, screenEl);
 }
 
 /* ---------------- PERFIL ---------------- */
@@ -198,39 +161,71 @@ function renderPerfil() {
 }
 
 /* ---------------- PENEIRAS ---------------- */
+/* Versão pessoal do calendário: mesmo card e mesmo filtro por status da
+   peneiras.html (components.js), mais o que só faz sentido logado —
+   "Minha região" (ME.state) e o estado de inscrição por evento. */
 function renderPeneiras() {
+  const filters = { status: 'all', mine: false };
+  const registered = new Set(ME.registrations || []);
+
+  function summaryHTML() {
+    const n = registered.size;
+    return `Você está inscrito em <strong>${n} ${n === 1 ? 'peneira' : 'peneiras'}</strong>${n ? ' nesta temporada.' : ' — escolha uma abaixo.'}`;
+  }
+
+  function rows() {
+    return filterEvents(MOCK.EVENTS, { status: filters.status, state: filters.mine ? ME.state : 'all' });
+  }
+
+  function paint(announceResult) {
+    const data = rows();
+    screenEl.querySelector('[data-rows]').innerHTML =
+      data.length ? data.map(e => eventCardHTML(e, 'atleta', { registered: registered.has(e.id) })).join('') : eventsEmptyHTML();
+    screenEl.querySelector('[data-count]').textContent = `${data.length} de ${MOCK.EVENTS.length} peneiras`;
+    screenEl.querySelectorAll('[data-status]').forEach(b => {
+      const on = b.dataset.status === filters.status;
+      b.classList.toggle('btn--primary', on); b.classList.toggle('btn--ghost', !on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    const mine = screenEl.querySelector('[data-mine]');
+    mine.classList.toggle('btn--primary', filters.mine); mine.classList.toggle('btn--ghost', !filters.mine);
+    mine.setAttribute('aria-pressed', String(filters.mine));
+    const clear = screenEl.querySelector('[data-clear-filters]');
+    if (clear) clear.onclick = () => { filters.status = 'all'; filters.mine = false; paint(true); };
+    // Inscrever-se: registra em memória (o protótipo não tem sessão), repinta o
+    // card como "Inscrito" e devolve o foco ao "Ver comprovante" do mesmo card.
+    screenEl.querySelectorAll('[data-register]').forEach(b => b.onclick = () => {
+      const ev = MOCK.EVENTS.find(x => x.id === b.dataset.register);
+      registered.add(ev.id);
+      paint(false);
+      screenEl.querySelector('[data-summary]').innerHTML = summaryHTML();
+      const card = screenEl.querySelector(`[data-event="${ev.id}"] .btn`);
+      if (card) card.focus();
+      announce(`Inscrição confirmada em ${ev.name}. Você está inscrito em ${registered.size} ${registered.size === 1 ? 'peneira' : 'peneiras'}.`);
+    });
+    if (announceResult) announce(`${data.length} peneiras na lista`);
+  }
+
   screenEl.innerHTML = `<div class="atleta-main">
     <div style="margin-bottom:32px">
       <span class="tag tag--outline">Calendário</span>
       <h1 class="display h1" style="margin:8px 0 0">Peneiras<br>na <span class="mark">temporada 2026.</span></h1>
       <div style="font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);margin-top:8px">${MOCK.SEASON.events} PENEIRAS · ${MOCK.SEASON.states} ESTADOS · INSCRIÇÃO GRATUITA</div>
+      <p style="font-size:15px;margin:12px 0 0" data-summary>${summaryHTML()}</p>
     </div>
 
-    <div style="display:flex;gap:8px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line);flex-wrap:wrap">
-      ${['Todas','Abertas','Inscrições','Encerradas','Minha região'].map((f,i)=>`<button class="btn ${i===0?'btn--primary':'btn--ghost'} btn--sm" style="font-family:var(--font-mono);letter-spacing:.08em">${f}</button>`).join('')}
-      <span style="margin-left:auto;align-self:center;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">${MOCK.EVENTS.length} peneiras</span>
+    <div style="display:flex;gap:8px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line);flex-wrap:wrap" role="group" aria-label="Filtrar peneiras">
+      ${EVENT_STATUS_FILTERS.map(([k, label]) => `<button type="button" class="btn btn--ghost btn--sm" data-status="${k}" aria-pressed="false" style="font-family:var(--font-mono);letter-spacing:.08em">${label}</button>`).join('')}
+      <button type="button" class="btn btn--ghost btn--sm" data-mine aria-pressed="false" style="font-family:var(--font-mono);letter-spacing:.08em">Minha região · ${ME.state}</button>
+      <span style="margin-left:auto;align-self:center;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)" data-count></span>
     </div>
 
-    <div class="g g-3" style="gap:20px">
-      ${MOCK.EVENTS.map(e=>{
-        const tone = e.status==='aberta'?'success':e.status==='inscrições'?'accent':'outline';
-        const closed = e.status==='encerrada';
-        return `<div class="card card--flush">
-          <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">${tagHTML('● '+e.status,tone)}<span style="font-family:var(--font-mono);font-size:10px;color:var(--ink-mute)">${e.age}</span></div>
-          <div style="padding:24px">
-            <div class="display" style="font-size:28px;letter-spacing:-.02em">${e.city}</div>
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:4px">${fmtDate(e.date)}</div>
-            <div class="g g-2" style="gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line-soft)">
-              ${statHTML('Inscritos', fmtNum(e.registered))}
-              ${statHTML('Vagas', e.capacity)}
-            </div>
-            <div style="margin-top:16px">${progressHTML(Math.min(e.registered,e.capacity*5), e.capacity*5, {sm:true, tone: closed?'ink':'accent'})}</div>
-          </div>
-          <div style="padding:12px;border-top:1px solid var(--line-soft)"><button class="btn ${closed?'btn--ghost':'btn--primary'} btn--sm btn--full" ${closed?'disabled':''}>${closed?'Encerrada':'Inscrever-se'}</button></div>
-        </div>`;
-      }).join('')}
-    </div>
+    <div class="g g-3" style="gap:20px" data-rows></div>
   </div>`;
+
+  screenEl.querySelectorAll('[data-status]').forEach(b => b.onclick = () => { filters.status = b.dataset.status; paint(true); });
+  screenEl.querySelector('[data-mine]').onclick = () => { filters.mine = !filters.mine; paint(true); };
+  paint(false);
 }
 
 /* ---------------- CADASTRO (wizard 5 passos) ---------------- */

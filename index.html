@@ -34,14 +34,14 @@
         </p>
         <div style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap">
           <a href="atleta.html?tela=cadastro" class="btn btn--accent btn--lg">Inscreva-se agora</a>
-          <a href="atleta.html?tela=peneiras" class="btn btn--gold btn--lg">Encontrar peneiras →</a>
+          <a href="peneiras.html" class="btn btn--gold btn--lg">Encontrar peneiras →</a>
         </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:24px">
         <div class="glass g g-2" style="gap:24px">
           <div><div class="glass-stat__label">Inscritos ativos</div><div class="glass-stat__value">18.420</div><div class="glass-stat__delta">+412 hoje</div></div>
-          <div><div class="glass-stat__label">Peneiras 2026</div><div class="glass-stat__value" data-season-events></div><div class="glass-stat__label" data-season-states></div></div>
+          <div><div class="glass-stat__label">Peneiras 2026</div><div class="glass-stat__value" data-season-events></div><a class="glass-stat__label" href="peneiras.html" style="text-decoration:underline;text-underline-offset:3px" data-season-states></a></div>
           <div><div class="glass-stat__label">Cidades atingidas</div><div class="glass-stat__value">127</div><div class="glass-stat__delta">+24 vs 2025</div></div>
           <div><div class="glass-stat__label">Aprovados</div><div class="glass-stat__value">187</div><div class="glass-stat__label">seguem em formação</div></div>
         </div>
@@ -51,7 +51,7 @@
             <span style="font-family:var(--font-mono);font-size:10px;color:var(--accent)" data-next-status></span>
           </div>
           <div style="padding:24px">
-            <div class="display" style="font-size:32px;letter-spacing:-.02em">Rio · Caxias</div>
+            <div class="display" style="font-size:32px;letter-spacing:-.02em" data-next-name></div>
             <div style="display:flex;justify-content:space-between;margin-top:16px;font-family:var(--font-mono);font-size:13px">
               <span data-next-date></span><span data-next-age></span>
             </div>
@@ -61,6 +61,7 @@
                 <span data-next-registered></span><span data-next-capacity></span>
               </div>
             </div>
+            <a href="peneiras.html" class="btn btn--ghost btn--sm btn--on-dark btn--full" style="margin-top:20px">Ver todas as peneiras →</a>
           </div>
         </div>
       </div>
@@ -106,7 +107,7 @@
   </section>
 
   <!-- MANIFESTO -->
-  <section id="manifesto" style="position:relative;background:var(--ink);color:var(--bg);overflow:hidden">
+  <section id="manifesto" class="on-dark" style="position:relative;background:var(--ink);color:var(--bg);overflow:hidden">
     <div class="pele-bg" style="position:absolute;inset:0;background-position:left center;opacity:.35;filter:grayscale(40%)"></div>
     <div style="position:absolute;inset:0;background:linear-gradient(270deg,rgba(14,14,15,.95) 0%,rgba(14,14,15,.7) 35%,rgba(14,14,15,.2) 80%)"></div>
     <div class="container" style="position:relative;padding:96px 32px">
@@ -238,7 +239,7 @@
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;
     document.querySelector('[data-season-events]').textContent = season.events;
-    document.querySelector('[data-season-states]').textContent = `em ${season.states} estados`;
+    document.querySelector('[data-season-states]').textContent = `em ${season.states} estados · ver calendário →`;
 
     // Card da próxima peneira — data e prazo calculados, nunca chumbados
     const next = season.nextEvent;
@@ -250,6 +251,8 @@
     const statusEl = document.querySelector('[data-next-status]');
     if (closed) statusEl.innerHTML = tagHTML('Inscrições encerradas', 'outline-on-dark');
     else statusEl.textContent = '● ' + next.status.toUpperCase();
+    // "Peneira Rio — Caxias" → "Rio · Caxias": o nome curto acompanha o evento, como o resto do card
+    document.querySelector('[data-next-name]').textContent = next.name.replace(/^Peneira\s+/, '').replace(/\s+—\s+/g, ' · ');
     document.querySelector('[data-next-date]').textContent = fmtDotDate(next.date, 'full').split('·').join(' · ');
     document.querySelector('[data-next-age]').textContent = `Sub-${next.age.split('-')[0]} → Sub-${next.age.split('-')[1]}`;
     document.querySelector('[data-next-progress]').innerHTML =

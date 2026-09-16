@@ -22,8 +22,9 @@ Ou qualquer servidor estático (Live Server do VS Code, `npx serve`, etc.).
 |---|---|---|
 | `index.html` | Landing pública (hero, planos, FAQ) | — |
 | `sobre.html` | Institucional (missão, equipe, parceria) | — |
+| `peneiras.html` | Calendário público da temporada (filtros por status e estado, CTA para login) | — |
 | `privacidade.html` | Política de Privacidade (LGPD/ECA) | — |
-| `login.html` | Login (3 perfis) | `?tipo=jogador\|olheiro\|academia` |
+| `login.html` | Login (3 perfis) | `?tipo=jogador\|olheiro\|academia` · `?evento=<id>` (contexto vindo de `peneiras.html`; id inválido cai no login normal) |
 | `recuperar.html` | Recuperação de senha (4 passos) | — |
 | `atleta.html` | Área do atleta | `?tela=status\|perfil\|peneiras\|cadastro` |
 | `olheiro.html` | Painel do olheiro | `?tela=lista\|checkin\|avaliacao` · `?tela=perfil&id=<id>` |

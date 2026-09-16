@@ -96,11 +96,12 @@ a { color: inherit; }
 .text-mute { color: var(--ink-mute); }
 .accent { color: var(--accent-text); }   /* padrão: fundo claro (AA) */
 .gold { color: var(--gold-deep); }       /* padrão: fundo claro (AA) */
-/* sobre superfícies escuras, volta ao neon/dourado vivo (contraste alto garantido) */
+/* sobre superfícies escuras, volta ao neon/dourado vivo (contraste alto garantido).
+   .on-dark marca qualquer seção com fundo --ink que não seja um dos componentes abaixo. */
 .site-footer .accent, .login-side .accent, .glass .accent,
-.card--dark .accent, .plan--featured .accent { color: var(--accent); }
+.card--dark .accent, .plan--featured .accent, .on-dark .accent { color: var(--accent); }  /* 13,3:1 */
 .site-footer .gold, .login-side .gold, .card--dark .gold,
-.plan--featured .gold { color: var(--gold); }
+.plan--featured .gold, .on-dark .gold { color: var(--gold); }                               /* 8,1:1 */
 
 /* ---------- 4. TIPOGRAFIA ---------- */
 .kicker {
@@ -594,6 +595,8 @@ a { color: inherit; }
 
 @media (max-width: 560px) {
   .g-2, .g-3, .g-4, .g-5 { grid-template-columns: 1fr; }
+  /* contagem regressiva: 4 células empilhadas em 1 coluna viravam uma torre; 2×2 cabe */
+  [data-countdown].g-4 { grid-template-columns: repeat(2, 1fr); }
   .kpi-strip--4, .kpi-strip--5 { grid-template-columns: 1fr; }
 }
 
@@ -625,7 +628,8 @@ summary:focus-visible,
 .login-side :focus-visible,
 .card--dark :focus-visible,
 .plan--featured :focus-visible,
-.glass :focus-visible {
+.glass :focus-visible,
+.on-dark :focus-visible {
   outline-color: var(--accent);
 }
 

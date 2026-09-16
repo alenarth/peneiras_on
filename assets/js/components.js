@@ -13,7 +13,9 @@ function esc(value) {
 }
 function fmtNum(n) { return n.toLocaleString('pt-BR'); }
 function fmtDate(iso, opts) {
-  return new Date(iso).toLocaleDateString('pt-BR', opts || { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+  // data sem hora ('2026-06-15') seria lida como UTC e cairia um dia atrás em BRT
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso + 'T00:00:00' : iso);
+  return d.toLocaleDateString('pt-BR', opts || { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
 }
 /* Data no formato de rótulo do projeto: 15·JUN·26 / 15·JUN·2026 / 15·JUN */
 function fmtDotDate(iso, year) {
@@ -52,7 +54,7 @@ function mountSiteHeader(active) {
         <nav class="site-nav" id="site-nav">
           <a href="index.html#como-funciona">Como funciona</a>
           <a href="index.html#planos">Planos</a>
-          <a href="atleta.html?tela=peneiras">Peneiras</a>
+          <a href="peneiras.html">Peneiras</a>
           <a href="sobre.html">Sobre</a>
           <a href="index.html#faq">FAQ</a>
         </nav>
@@ -219,11 +221,18 @@ function mountSiteFooter(opts = {}) {
   const host = document.querySelector('[data-site-footer]');
   if (!host) return;
   if (opts.compact) {
+    // Links mínimos: a Política saiu da nav e o compacto não tem a coluna Legal.
+    // A página atual não aparece na própria lista.
+    const here = location.pathname.split('/').pop() || 'index.html';
+    const links = [['index.html', 'Início'], ['sobre.html', 'Sobre'], ['peneiras.html', 'Peneiras'], ['privacidade.html', 'Política de Privacidade']]
+      .filter(([href]) => href !== here)
+      .map(([href, label]) => `<a href="${href}">${label}</a>`).join(' · ');
     host.innerHTML = `
     <footer class="site-footer site-footer--compact">
       <div class="site-footer__bottom">
         <div class="container site-footer__bottom-inner">
           ${(opts.lines || []).map(l => `<span>${l}</span>`).join('')}
+          <nav aria-label="Links do rodapé"><span>${links}</span></nav>
         </div>
       </div>
     </footer>`;
@@ -355,3 +364,112 @@ window.announce = function (msg) {
   const lr = document.querySelector('[data-live-region]');
   if (lr) { lr.textContent = ''; setTimeout(() => { lr.textContent = msg; }, 50); }
 };
+
+/* ============================================================
+   EVENTOS (peneiras) — compartilhado entre peneiras.html (público)
+   e atleta.html?tela=peneiras (pessoal). Um card, um filtro, uma
+   contagem regressiva: as duas telas não podem divergir.
+   ============================================================ */
+
+/* Quebra o tempo restante até uma data em dias/horas/minutos/segundos.
+   Retorna tudo zerado quando a data já passou. */
+function countdownParts(target) {
+  const ms = Math.max(0, target.getTime() - Date.now());
+  const pad = n => String(n).padStart(2, '0');
+  return {
+    over: ms === 0,
+    cells: [
+      [pad(Math.floor(ms / 86400000)), 'dias'],
+      [pad(Math.floor(ms / 3600000) % 24), 'h'],
+      [pad(Math.floor(ms / 60000) % 60), 'min'],
+      [pad(Math.floor(ms / 1000) % 60), 's'],
+    ],
+  };
+}
+
+/* Atualiza a contagem a cada segundo dentro de `root` ([data-countdown] e
+   [data-countdown-state]). Respeita prefers-reduced-motion: com movimento
+   reduzido, renderiza uma vez, não fica piscando números e avisa no rótulo
+   que a atualização automática está desligada. */
+function startCountdown(target, root) {
+  const scope = root || document;
+  const host = scope.querySelector('[data-countdown]');
+  const state = scope.querySelector('[data-countdown-state]');
+  if (!host) return;
+  const paint = () => {
+    const { over, cells } = countdownParts(target);
+    host.innerHTML = cells.map(c => `<div style="text-align:center;padding:12px;background:var(--bg-alt);border:1px solid var(--line-soft)"><div class="display" style="font-size:36px">${c[0]}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-soft);text-transform:uppercase;margin-top:4px">${c[1]}</div></div>`).join('');
+    if (state) state.innerHTML = over ? tagHTML('encerrada', 'outline') : '';
+    return over;
+  };
+  if (paint()) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (state) {
+      state.innerHTML = tagHTML('atualização automática desligada', 'outline');
+      state.title = 'Contagem congelada porque o sistema pede movimento reduzido. Recarregue a página para atualizar.';
+    }
+    return;
+  }
+  const id = setInterval(() => { if (paint()) clearInterval(id); }, 1000);
+}
+
+/* Filtros de status: chave usada no estado da tela + rótulo do botão. */
+const EVENT_STATUS_FILTERS = [
+  ['all', 'Todas'],
+  ['aberta', 'Abertas'],
+  ['inscrições', 'Inscrições'],
+  ['encerrada', 'Encerradas'],
+];
+
+/* Filtra por status ('all' ou um e.status) e, opcionalmente, por estado (UF). */
+function filterEvents(events, { status = 'all', state = 'all' } = {}) {
+  return events.filter(e =>
+    (status === 'all' || e.status === status) &&
+    (state === 'all' || e.state === state));
+}
+
+/* UFs presentes em EVENTS, em ordem alfabética — nunca uma lista chumbada. */
+function eventStates(events) {
+  return [...new Set(events.map(e => e.state))].sort();
+}
+
+const EVENT_STATUS_TONE = { aberta: 'success', 'inscrições': 'accent', encerrada: 'outline' };
+
+/* Card de peneira.
+   mode 'publico'  → CTA "Quero participar" (login com ?evento=), sem dado pessoal.
+   mode 'atleta'   → opts.registered decide entre "Ver comprovante" e "Inscrever-se".
+   Encerrada em qualquer modo → botão desabilitado "Encerrada". */
+function eventCardHTML(e, mode, opts = {}) {
+  const closed = e.status === 'encerrada';
+  const registered = mode === 'atleta' && !!opts.registered;
+  let cta;
+  if (closed) cta = `<button class="btn btn--ghost btn--sm btn--full" disabled>Encerrada</button>`;
+  else if (mode === 'atleta' && registered) cta = `<a href="atleta.html?tela=status" class="btn btn--ghost btn--sm btn--full">Ver comprovante</a>`;
+  else if (mode === 'atleta') cta = `<button type="button" class="btn btn--primary btn--sm btn--full" data-register="${esc(e.id)}">Inscrever-se</button>`;
+  else cta = `<a href="login.html?tipo=jogador&evento=${esc(e.id)}" class="btn btn--primary btn--sm btn--full">Quero participar</a>`;
+  return `<article class="card card--flush" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="display:flex;gap:6px;flex-wrap:wrap">${tagHTML('● ' + e.status, EVENT_STATUS_TONE[e.status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--ink-mute)">${e.age.replace('-', ' – ')} anos</span>
+    </div>
+    <div style="padding:24px">
+      <div class="display" id="ev-${esc(e.id)}" style="font-size:28px;letter-spacing:-.02em">${e.city}</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:4px">${e.state} · ${fmtDate(e.date)}</div>
+      <div class="g g-2" style="gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line-soft)">
+        ${statHTML('Inscritos', fmtNum(e.registered))}
+        ${statHTML('Vagas', e.capacity)}
+      </div>
+      <div style="margin-top:16px">${progressHTML(Math.min(e.registered, e.capacity * 5), e.capacity * 5, { sm: true, tone: closed ? 'ink' : 'accent' })}</div>
+    </div>
+    <div style="padding:12px;border-top:1px solid var(--line-soft)">${cta}</div>
+  </article>`;
+}
+
+/* Estado vazio da grade — ocupa a linha inteira em vez de deixar o grid em branco. */
+function eventsEmptyHTML() {
+  return `<div class="card" style="grid-column:1 / -1;text-align:center;padding:40px 24px">
+    <div class="display" style="font-size:22px">Nenhuma peneira com esses filtros.</div>
+    <p style="font-size:14px;color:var(--ink-soft);margin:8px 0 16px">Tente outro status ou outro estado.</p>
+    <button type="button" class="btn btn--ghost btn--sm" data-clear-filters>Limpar filtros</button>
+  </div>`;
+}

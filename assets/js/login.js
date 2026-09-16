@@ -31,6 +31,15 @@ const params = new URLSearchParams(location.search);
 const role = ROLES[params.get('tipo')] ? params.get('tipo') : 'jogador';
 const cfg = ROLES[role];
 
+// ?evento=<id> vindo de peneiras.html: só contexto no formulário (o protótipo
+// não tem sessão). Id inválido ou ausente cai no login normal.
+const evento = MOCK.EVENTS.find(e => e.id === params.get('evento'));
+if (evento && role === 'jogador') {
+  const ctx = document.querySelector('[data-event-context]');
+  ctx.textContent = `Entre para se inscrever em ${evento.name} · ${fmtDotDate(evento.date, 'full')}`;
+  ctx.hidden = false;
+}
+
 // preencher lado
 document.querySelector('[data-side-tag]').textContent = cfg.tag;
 document.querySelector('[data-side-title]').textContent = cfg.title;
