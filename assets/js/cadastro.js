@@ -62,7 +62,7 @@ function renderCadastro() {
   }
   function valid() {
     const a=age(), bad=a!=null&&(a<7||a>19), needs=a!=null&&a<18;
-    return { 1: form.name&&form.dob&&!bad&&form.cpf.length>=11, 2: form.state&&form.city, 3: form.position&&form.foot, 4: true, 5: needs?(form.consent&&form.responsible):true };
+    return { 1: form.name&&form.dob&&!bad&&form.cpf.length===11, 2: form.state&&form.city, 3: form.position&&form.foot, 4: true, 5: needs?(form.consent&&form.responsible&&form.responsiblePhone.replace(/\D/g,'').length>=10):true };
   }
 
   /* Bloco do score — redesenhado a cada tecla, não só a cada troca de passo. */

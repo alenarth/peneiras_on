@@ -17,14 +17,15 @@ document.querySelector('[data-season-line]').textContent =
 /* ---------- Destaque: próxima peneira + contagem regressiva ---------- */
 function renderHighlight() {
   const e = season.nextEvent;
-  const closed = e.status === 'encerrada';
+  const status = eventStatus(e);
+  const closed = status === 'encerrada';
   const cta = closed
     ? `<button class="btn btn--ghost btn--lg" disabled>Encerrada</button>`
     : `<a href="login.html?tipo=jogador&evento=${esc(e.id)}" class="btn btn--accent btn--lg">Quero participar →</a>`;
   document.querySelector('[data-highlight]').innerHTML = `
     <div class="card card--flush flex flex-col">
       <div class="py-3.5 px-5 border-b border-b-line flex justify-between items-center gap-2 flex-wrap">
-        ${tagHTML('● ' + e.status, EVENT_STATUS_TONE[e.status] || 'outline')}
+        ${tagHTML('● ' + status, EVENT_STATUS_TONE[status] || 'outline')}
         <span class="font-mono text-10 text-ink-mute">${e.age.replace('-', ' – ')} anos</span>
       </div>
       <div class="pad flex flex-col gap-5 flex-1">

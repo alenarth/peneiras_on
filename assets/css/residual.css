@@ -1,25 +1,4 @@
-/* ============================================================
-   PENEIRAS ON — CSS autoral residual (importado por input.css na camada
-   components). Tudo o que está aqui não faz sentido como utilitária do
-   Tailwind, por um destes motivos:
-
-   1. RADAR DE ATRIBUTOS (.radar-*) — é SVG desenhado por radar.js; texto e
-      traços dentro de <svg> usam `fill`/`stroke` e tipografia própria que
-      não têm utilitária equivalente sem virar valor arbitrário por elemento.
-   2. IMAGEM DE FUNDO DO PELÉ (.pele-bg) — `image-set()` com WebP e fallback
-      JPEG: função CSS de seleção de formato, sem utilitária.
-   3. SCRIMS E GRADIENTES DECORATIVOS (.hero__scrim, .hero__top-fade,
-      .login-side__scrim, .manifesto__scrim, .parceria__scrim, .glow-*,
-      .map-grid, .qr-pattern, .player-img) — gradientes de várias paradas;
-      como utilitária arbitrária virariam uma classe de 100+ caracteres com
-      underscores no lugar dos espaços, ilegível e impossível de manter.
-   4. MARQUEE DA LANDING (@keyframes marquee) — animação contínua com
-      keyframes próprios; o Tailwind só traz spin/ping/pulse/bounce.
-   5. FUNIL DO PIPELINE e MAPA DE CALOR — o clip-path do funil e a posição/
-      raio de cada estado no mapa são calculados em tempo de execução pelo JS
-      (dependem dos dados), então continuam como estilo inline dinâmico;
-      aqui fica só a moldura estática (.map-grid, .funnel-bar).
-   ============================================================ */
+/* Estilos que dependem de SVG, imagens, gradientes ou valores calculados pelo JS. */
 
 /* 1. Radar de atributos (SVG) */
 .radar-svg { display: block; max-width: 100%; height: auto; }

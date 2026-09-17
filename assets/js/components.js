@@ -431,10 +431,17 @@ const EVENT_STATUS_FILTERS = [
   ['encerrada', 'Encerradas'],
 ];
 
+function eventStatus(event) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const date = new Date(event.date + 'T00:00:00');
+  return date <= today ? 'encerrada' : event.status;
+}
+
 /* Filtra por status ('all' ou um e.status) e, opcionalmente, por estado (UF). */
 function filterEvents(events, { status = 'all', state = 'all' } = {}) {
   return events.filter(e =>
-    (status === 'all' || e.status === status) &&
+    (status === 'all' || eventStatus(e) === status) &&
     (state === 'all' || e.state === state));
 }
 
@@ -450,7 +457,8 @@ const EVENT_STATUS_TONE = { aberta: 'success', 'inscrições': 'accent', encerra
    mode 'atleta'   → opts.registered decide entre "Ver comprovante" e "Inscrever-se".
    Encerrada em qualquer modo → botão desabilitado "Encerrada". */
 function eventCardHTML(e, mode, opts = {}) {
-  const closed = e.status === 'encerrada';
+  const status = eventStatus(e);
+  const closed = status === 'encerrada';
   const registered = mode === 'atleta' && !!opts.registered;
   let cta;
   if (closed) cta = `<button class="btn btn--ghost btn--sm btn--full" disabled>Encerrada</button>`;
@@ -459,7 +467,7 @@ function eventCardHTML(e, mode, opts = {}) {
   else cta = `<a href="login.html?tipo=jogador&evento=${esc(e.id)}" class="btn btn--primary btn--sm btn--full">Quero participar</a>`;
   return `<article class="card card--flush" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
     <div class="py-3.5 px-5 border-b border-b-line flex justify-between items-center gap-2 flex-wrap">
-      <span class="flex gap-1.5 flex-wrap">${tagHTML('● ' + e.status, EVENT_STATUS_TONE[e.status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
+      <span class="flex gap-1.5 flex-wrap">${tagHTML('● ' + status, EVENT_STATUS_TONE[status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
       <span class="font-mono text-10 text-ink-mute">${e.age.replace('-', ' – ')} anos</span>
     </div>
     <div class="p-6">
