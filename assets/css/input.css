@@ -1,0 +1,562 @@
+/* ============================================================
+   PENEIRAS ON — Tailwind CSS v4 (arquivo de entrada)
+   Compila para assets/css/tailwind.css (artefato de build, fora do git).
+   1. @theme  → design system da Sprint 1 como tokens do Tailwind
+   2. base    → o que o preflight não cobre (fontes, anel de foco, movimento)
+   3. components → padrões recorrentes via @apply (nomes de classe preservados)
+   4. residual.css → o que não faz sentido virar utilitária (ver comentário lá)
+   ============================================================ */
+@import "tailwindcss";
+@import "./residual.css" layer(components);
+
+@source "../../*.html";
+@source "../js/*.js";
+
+/* ---------- 1. TOKENS (Sprint 1, valores idênticos ao antigo :root) ---------- */
+@theme {
+  /* Tipografia — três famílias */
+  --font-display: "Archivo", "Helvetica Neue", sans-serif;
+  --font-body: "Inter", "Helvetica Neue", system-ui, sans-serif;
+  --font-sans: "Inter", "Helvetica Neue", system-ui, sans-serif; /* preflight usa --font-sans no body */
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Cores */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #FFFFFF;
+  --color-bg: #F5F4EE;
+  --color-bg-alt: #ECEAE0;
+  --color-ink: #0E0E0F;
+  --color-ink-soft: #48483F;
+  --color-ink-mute: #67675C;     /* escurecido p/ AA (5.7:1 sobre branco) */
+  --color-line: #0E0E0F;
+  --color-line-soft: #D9D6C8;
+  --color-card: #FFFFFF;
+
+  --color-accent: #54F542;       /* verde neon — só como FUNDO (texto preto) ou sobre superfície escura */
+  --color-accent-ink: #0E0E0F;
+  --color-accent-soft: #E0FBDC;
+  --color-accent-text: #177038;  /* verde p/ TEXTO/ícone sobre fundo claro (6.1:1) — decisão AA da Sprint 1 */
+  --color-gold: #C8A415;         /* dourado — fundo c/ texto preto */
+  --color-gold-ink: #0E0E0F;
+  --color-gold-soft: rgba(200,164,21,0.18);
+  --color-gold-deep: #7E660E;    /* dourado p/ TEXTO sobre fundo claro (5.5:1) — decisão AA da Sprint 1 */
+
+  --color-focus: #0E0E0F;        /* anel de foco (16:1+ sobre claro) */
+
+  --color-danger: #C62828;
+  --color-danger-soft: #FCEDED;  /* fundo do campo em erro */
+  --color-success: #1B7A3D;
+
+  /* Cores de hover — cada uma verificada WCAG AA contra o texto que carrega */
+  --color-ink-hover: #333336;    /* texto --bg: 11,43:1 */
+  --color-accent-hover: #45E634; /* texto --ink: 11,60:1 */
+  --color-gold-hover: #B4930F;   /* texto --ink: 6,54:1 */
+  --color-danger-hover: #A82020; /* texto branco: 7,26:1 */
+
+  /* Cantos: só o que se clica e o que se preenche. Cards, tags, tabelas,
+     avatares e menus continuam retos (rounded-none). */
+  --radius: 4px;
+
+  /* Breakpoints do projeto (max-width 900 e 560 no CSS antigo → max-md: e max-sm:) */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 560px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1280px;
+
+  /* Escala tipográfica — os tamanhos que o projeto usa de fato, em px.
+     Sem line-height acoplado: a altura de linha vem do contexto, como antes. */
+  --text-*: initial;
+  --text-8: 8px;
+  --text-9: 9px;
+  --text-10: 10px;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-20: 20px;
+  --text-22: 22px;
+  --text-24: 24px;
+  --text-26: 26px;
+  --text-28: 28px;
+  --text-32: 32px;
+  --text-36: 36px;
+  --text-44: 44px;
+  --text-48: 48px;
+  --text-56: 56px;
+  --text-64: 64px;
+  --text-72: 72px;
+  /* Display fluido (heros e títulos de seção) */
+  --text-fluid-hero: clamp(34px, 8vw, 128px);
+  --text-fluid-hero-sm: clamp(34px, 8vw, 120px);
+  --text-fluid-h1: clamp(56px, 6vw, 96px);
+  --text-fluid-lg: clamp(28px, 6vw, 80px);
+  --text-fluid-md: clamp(36px, 5vw, 72px);
+  --text-fluid-sm: clamp(32px, 7vw, 56px);
+  --text-fluid-p: clamp(28px, 4vw, 56px);
+
+  /* Alturas de linha (display comprimido → corpo) */
+  --leading-display-xtight: 0.85;
+  --leading-display-tight: 0.86;
+  --leading-display: 0.9;
+  --leading-display-loose: 0.95;
+  --leading-heading-xs: 1.05;
+  --leading-heading-sm: 1.1;
+  --leading-heading: 1.2;
+  --leading-copy: 1.6;
+  --leading-copy-md: 1.65;
+  --leading-copy-lg: 1.7;
+
+  /* Espaçamento entre letras (mono em caixa alta / display comprimido) */
+  --tracking-btn: 0.04em;
+  --tracking-tab: 0.06em;
+  --tracking-label: 0.08em;
+  --tracking-kicker: 0.12em;
+  --tracking-kicker-lg: 0.16em;
+  --tracking-display-sm: -0.01em;
+  --tracking-display: -0.02em;
+  --tracking-display-md: -0.03em;
+  --tracking-display-lg: -0.04em;
+
+  /* Larguras máximas de leitura / layout */
+  --container-desc: 320px;
+  --container-hero-p: 480px;
+  --container-form: 520px;
+  --container-tight: 560px;
+  --container-copy-sm: 600px;
+  --container-copy-md: 640px;
+  --container-copy: 720px;
+  --container-copy-lg: 760px;
+  --container-narrow: 920px;
+  --container-wide: 1100px;
+  --container-page: 1280px;
+
+  /* Sombras */
+  --shadow-btn: 0 2px 6px rgba(14,14,15,0.18);
+  --shadow-header: 0 4px 16px rgba(14,14,15,0.10);
+  --shadow-menu: 0 14px 32px rgba(0,0,0,0.18);
+
+  /* Transições curtas do sistema */
+  --default-transition-duration: 120ms;
+}
+
+/* ---------- 2. BASE ---------- */
+@layer base {
+  body {
+    @apply font-body bg-bg text-ink antialiased leading-normal;
+    text-rendering: optimizeLegibility;
+  }
+  /* O preflight zera margens de parágrafos, títulos e listas e tira o sublinhado
+     dos links. O markup da Sprint 1 conta com os padrões do navegador nesses
+     elementos — restaurados aqui para a interface ficar idêntica. */
+  p { margin: 1em 0; }
+  h1 { margin: 0.67em 0; } h2 { margin: 0.83em 0; } h3 { margin: 1em 0; }
+  ul, ol { margin: 1em 0; padding-left: 40px; }
+  ul { list-style: disc; } ol { list-style: decimal; }
+  a { text-decoration: underline; }
+  button, [role="button"] { cursor: pointer; }
+  /* preflight faz os controles herdarem line-height 1.5; o navegador usa `normal` */
+  button, input, select, textarea { line-height: normal; font-size: 13.3333px; }
+  button { padding: 1px 6px; }
+  /* margem nativa do checkbox/radio, zerada pelo preflight */
+  input[type="checkbox"], input[type="radio"] { margin: 3px 3px 3px 4px; }
+  ::placeholder { @apply text-ink-mute; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-line-soft border-2 border-bg; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-mute; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; }
+  }
+  /* Âncoras da própria página rolam suave — só para quem não pediu movimento reduzido */
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  /* Anel de foco consistente (3px): outline nunca é removido sem substituto.
+     Sobre fundo claro usa tinta (16:1+). */
+  a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+    @apply outline-solid outline-3 outline-focus outline-offset-2 rounded;
+  }
+  /* Sobre superfícies escuras, o anel vira verde neon (13:1 sobre preto) */
+  .site-footer :focus-visible, .login-side :focus-visible, .card--dark :focus-visible,
+  .plan--featured :focus-visible, .glass :focus-visible, .on-dark :focus-visible {
+    @apply outline-accent;
+  }
+  /* main e seções com tabindex=-1 não mostram anel ao receber foco programático */
+  main[tabindex="-1"]:focus, section[tabindex="-1"]:focus { @apply outline-none; }
+  /* Destino de âncora para abaixo do header sticky (65px), não embaixo dele */
+  main section[id] { @apply scroll-mt-25; }
+}
+
+/* ---------- 3. COMPONENTES (padrões recorrentes, nomes preservados) ---------- */
+@layer components {
+  /* --- layout --- */
+  .wrap { @apply mx-auto max-w-page px-8 max-md:px-5; }
+  .wrap--narrow { @apply max-w-narrow; }
+  .wrap--tight { @apply max-w-tight; }
+  .section { @apply border-b border-line; }
+  .section__pad { @apply py-20; }
+  .grid-2 { @apply grid grid-cols-[repeat(2,1fr)] gap-6 max-md:grid-cols-[1fr]; }
+  .grid-3 { @apply grid grid-cols-[repeat(3,1fr)] gap-6 max-md:grid-cols-[1fr]; }
+  .grid-4 { @apply grid grid-cols-[repeat(4,1fr)] gap-6 max-md:grid-cols-[1fr]; }
+  .pad { @apply p-8 max-md:p-5; }
+  .table-scroll { @apply overflow-x-auto; }
+
+  /* --- grades utilitárias (Etapa 1): estilo inline não colapsa em media query --- */
+  .g { @apply grid; }
+  .g-2 { @apply grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  .g-3 { @apply grid-cols-[repeat(3,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  .g-4 { @apply grid-cols-[repeat(4,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  .g-5 { @apply grid-cols-[repeat(5,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  /* contagem regressiva: 4 células em 1 coluna viravam uma torre; 2×2 cabe */
+  [data-countdown].g-4 { @apply max-sm:grid-cols-[repeat(2,1fr)]; }
+  .g-main      { @apply grid-cols-[1.4fr_1fr] max-md:grid-cols-[1fr]; }
+  .g-main-wide { @apply grid-cols-[1.6fr_1fr] max-md:grid-cols-[1fr]; }
+  .g-hero      { @apply grid-cols-[1.3fr_1fr] max-md:grid-cols-[1fr]; }
+  .g-faq       { @apply grid-cols-[1fr_2fr] max-md:grid-cols-[1fr]; }
+  .g-aside-sm  { @apply grid-cols-[260px_1fr] max-md:grid-cols-[1fr]; }
+  .g-aside-md  { @apply grid-cols-[380px_1fr] max-md:grid-cols-[1fr]; }
+  .g-panel-sm  { @apply grid-cols-[1fr_320px] max-md:grid-cols-[1fr]; }
+  .g-panel-md  { @apply grid-cols-[1fr_360px] max-md:grid-cols-[1fr]; }
+  .g-label     { @apply grid-cols-[120px_1fr] max-md:grid-cols-[1fr]; }
+  .g-label-lg  { @apply grid-cols-[180px_1fr] max-md:grid-cols-[1fr]; }
+  .g-row-bar   { @apply grid-cols-[90px_1fr_40px]; }
+  .g-row-time  { @apply grid-cols-[80px_16px_1fr]; }
+  .g-row-hist  { @apply grid-cols-[60px_1fr_auto]; }
+  .g-row-rank  { @apply grid-cols-[24px_1fr_auto]; }
+  .g-row-tip   { @apply grid-cols-[20px_1fr]; }
+  /* item de grid tem min-width:auto e estoura o painel no celular */
+  .g > *, .ci-row > *, .crit-row > * { @apply max-md:min-w-0; }
+  .ci-row { @apply grid grid-cols-[40px_32px_1fr_80px_60px_auto] items-center gap-3 px-5 py-3.5 cursor-pointer max-md:grid-cols-[32px_32px_1fr_auto] max-md:px-4 max-md:py-3; }
+  .crit-row { @apply grid grid-cols-[180px_1fr_60px] gap-4 items-center py-4 max-md:grid-cols-[1fr] max-md:gap-2.5; }
+  .crit-row > div:last-child { @apply max-md:text-left!; }
+
+  /* --- utilitários semânticos de cor (AA sobre claro; neon/dourado sobre escuro) --- */
+  .text-soft { @apply text-ink-soft; }
+  .text-mute { @apply text-ink-mute; }
+  .accent { @apply text-accent-text; }
+  .gold { @apply text-gold-deep; }
+  .site-footer .accent, .login-side .accent, .glass .accent,
+  .card--dark .accent, .plan--featured .accent, .on-dark .accent { @apply text-accent; }  /* 13,3:1 */
+  .site-footer .gold, .login-side .gold, .card--dark .gold,
+  .plan--featured .gold, .on-dark .gold { @apply text-gold; }                              /* 8,1:1 */
+
+  /* --- tipografia --- */
+  .kicker { @apply font-mono text-11 uppercase tracking-kicker-lg text-ink-mute; }
+  .mono { @apply font-mono text-11 uppercase tracking-label; }
+  .display { @apply font-display font-black tracking-display-lg uppercase leading-display m-0; }
+  .h-hero { font-size: clamp(64px, 9vw, 140px); @apply leading-display-tight tracking-tighter max-md:text-[clamp(40px,13vw,140px)]; }
+  .h1 { font-size: clamp(48px, 6vw, 72px); @apply leading-[0.92] max-md:text-[clamp(34px,11vw,72px)]; }
+  .h2 { @apply text-56 leading-display max-md:text-[clamp(32px,9vw,56px)]; }
+  .h3 { @apply text-36 leading-display-loose tracking-display-md max-md:text-[clamp(24px,6vw,36px)]; }
+  .h-panel { @apply text-44 max-md:text-[clamp(30px,9vw,44px)]; }
+  .lead { @apply text-18 leading-normal text-ink-soft; }
+  .mark { @apply bg-accent text-accent-ink px-[0.06em]; }
+  .mark-gold { @apply bg-gold-soft text-gold-deep px-[0.06em]; }
+
+  /* --- wordmark --- */
+  .wordmark { @apply inline-flex items-center gap-2.5 text-ink no-underline transition-transform duration-120 hover:-translate-y-px; }
+  .wordmark:hover .wordmark__text { @apply text-accent-text; }        /* 5,6:1 sobre --bg */
+  .wordmark--on-dark { @apply text-bg; }
+  .wordmark--on-dark:hover .wordmark__text { @apply text-accent; }    /* 13,3:1 sobre --ink */
+  .wordmark--on-dark:hover .wordmark__text .dot { @apply text-bg; }
+  .wordmark__diamond { @apply size-4.5 bg-accent; clip-path: polygon(50% 0%, 95% 35%, 78% 100%, 22% 100%, 5% 35%); }
+  .wordmark__text { @apply font-display font-black text-20 tracking-display-lg leading-none uppercase; }
+  .wordmark__text .dot { @apply text-accent; }
+
+  /* --- botões --- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 h-11 px-5
+      font-display font-extrabold text-13 uppercase tracking-btn
+      border border-ink rounded bg-ink text-bg cursor-pointer no-underline whitespace-nowrap
+      transition-[transform,box-shadow,background-color,color,border-color] duration-120
+      disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  /* Hover: sobe 1px com sombra curta e troca para a cor de hover da variante.
+     Sem filter: brightness() — clarear o preto não aparece e escurecer o neon
+     derruba o contraste. Desabilitado não reage a nada. */
+  .btn:not(:disabled):hover { @apply -translate-y-px shadow-btn bg-ink-hover border-ink-hover; }
+  .btn:not(:disabled):active { @apply translate-y-px shadow-none; }
+  .btn--primary { @apply bg-ink text-bg border-ink; }
+  .btn--primary:not(:disabled):hover { @apply bg-ink-hover border-ink-hover; }
+  .btn--accent { @apply bg-accent text-accent-ink border-accent; }
+  .btn--accent:not(:disabled):hover { @apply bg-accent-hover border-accent-hover; }
+  .btn--gold { @apply bg-gold text-gold-ink border-gold; }
+  .btn--gold:not(:disabled):hover { @apply bg-gold-hover border-gold-hover; }
+  .btn--ghost { @apply bg-transparent text-ink border-ink; }
+  .btn--ghost:not(:disabled):hover { @apply bg-ink text-bg border-ink; }
+  .btn--danger { @apply bg-danger text-white border-danger; }
+  .btn--danger:not(:disabled):hover { @apply bg-danger-hover border-danger-hover; }
+  .btn--sm { @apply h-8 px-3.5 text-12; }
+  .btn--lg { @apply h-14 px-7 text-15; }
+  .btn--full { @apply w-full; }
+  .btn--on-dark { @apply text-bg border-bg; }
+  .btn--on-dark:not(:disabled):hover { @apply bg-bg text-ink border-bg; }
+  .btn-row { @apply flex max-md:flex-wrap; }
+
+  /* --- tags --- */
+  .tag { @apply inline-flex items-center gap-1.5 px-2 py-[3px] font-mono text-10 uppercase tracking-label font-semibold bg-bg-alt text-ink border border-line-soft; }
+  .tag--accent { @apply bg-accent text-accent-ink border-accent; }
+  .tag--gold { @apply bg-gold-soft text-gold-deep border-gold/50; }
+  .tag--ink { @apply bg-ink text-bg border-ink; }
+  .tag--outline { @apply bg-transparent text-ink border-ink; }
+  .tag--outline-on-dark { @apply bg-transparent text-bg border-bg/60; }
+  .tag--danger { @apply bg-transparent text-danger border-danger; }
+  .tag--success { @apply bg-transparent text-success border-success; }
+
+  /* --- card --- */
+  .card { @apply bg-card text-ink border border-line p-6; }
+  .card--flush { @apply p-0; }
+  .card--dark { @apply bg-ink text-bg border-ink; }
+
+  /* --- section label --- */
+  .section-label { @apply flex items-baseline gap-3 border-b border-line pb-2 mb-4 max-md:flex-wrap; }
+  .section-label__title { @apply font-display font-extrabold uppercase tracking-btn text-13; }
+  .section-label__action { @apply ml-auto; }
+
+  /* --- progress --- */
+  .progress { @apply relative h-2 bg-bg-alt border border-line-soft; }
+  .progress__fill { @apply h-full bg-accent transition-[width] duration-400 ease-[cubic-bezier(.2,.7,.2,1)]; }
+  .progress__fill--ink { @apply bg-ink; }
+  .progress--sm { @apply h-1; }
+  .progress--xs { @apply h-[3px]; }
+  .progress-head { @apply flex justify-between items-baseline mb-1.5; }
+
+  /* --- stat / kpi --- */
+  .stat { @apply flex flex-col gap-1; }
+  .stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink-mute; }
+  .stat__value { @apply font-display font-black tracking-display-lg text-36 leading-display; }
+  .stat__value--big { @apply text-56; }
+  .stat__delta { @apply font-mono text-11 text-success; }
+  .stat__sub { @apply font-mono text-11 text-ink-mute; }
+
+  /* --- avatar --- */
+  .avatar { @apply inline-flex items-center justify-center shrink-0 size-10 bg-ink text-bg font-display font-black text-14 tracking-display border border-ink; }
+  .avatar--gold { @apply bg-gold text-gold-ink; }
+
+  /* --- formulário --- */
+  .field { @apply flex flex-col gap-1.5; }
+  .field__label { @apply flex items-baseline justify-between; }
+  .field__label span:first-child { @apply font-mono text-11 uppercase tracking-label text-ink-soft; }
+  .field__optional { @apply font-mono text-10 text-ink-mute; }
+  .field__hint { @apply text-11 text-ink-mute; }
+  /* Estado de erro: ícone + texto + borda + fundo. Nunca só cor. */
+  .field__error { @apply flex items-center gap-1.5 text-11 text-danger font-semibold; }
+  .field__error::before { content: "⚠"; @apply text-12 leading-none; }
+  .input, .select { @apply h-12 px-3.5 w-full bg-card text-ink border border-ink rounded font-body text-15 outline-none; }
+  .input:focus-visible, .select:focus-visible, .textarea:focus-visible { @apply outline-solid outline-3 outline-focus outline-offset-2; }
+  /* <input type="date">: ao tabular para o segmento do mês/ano o Chromium deixa de
+     casar :focus e :focus-visible no input; só :focus-within segue casando. */
+  .input[type="date"]:focus-within { @apply outline-solid outline-3 outline-focus outline-offset-2; }
+  .select {
+    @apply appearance-none cursor-pointer bg-no-repeat pr-9;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><polyline points='1,1 6,7 11,1' fill='none' stroke='%230E0E0F' stroke-width='1.5'/></svg>");
+    background-position: right 14px center;
+  }
+  .textarea { @apply w-full min-h-[90px] p-3 bg-card text-ink border border-ink rounded resize-y font-body text-13 leading-normal outline-none; }
+  .input--error, .input[aria-invalid="true"], .select[aria-invalid="true"], .textarea[aria-invalid="true"] { @apply border-danger bg-danger-soft; }
+  .choice { @apply h-13 bg-card text-ink border border-ink rounded cursor-pointer font-display font-extrabold text-13 uppercase tracking-btn; }
+  .choice.is-active { @apply bg-ink text-bg; }
+  .choice--accent.is-active { @apply bg-accent text-accent-ink; }
+  /* selects compactos e toggles de filtro (olheiro/gestora) */
+  .sel, .sel2 {
+    @apply pl-3 pr-7 bg-card text-ink border border-ink rounded font-mono text-11 uppercase tracking-label cursor-pointer appearance-none bg-no-repeat;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><polyline points='1,1 5,5 9,1' fill='none' stroke='%230E0E0F' stroke-width='1.5'/></svg>");
+    background-position: right 10px center;
+  }
+  .sel { @apply h-10; }
+  .sel2 { @apply h-9; }
+  .ftoggle, .map-filter { @apply px-3.5 bg-card text-ink border border-ink rounded font-mono text-11 uppercase tracking-label cursor-pointer; }
+  .ftoggle { @apply h-10; }
+  .map-filter { @apply h-9; }
+  .ftoggle:hover:not(.is-active), .map-filter:hover:not(.is-active) { @apply bg-bg-alt; }
+  .ftoggle.is-active, .map-filter.is-active { @apply bg-ink text-bg; }
+  .filter-bar { @apply px-8 py-4 border-b border-line flex gap-2.5 items-center flex-wrap bg-bg-alt max-md:grid max-md:grid-cols-[repeat(2,1fr)] max-md:px-5 max-md:py-3; }
+  .filter-bar > :first-child, .filter-bar > :last-child { @apply max-md:col-span-full; }
+  .filter-bar .input, .filter-bar .sel, .filter-bar .ftoggle { @apply max-md:w-full!; }
+
+  /* --- header público --- */
+  /* O wrapper que o JS preenche não pode ser uma caixa: sticky é limitado pelo pai */
+  [data-site-header], [data-simple-header] { @apply contents; }
+  .header-sentinel { @apply h-px -mb-px; }
+  .site-header { @apply sticky top-0 z-20 bg-bg border-b border-line transition-shadow duration-120; }
+  .site-header.is-scrolled { @apply shadow-header; }
+  .site-header__inner { @apply flex items-center gap-6 py-4 max-md:flex-wrap; }
+  .site-nav { @apply flex gap-6 ml-8 max-md:hidden max-md:order-10 max-md:basis-full max-md:flex-col max-md:gap-0 max-md:ml-0 max-md:mt-3 max-md:border-t max-md:border-line; }
+  .site-nav.is-open { @apply max-md:flex; }
+  .site-nav a { @apply font-mono text-11 uppercase tracking-label text-ink-soft no-underline cursor-pointer hover:text-ink max-md:px-0.5 max-md:py-3.5 max-md:border-b max-md:border-line-soft; }
+  .site-nav a.is-active { @apply text-ink; }
+  /* Link que sai da página leva um marcador discreto; âncora da mesma página, não. */
+  .site-nav a[data-kind="page"]::after { content: "↗" / ""; @apply text-9 ml-1 opacity-60; }
+  .nav-toggle { @apply hidden max-md:inline-flex size-10 ml-auto items-center justify-center bg-transparent text-ink border border-ink rounded cursor-pointer text-16 leading-none transition-[transform,background-color,color] duration-120 hover:-translate-y-px hover:bg-ink hover:text-bg; }
+  .site-header__actions { @apply ml-auto flex items-center gap-3 max-md:ml-3; }
+  .site-header__crumb { @apply ml-2 font-mono text-11 uppercase tracking-kicker text-ink-mute; }
+
+  /* --- menu "Entrar" (abre só por clique) --- */
+  .entrar { @apply relative; }
+  .entrar__btn { @apply inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-transparent border border-transparent rounded cursor-pointer font-mono text-11 uppercase tracking-label text-ink; }
+  .entrar.is-open .entrar__btn { @apply border-ink; }
+  .entrar__chevron { @apply inline-block text-8 opacity-60 transition-transform duration-120; }
+  .entrar.is-open .entrar__chevron { @apply rotate-180; }
+  .entrar__menu { @apply hidden absolute right-0 top-[calc(100%+6px)] min-w-65 bg-card border border-ink shadow-menu z-30; }
+  .entrar.is-open .entrar__menu { @apply block; }
+  .entrar__head { @apply px-3.5 py-3 border-b border-line-soft bg-bg-alt font-mono text-10 uppercase tracking-kicker text-ink-mute; }
+  .entrar__item { @apply grid grid-cols-[32px_1fr_16px] gap-3 items-center w-full p-3.5 cursor-pointer border-0 border-t border-line-soft bg-transparent text-left text-ink no-underline first-of-type:border-t-0 hover:bg-accent hover:text-accent-ink; }
+  /* Item focado por teclado tem o mesmo peso do :hover; o anel fica por dentro do menu */
+  .entrar__item:focus-visible { @apply bg-accent text-accent-ink -outline-offset-3; }
+  .entrar__item-icon { @apply inline-flex items-center justify-center size-8 border border-current text-14; }
+  .entrar__item-label { @apply font-display font-extrabold text-14 uppercase tracking-display-sm; }
+  .entrar__item-sub { @apply font-mono text-10 opacity-70; }
+  .entrar__foot { @apply flex justify-between items-center px-3.5 py-2.5 border-t border-line-soft bg-bg-alt; }
+
+  /* --- rodapé --- */
+  .site-footer { @apply bg-ink text-bg; }
+  .site-footer a:not(.btn) { @apply text-bg no-underline; }
+  .site-footer__cta { @apply border-b border-bg/15; }
+  .site-footer__cta-inner { @apply grid grid-cols-[1.4fr_1fr] gap-12 items-end px-0 py-12 max-md:grid-cols-[1fr] max-md:px-5; }
+  .site-footer__cols { @apply grid grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-8 px-0 pt-14 pb-8 max-md:grid-cols-[1fr] max-md:px-5; }
+  .foot-col__title { @apply font-mono text-10 uppercase tracking-kicker text-bg/55 mb-3.5 pb-2.5 border-b border-bg/15; }
+  .foot-col__links { @apply flex flex-col gap-2.5; }
+  .foot-col__links a { @apply text-13 transition-colors duration-150 hover:text-accent; }
+  .site-footer__desc { @apply mt-4 text-bg/65 text-13 max-w-desc leading-copy; }
+  .social { @apply flex gap-2 mt-5; }
+  .social a, .social span { @apply inline-flex items-center justify-center size-9 border border-bg/25 font-mono text-11 font-semibold transition-colors duration-150; }
+  .social span { @apply opacity-50 cursor-default; }
+  .social a:hover { @apply bg-accent text-accent-ink; }
+  .site-footer__bottom { @apply border-t border-bg/15; }
+  .site-footer--compact { @apply border-t border-line; }
+  .site-footer--compact .site-footer__bottom { @apply border-t-0; }
+  .site-footer__bottom-inner { @apply flex justify-between items-center flex-wrap gap-3 px-0 py-5 font-mono text-11 text-bg/50 max-md:px-5; }
+
+  /* --- tabela --- */
+  .table { @apply w-full border-collapse font-body text-13; }
+  .table th { @apply text-left px-4 py-3 font-mono text-10 uppercase tracking-widest text-ink-mute font-semibold border-b border-line; }
+  .table td { @apply px-4 py-3 border-b border-line-soft; }
+  .table tbody tr { @apply cursor-pointer hover:bg-bg-alt; }
+  .table tbody tr.is-fav { @apply bg-accent-soft; }
+
+  /* --- app shell (olheiro / gestora) --- */
+  .app { @apply grid grid-cols-[240px_1fr] min-h-screen max-md:grid-cols-[1fr]; }
+  .app__aside { @apply flex flex-col border-r border-line bg-ink text-bg max-md:flex-row max-md:flex-wrap max-md:items-center; }
+  .app__main { @apply overflow-auto; }
+  .aside__brand { @apply px-5 py-6 border-b border-bg; }
+  .aside__badge { @apply mt-4 p-2.5; }
+  .aside__badge--accent { @apply bg-accent text-accent-ink; }
+  .aside__badge--gold { @apply bg-gold text-gold-ink; }
+  .aside__nav { @apply py-4 flex-1 max-md:flex max-md:flex-wrap max-md:basis-full max-md:py-2; }
+  .aside__group { @apply font-mono text-10 opacity-50 uppercase tracking-kicker px-5 pt-1 pb-2 max-md:hidden; }
+  .nav-item { @apply flex items-center gap-2.5 w-full px-5 py-2.5 border-0 border-l-[3px] border-transparent cursor-pointer bg-transparent text-bg font-body text-13 font-medium text-left no-underline max-md:w-auto max-md:flex-[1_0_150px] max-md:border-l-0 max-md:border-b-[3px]; }
+  .nav-item.is-active { @apply bg-accent text-accent-ink border-l-bg font-bold max-md:border-l-transparent max-md:border-b-bg; }
+  /* Item ainda não implementado: não é link, não entra no Tab, avisa "em breve" */
+  .nav-item--soon { @apply opacity-50 cursor-default; }
+  .nav-item--soon .nav-item__count { @apply opacity-100 uppercase tracking-label; }
+  .nav-item__count { @apply ml-auto font-mono text-10 opacity-60; }
+  .aside__foot { @apply p-5 border-t border-bg opacity-85 max-md:basis-full; }
+  .page-head { @apply flex justify-between items-end gap-4 px-8 py-6 border-b border-line max-md:px-5 max-md:py-4 max-md:flex-wrap max-md:items-start; }
+  .page-head__actions { @apply max-md:flex-wrap; }
+  .kpi-strip { @apply grid border-b border-line; }
+  .kpi-strip > div { @apply px-6 py-5 border-r border-line-soft last:border-r-0 max-md:border-r-0 max-md:border-b max-md:border-line-soft; }
+  .kpi-strip--4 { @apply grid-cols-[repeat(4,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  .kpi-strip--5 { @apply grid-cols-[repeat(5,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+
+  /* --- FAQ (details) --- */
+  .faq details { @apply border-t border-line-soft py-5; }
+  .faq summary { @apply flex justify-between items-center cursor-pointer list-none font-display font-extrabold text-20 uppercase tracking-display-sm; }
+  .faq summary::-webkit-details-marker { @apply hidden; }
+  .faq p { @apply mt-3 text-ink-soft text-14 leading-copy; }
+
+  /* --- hero da landing --- */
+  .hero { @apply relative border-b border-line bg-[#0A0A0B] text-bg overflow-hidden; }
+  .hero__bg { @apply absolute inset-0 -scale-x-100; }
+  .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
+  .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-20 pb-14 max-md:grid-cols-[1fr] max-md:px-5; }
+  .glass { @apply border border-bg/25 p-6 bg-[rgba(15,15,16,0.55)] backdrop-blur-[12px] text-bg; }
+  .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-bg/55; }
+  .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg; }
+  .glass-stat__delta { @apply font-mono text-11 text-accent; }
+
+  /* --- planos --- */
+  .plans { @apply grid grid-cols-[repeat(3,1fr)] border border-line max-md:grid-cols-[1fr]; }
+  .plan { @apply relative flex flex-col gap-4 p-7 min-h-130 bg-card text-ink border-r border-line last:border-r-0; }
+  .plan--featured { @apply bg-ink text-bg border-t-4 border-b-4 border-t-gold border-b-gold border-l border-l-gold -mt-1 -mb-1; }
+  .plan__ribbon { @apply absolute -top-1 -left-px -right-px flex justify-between items-center bg-gold text-gold-ink px-3.5 py-1.5 font-mono text-10 font-bold uppercase tracking-kicker-lg; }
+  .plan__price { @apply font-display font-black text-48 leading-display-xtight tracking-display-lg; }
+  .plan__features { @apply m-0 p-0 list-none flex flex-col gap-2.5; }
+  .plan__features li { @apply grid grid-cols-[16px_1fr] gap-2.5 text-13 leading-normal pt-2 border-t border-line-soft first:border-t-0; }
+  .plan__check { @apply text-accent-text font-display font-black; }
+  .plan--featured .plan__check { @apply text-gold; }
+
+  /* --- skip link --- */
+  .skip-link { @apply absolute left-2 -top-16 z-[1000] bg-ink text-bg px-4 py-2.5 font-display font-extrabold text-13 uppercase tracking-btn no-underline transition-[top] duration-150 focus:top-2; }
+
+  /* --- área do atleta (atleta.html) --- */
+  .atleta-header { @apply sticky top-0 z-20 bg-bg border-b border-line; }
+  .atleta-tabs { @apply flex gap-1 ml-6 max-md:ml-0 max-md:order-10 max-md:basis-full max-md:overflow-x-auto; }
+  .atleta-tab { @apply inline-flex items-center gap-2 h-9.5 px-4 cursor-pointer bg-transparent text-ink border border-transparent font-display font-extrabold text-12 uppercase tracking-tab no-underline; }
+  .atleta-tab.is-active { @apply bg-ink text-bg border-ink; }
+  .atleta-main { @apply max-w-page mx-auto p-8 max-md:p-5; }
+
+  /* --- login (login.html) --- */
+  .login-grid { @apply grid grid-cols-[1.2fr_1fr] min-h-[calc(100vh-65px)] max-md:grid-cols-[1fr]; }
+  .login-side { @apply relative flex flex-col justify-between bg-ink text-bg overflow-hidden px-14 py-16 max-md:hidden; }
+  .login-side__bg { @apply absolute inset-0 opacity-55 grayscale-[20%]; }
+  .login-form { @apply flex flex-col justify-center w-full max-w-form mx-auto px-14 py-16; }
+  .role-tabs { @apply flex border border-ink mb-8; }
+  .role-tab { @apply flex flex-1 items-center justify-center h-11 cursor-pointer bg-transparent text-ink border-0 font-display font-extrabold text-12 uppercase tracking-tab no-underline; }
+  .role-tab.is-active { @apply bg-ink text-bg; }
+
+  /* --- recuperar senha (recuperar.html) --- */
+  .step-bars { @apply flex gap-1.5 mb-6; }
+  .step-bars > div { @apply flex-1 h-1 bg-line-soft; }
+  .step-bars > div.is-done { @apply bg-ink; }
+  .step-bars > div.is-final { @apply bg-accent; }
+  .code-input { @apply flex-1 h-16 font-display font-black text-32 text-center tracking-display bg-card text-ink border border-ink rounded outline-none; }
+  .code-input:focus, .code-input.filled { @apply border-2 border-ink; }
+  .strength-bar { @apply flex gap-0.5 h-1 bg-bg-alt; }
+  .strength-bar > div { @apply flex-1; }
+  .req { @apply flex items-center gap-1.5; }
+
+  /* --- cadastro (cadastro.html): alturas medidas pelo JS em --header-h / --cad-head-h --- */
+  .cad-body { @apply flex-1; }
+  .cad-head { @apply sticky top-(--header-h) z-5 border-b border-line bg-bg; }
+  .cad-footer { @apply fixed bottom-0 left-0 right-0 bg-bg border-t border-line px-8 py-4 z-20 max-md:px-5 max-md:py-3; }
+  @media (max-height: 640px) { .cad-head { @apply static; } }
+
+  /* --- política de privacidade (privacidade.html) --- */
+  .priv-block { @apply scroll-mt-25 focus:outline-none; }
+  .priv-block__head { @apply flex items-baseline gap-4 mb-4 border-b border-line pb-2.5; }
+  .priv-block__head h2 { @apply font-display font-black text-28 leading-none tracking-display uppercase m-0 max-md:text-22; }
+  .priv-p { @apply text-15 leading-copy-md text-ink m-0 text-pretty; }
+  .priv-bullets { @apply m-0 p-0 list-none flex flex-col gap-2.5; }
+  .priv-bullets li { @apply grid grid-cols-[14px_1fr] gap-3 text-15 leading-[1.55]; }
+  .priv-bullets li .b { @apply text-accent-text font-display font-black pt-0.5; }
+  .priv-callout { @apply p-4 bg-bg-alt border-l-4 border-accent text-14 leading-copy; }
+  .priv-callout--danger { @apply bg-transparent border-danger; }
+  .dt { @apply border border-line; }
+  .dt__head, .dt__row { @apply grid grid-cols-[180px_1.4fr_1fr] max-md:grid-cols-[1fr]; }
+  .dt__head { @apply border-b border-line bg-bg-alt max-md:hidden; }
+  .dt__head > div { @apply px-3.5 py-2.5 font-mono text-10 uppercase tracking-widest text-ink-mute; }
+  .dt__row { @apply border-t border-line-soft first:border-t-0; }
+  .dt__row > div:first-child { @apply p-3.5 font-display font-extrabold text-13 uppercase max-md:pb-0; }
+  .dt__row > div:nth-child(2) { @apply p-3.5 text-14 leading-normal max-md:pt-1.5; }
+  .dt__row > div:nth-child(3) { @apply p-3.5 text-13 leading-normal text-ink-soft max-md:pt-1.5; }
+  .rights { @apply grid grid-cols-[1fr_1fr] border border-line max-md:grid-cols-[1fr]; }
+  .rights__item { @apply grid grid-cols-[40px_1fr] gap-3 items-baseline p-3.5 odd:border-r odd:border-line-soft [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-line-soft max-md:odd:border-r-0 max-md:[&:nth-child(n+2)]:border-t max-md:[&:nth-child(n+2)]:border-line-soft; }
+  .rights__n { @apply font-mono text-11 text-accent-text font-bold; }
+  .toc-btn { @apply grid grid-cols-[32px_1fr] gap-2 items-baseline w-full px-0 py-2.5 cursor-pointer bg-transparent border-0 border-t border-line-soft text-left text-ink; }
+
+  /* Movimento reduzido: hover mantém só a troca de cor — sem subir, sem sombra
+     animada, sem giro do chevron. */
+  @media (prefers-reduced-motion: reduce) {
+    .btn:not(:disabled):hover, .btn:not(:disabled):active, .nav-toggle:hover, .wordmark:hover { @apply translate-y-0; }
+    .btn, .nav-toggle, .wordmark, .site-header { @apply transition-none; }
+    .entrar__chevron, .entrar.is-open .entrar__chevron { @apply transition-none rotate-0; }
+  }
+}

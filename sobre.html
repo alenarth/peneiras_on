@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/tailwind.css">
 </head>
 <body data-page="sobre.html">
 
@@ -19,50 +19,50 @@
 
   <!-- HERO -->
   <section class="section">
-    <div class="container g g-hero" style="padding:80px 32px 56px;gap:56px;align-items:end">
+    <div class="wrap g g-hero pt-20 pb-14 px-8 gap-14 items-end">
       <div>
         <span class="tag tag--outline">Quem somos</span>
-        <h1 class="display" style="font-size:clamp(34px,8vw,128px);line-height:.86;letter-spacing:-.05em;margin:16px 0 0">
-          Quem está<br><span class="mark" style="display:inline-block;line-height:.95">por trás</span><br>do projeto.
+        <h1 class="display text-fluid-hero leading-display-tight tracking-tighter mt-4 mb-0 mx-0">
+          Quem está<br><span class="mark inline-block leading-display-loose">por trás</span><br>do projeto.
         </h1>
       </div>
       <div>
         <!-- TODO: texto definitivo -->
         <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris sit amet velit non lectus dignissim suscipit.</p>
-        <div class="grid-2" style="margin-top:32px;padding-top:24px;border-top:1px solid var(--line-soft)" data-stats></div>
+        <div class="grid-2 mt-8 pt-6 border-t border-t-line-soft" data-stats></div>
       </div>
     </div>
   </section>
 
   <!-- MVV -->
   <section class="section">
-    <div class="container section__pad">
-      <div class="grid-2" style="align-items:end;margin-bottom:48px">
+    <div class="wrap section__pad">
+      <div class="grid-2 items-end mb-12">
         <div>
           <span class="tag tag--outline">Direção</span>
-          <h2 class="display h2" style="margin-top:12px">Missão.<br>Visão.<br>Valores.</h2>
+          <h2 class="display h2 mt-3">Missão.<br>Visão.<br>Valores.</h2>
         </div>
         <!-- TODO: texto definitivo -->
-        <p style="font-size:16px;line-height:1.6;color:var(--ink-soft)">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent in sapien sed leo vestibulum convallis. Integer non lectus eu lorem fringilla volutpat.</p>
+        <p class="text-16 leading-copy text-ink-soft">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent in sapien sed leo vestibulum convallis. Integer non lectus eu lorem fringilla volutpat.</p>
       </div>
-      <div class="grid-3" style="gap:0;border-top:1px solid var(--line)">
-        <div class="pad" style="border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px">
+      <div class="grid-3 gap-0 border-t border-t-line">
+        <div class="pad border-r border-r-line flex flex-col gap-3.5">
           <div class="mono text-mute">01</div><div class="display h3">Missão</div>
-          <div class="display gold" style="font-size:16px;line-height:1.2">Democratizar o futebol.</div>
+          <div class="display gold text-16 leading-heading">Democratizar o futebol.</div>
           <!-- TODO: texto definitivo -->
-          <p style="font-size:14px;line-height:1.6;color:var(--ink-soft)">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
+          <p class="text-14 leading-copy text-ink-soft">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
         </div>
-        <div class="pad" style="border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px">
+        <div class="pad border-r border-r-line flex flex-col gap-3.5">
           <div class="mono text-mute">02</div><div class="display h3">Visão</div>
-          <div class="display gold" style="font-size:16px;line-height:1.2">O olheiro vai até você.</div>
+          <div class="display gold text-16 leading-heading">O olheiro vai até você.</div>
           <!-- TODO: texto definitivo -->
-          <p style="font-size:14px;line-height:1.6;color:var(--ink-soft)">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+          <p class="text-14 leading-copy text-ink-soft">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
         </div>
-        <div class="pad" style="display:flex;flex-direction:column;gap:14px">
+        <div class="pad flex flex-col gap-3.5">
           <div class="mono text-mute">03</div><div class="display h3">Valores</div>
-          <div class="display gold" style="font-size:16px;line-height:1.2">Acesso, dado, respeito.</div>
+          <div class="display gold text-16 leading-heading">Acesso, dado, respeito.</div>
           <!-- TODO: texto definitivo -->
-          <p style="font-size:14px;line-height:1.6;color:var(--ink-soft)">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
+          <p class="text-14 leading-copy text-ink-soft">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
         </div>
       </div>
     </div>
@@ -70,14 +70,14 @@
 
   <!-- TIMELINE -->
   <section class="section">
-    <div class="container section__pad">
-      <div class="grid-2" style="align-items:end;margin-bottom:48px">
+    <div class="wrap section__pad">
+      <div class="grid-2 items-end mb-12">
         <div>
           <span class="tag tag--outline">Histórico</span>
-          <h2 class="display h2" style="margin-top:12px">Do briefing<br>ao campo.</h2>
+          <h2 class="display h2 mt-3">Do briefing<br>ao campo.</h2>
         </div>
         <!-- TODO: texto definitivo -->
-        <p style="font-size:16px;line-height:1.6;color:var(--ink-soft)">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore. Vestibulum ante ipsum primis in faucibus orci luctus.</p>
+        <p class="text-16 leading-copy text-ink-soft">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore. Vestibulum ante ipsum primis in faucibus orci luctus.</p>
       </div>
       <div data-timeline></div>
     </div>
@@ -85,35 +85,35 @@
 
   <!-- EQUIPE -->
   <section class="section">
-    <div class="container section__pad">
-      <div style="margin-bottom:48px">
+    <div class="wrap section__pad">
+      <div class="mb-12">
         <span class="tag tag--outline">Equipe</span>
-        <h2 class="display h2" style="margin-top:12px">Cinco pessoas.<br>Uma plataforma.</h2>
+        <h2 class="display h2 mt-3">Cinco pessoas.<br>Uma plataforma.</h2>
       </div>
-      <div class="g g-5" style="gap:16px" data-team></div>
+      <div class="g g-5 gap-4" data-team></div>
     </div>
   </section>
 
   <!-- PARCERIA -->
-  <section class="on-dark" style="position:relative;background:var(--ink);color:var(--bg);overflow:hidden">
-    <div class="pele-bg" style="position:absolute;inset:0;background-position:right center;opacity:.45;filter:grayscale(30%)"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,14,15,.95),rgba(14,14,15,.7) 50%,rgba(14,14,15,.15))"></div>
-    <div class="container g g-main" style="position:relative;padding:96px 32px;gap:48px;align-items:center">
+  <section class="on-dark relative bg-ink text-bg overflow-hidden">
+    <div class="pele-bg bg-right absolute inset-0 opacity-45 grayscale-[30%]"></div>
+    <div class="parceria__scrim"></div>
+    <div class="wrap g g-main relative py-24 px-8 gap-12 items-center">
       <div>
         <span class="tag tag--accent">Parceria</span>
-        <h2 class="display" style="font-size:clamp(28px,6vw,80px);line-height:.95;margin-top:12px;color:var(--bg)">Em parceria com a<br><span class="gold">Pelé Academia</span>.</h2>
+        <h2 class="display text-fluid-lg leading-display-loose mt-3 text-bg">Em parceria com a<br><span class="gold">Pelé Academia</span>.</h2>
         <!-- TODO: texto definitivo -->
-        <p style="font-size:16px;line-height:1.7;margin-top:24px;color:rgba(245,244,238,.8);max-width:640px">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fundada em 2018 para honrar o legado do Rei Pelé, a Pelé Academia oferece a crianças e jovens brasileiros acesso à educação, lazer e cidadania através do futebol.</p>
+        <p class="text-16 leading-copy-lg mt-6 text-bg/80 max-w-copy-md">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fundada em 2018 para honrar o legado do Rei Pelé, a Pelé Academia oferece a crianças e jovens brasileiros acesso à educação, lazer e cidadania através do futebol.</p>
         <!-- TODO: texto definitivo -->
-        <p style="font-size:16px;line-height:1.7;margin-top:16px;color:rgba(245,244,238,.8);max-width:640px">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        <p class="text-16 leading-copy-lg mt-4 text-bg/80 max-w-copy-md">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
       </div>
       <div class="glass">
         <div class="glass-stat__label">Em números</div>
-        <div style="display:flex;flex-direction:column;gap:16px;margin-top:20px">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(245,244,238,.15)"><span style="font-size:13px;opacity:.7">Anos de operação</span><span class="display gold" style="font-size:36px">8</span></div>
-          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(245,244,238,.15)"><span style="font-size:13px;opacity:.7">Atletas atendidos</span><span class="display gold" style="font-size:36px">12k+</span></div>
-          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(245,244,238,.15)"><span style="font-size:13px;opacity:.7">Núcleos no Brasil</span><span class="display gold" style="font-size:36px">24</span></div>
-          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(245,244,238,.15)"><span style="font-size:13px;opacity:.7">Escolas parceiras</span><span class="display gold" style="font-size:36px">146</span></div>
+        <div class="flex flex-col gap-4 mt-5">
+          <div class="flex items-baseline justify-between pb-3.5 border-b border-b-bg/15"><span class="text-13 opacity-70">Anos de operação</span><span class="display gold text-36">8</span></div>
+          <div class="flex items-baseline justify-between pb-3.5 border-b border-b-bg/15"><span class="text-13 opacity-70">Atletas atendidos</span><span class="display gold text-36">12k+</span></div>
+          <div class="flex items-baseline justify-between pb-3.5 border-b border-b-bg/15"><span class="text-13 opacity-70">Núcleos no Brasil</span><span class="display gold text-36">24</span></div>
+          <div class="flex items-baseline justify-between pb-3.5 border-b border-b-bg/15"><span class="text-13 opacity-70">Escolas parceiras</span><span class="display gold text-36">146</span></div>
         </div>
       </div>
     </div>
@@ -121,14 +121,14 @@
 
   <!-- CONTATO -->
   <section id="contato">
-    <div class="container g g-2" style="padding:80px 32px;gap:64px;align-items:start">
+    <div class="wrap g g-2 py-20 px-8 gap-16 items-start">
       <div>
         <span class="tag tag--outline">Contato</span>
-        <h2 class="display h2" style="margin-top:12px">Fala<br>com a gente.</h2>
+        <h2 class="display h2 mt-3">Fala<br>com a gente.</h2>
         <!-- TODO: texto definitivo -->
-        <p style="margin-top:20px;font-size:15px;line-height:1.6;color:var(--ink-soft)">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p class="mt-5 text-15 leading-copy text-ink-soft">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px" data-contato></div>
+      <div class="flex flex-col gap-3" data-contato></div>
     </div>
   </section>
 
@@ -168,8 +168,8 @@
       '<div class="g g-label">' +
       tl.map((e,i)=>{
         const last = i===tl.length-1;
-        return `<div style="padding:24px 16px 24px 0;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);border-top:1px solid var(--line-soft);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:flex-start;gap:8px"><span style="width:8px;height:8px;margin-top:4px;background:${last?'var(--accent)':'var(--ink)'}"></span>${e.d}</div>
-        <div style="padding:24px 0;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:6px"><div style="font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.02em;text-transform:uppercase">${e.t}</div><p style="font-size:14px;line-height:1.6;color:var(--ink-soft);max-width:720px;margin:0">${e.s}</p></div>`;
+        return `<div class="py-6 pl-0 pr-4 font-mono text-11 text-ink-soft border-t border-t-line-soft uppercase tracking-label flex items-start gap-2"><span class="w-2 h-2 mt-1 ${last?'bg-accent':'bg-ink'}"></span>${e.d}</div>
+        <div class="py-6 px-0 border-t border-t-line-soft flex flex-col gap-1.5"><div class="font-display font-extrabold text-22 tracking-display uppercase">${e.t}</div><p class="text-14 leading-copy text-ink-soft max-w-copy m-0">${e.s}</p></div>`;
       }).join('') + '</div>';
 
     // team
@@ -181,11 +181,11 @@
       {name:'Anna',rm:'—',role:'Produto'},
     ];
     document.querySelector('[data-team]').innerHTML = team.map(p=>`
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="player-img" style="height:220px">foto</div>
+      <div class="flex flex-col gap-3">
+        <div class="player-img h-55">foto</div>
         <div>
-          <div style="font-family:var(--font-display);font-weight:900;font-size:14px;text-transform:uppercase;letter-spacing:-.01em;line-height:1.1">${p.name}</div>
-          <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">${p.role}</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-mute)">RM ${p.rm}</span></div>
+          <div class="font-display font-black text-14 uppercase tracking-display-sm leading-heading-sm">${p.name}</div>
+          <div class="flex justify-between mt-1"><span class="font-mono text-11 text-ink-soft">${p.role}</span><span class="font-mono text-11 text-ink-mute">RM ${p.rm}</span></div>
         </div>
       </div>`).join('');
 
@@ -199,11 +199,11 @@
       {l:'Endereço',v:'Rua Exemplo, 000 — Cidade/UF — 00000-000'},
     ];
     document.querySelector('[data-contato]').innerHTML = cont.map((c,i)=>`
-      <div class="g g-label-lg" style="gap:16px;padding:14px 0;border-top:1px solid ${i?'var(--line-soft)':'var(--line)'}">
-        <span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-mute)">${c.l}</span>
-        <span style="font-size:14px;font-weight:600">${c.v}</span>
+      <div class="g g-label-lg gap-4 py-3.5 px-0 border-t ${i?'border-line-soft':'border-line'}">
+        <span class="font-mono text-11 uppercase tracking-widest text-ink-mute">${c.l}</span>
+        <span class="text-14 font-semibold">${c.v}</span>
       </div>`).join('') +
-      `<div class="btn-row" style="margin-top:16px;display:flex;gap:8px"><a href="index.html" class="btn btn--primary">Voltar à home</a><a href="cadastro.html" class="btn btn--ghost">Quero me inscrever →</a></div>`;
+      `<div class="btn-row mt-4 flex gap-2"><a href="index.html" class="btn btn--primary">Voltar à home</a><a href="cadastro.html" class="btn btn--ghost">Quero me inscrever →</a></div>`;
   </script>
 </body>
 </html>

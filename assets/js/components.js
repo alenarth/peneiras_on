@@ -43,7 +43,7 @@ function mountSiteHeader(active) {
   host.innerHTML = `
     <div class="header-sentinel" aria-hidden="true"></div>
     <header class="site-header">
-      <div class="container site-header__inner">
+      <div class="wrap site-header__inner">
         ${wordmarkHTML(false)}
         <button class="nav-toggle" type="button" data-nav-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Abrir menu de navegação">☰</button>
         <nav class="site-nav" id="site-nav">
@@ -61,21 +61,21 @@ function mountSiteHeader(active) {
               <a class="entrar__item" href="login.html?tipo=jogador">
                 <span class="entrar__item-icon">✦</span>
                 <span><span class="entrar__item-label">Jogador</span><br><span class="entrar__item-sub">Já tenho inscrição</span></span>
-                <span style="font-family:var(--font-display);font-weight:900">→</span>
+                <span class="font-display font-black">→</span>
               </a>
               <a class="entrar__item" href="login.html?tipo=olheiro">
                 <span class="entrar__item-icon">◉</span>
                 <span><span class="entrar__item-label">Olheiro</span><br><span class="entrar__item-sub">Acesso credenciado</span></span>
-                <span style="font-family:var(--font-display);font-weight:900">→</span>
+                <span class="font-display font-black">→</span>
               </a>
               <a class="entrar__item" href="login.html?tipo=academia">
                 <span class="entrar__item-icon">▦</span>
                 <span><span class="entrar__item-label">Academia</span><br><span class="entrar__item-sub">Gestão estratégica</span></span>
-                <span style="font-family:var(--font-display);font-weight:900">→</span>
+                <span class="font-display font-black">→</span>
               </a>
               <div class="entrar__foot">
-                <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">Sem conta?</span>
-                <a href="cadastro.html" style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.08em;text-decoration:none">Inscreva-se →</a>
+                <span class="font-mono text-11 text-ink-soft">Sem conta?</span>
+                <a href="cadastro.html" class="font-mono text-11 font-bold text-ink uppercase tracking-label no-underline">Inscreva-se →</a>
               </div>
             </div>
           </div>
@@ -199,11 +199,11 @@ function mountSimpleHeader(crumb, backHref, backLabel, opts = {}) {
   host.innerHTML = `
     <div class="header-sentinel" aria-hidden="true"></div>
     <header class="site-header">
-      <div class="container site-header__inner">
+      <div class="wrap site-header__inner">
         ${wordmarkHTML(false)}
         <span class="site-header__crumb">/ ${crumb}</span>
         <div class="site-header__actions">
-          <a href="${backHref || 'index.html'}" style="background:transparent;border:none;cursor:pointer;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);text-decoration:none">← ${backLabel || 'Voltar à home'}</a>
+          <a href="${backHref || 'index.html'}" class="bg-transparent border-0 cursor-pointer font-mono text-11 uppercase tracking-label text-ink-soft no-underline">← ${backLabel || 'Voltar à home'}</a>
           ${opts.cta === false ? '' : '<a href="cadastro.html" class="btn btn--accent btn--sm">Quero me inscrever →</a>'}
         </div>
       </div>
@@ -237,7 +237,7 @@ function mountSiteFooter(opts = {}) {
     host.innerHTML = `
     <footer class="site-footer site-footer--compact">
       <div class="site-footer__bottom">
-        <div class="container site-footer__bottom-inner">
+        <div class="wrap site-footer__bottom-inner">
           ${(opts.lines || []).map(l => `<span>${l}</span>`).join('')}
           <nav aria-label="Links do rodapé"><span>${links}</span></nav>
         </div>
@@ -249,19 +249,19 @@ function mountSiteFooter(opts = {}) {
   host.innerHTML = `
     <footer class="site-footer">
       <div class="site-footer__cta">
-        <div class="container site-footer__cta-inner">
+        <div class="wrap site-footer__cta-inner">
           <div>
             <div class="kicker accent">Pronto para entrar em campo?</div>
-            <h3 class="display" style="font-size:clamp(36px,5vw,72px);margin-top:12px">Inscreva-se em<br>menos de 4 minutos.</h3>
+            <h3 class="display text-fluid-md mt-3">Inscreva-se em<br>menos de 4 minutos.</h3>
           </div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end">
+          <div class="flex gap-3 flex-wrap justify-end">
             <a href="cadastro.html" class="btn btn--accent btn--lg">Quero me inscrever →</a>
             <a href="login.html?tipo=jogador" class="btn btn--ghost btn--lg btn--on-dark">Já sou inscrito · Entrar</a>
           </div>
         </div>
       </div>
 
-      <div class="container site-footer__cols">
+      <div class="wrap site-footer__cols">
         <div>
           ${wordmarkHTML(true)}
           <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo — independentemente de onde estiver.</p>
@@ -309,7 +309,7 @@ function mountSiteFooter(opts = {}) {
       </div>
 
       <div class="site-footer__bottom">
-        <div class="container site-footer__bottom-inner">
+        <div class="wrap site-footer__bottom-inner">
           <span>© 2026 PENEIRAS ON · TODOS OS DIREITOS RESERVADOS</span>
           <span>FIAP / ENGENHARIA DE SOFTWARE · SEMI-PRESENCIAL RJ</span>
           <span>EM PARCERIA COM <span class="gold">PELÉ ACADEMIA</span></span>
@@ -326,8 +326,8 @@ function statHTML(label, value, opts = {}) {
   const sub = opts.sub ? `<span class="stat__sub">${opts.sub}</span>` : '';
   return `<div class="stat">
     <span class="stat__label">${label}</span>
-    <div style="display:flex;align-items:baseline;gap:6px"><span class="stat__value${big}">${value}</span></div>
-    <div style="display:flex;align-items:center;gap:8px">${delta}${sub}</div>
+    <div class="flex items-baseline gap-1.5"><span class="stat__value${big}">${value}</span></div>
+    <div class="flex items-center gap-2">${delta}${sub}</div>
   </div>`;
 }
 
@@ -339,7 +339,7 @@ function progressHTML(value, max, opts = {}) {
   if (opts.label || opts.sublabel) {
     head = `<div class="progress-head">
       ${opts.label ? `<span class="mono text-soft">${opts.label}</span>` : ''}
-      ${opts.sublabel ? `<span style="font-family:var(--font-display);font-weight:800;font-size:14px">${opts.sublabel}</span>` : ''}
+      ${opts.sublabel ? `<span class="font-display font-extrabold text-14">${opts.sublabel}</span>` : ''}
     </div>`;
   }
   return `${head}<div class="progress ${h}"><div class="${fillCls}" style="width:${pct}%"></div></div>`;
@@ -408,7 +408,7 @@ function startCountdown(target, root) {
   if (!host) return;
   const paint = () => {
     const { over, cells } = countdownParts(target);
-    host.innerHTML = cells.map(c => `<div style="text-align:center;padding:12px;background:var(--bg-alt);border:1px solid var(--line-soft)"><div class="display" style="font-size:36px">${c[0]}</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-soft);text-transform:uppercase;margin-top:4px">${c[1]}</div></div>`).join('');
+    host.innerHTML = cells.map(c => `<div class="text-center p-3 bg-bg-alt border border-line-soft"><div class="display text-36">${c[0]}</div><div class="font-mono text-10 text-ink-soft uppercase mt-1">${c[1]}</div></div>`).join('');
     if (state) state.innerHTML = over ? tagHTML('encerrada', 'outline') : '';
     return over;
   };
@@ -458,20 +458,20 @@ function eventCardHTML(e, mode, opts = {}) {
   else if (mode === 'atleta') cta = `<button type="button" class="btn btn--primary btn--sm btn--full" data-register="${esc(e.id)}">Inscrever-se</button>`;
   else cta = `<a href="login.html?tipo=jogador&evento=${esc(e.id)}" class="btn btn--primary btn--sm btn--full">Quero participar</a>`;
   return `<article class="card card--flush" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
-    <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-      <span style="display:flex;gap:6px;flex-wrap:wrap">${tagHTML('● ' + e.status, EVENT_STATUS_TONE[e.status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
-      <span style="font-family:var(--font-mono);font-size:10px;color:var(--ink-mute)">${e.age.replace('-', ' – ')} anos</span>
+    <div class="py-3.5 px-5 border-b border-b-line flex justify-between items-center gap-2 flex-wrap">
+      <span class="flex gap-1.5 flex-wrap">${tagHTML('● ' + e.status, EVENT_STATUS_TONE[e.status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
+      <span class="font-mono text-10 text-ink-mute">${e.age.replace('-', ' – ')} anos</span>
     </div>
-    <div style="padding:24px">
-      <div class="display" id="ev-${esc(e.id)}" style="font-size:28px;letter-spacing:-.02em">${e.city}</div>
-      <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:4px">${e.state} · ${fmtDate(e.date)}</div>
-      <div class="g g-2" style="gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line-soft)">
+    <div class="p-6">
+      <div class="display text-28 tracking-display" id="ev-${esc(e.id)}">${e.city}</div>
+      <div class="font-mono text-11 text-ink-soft mt-1">${e.state} · ${fmtDate(e.date)}</div>
+      <div class="g g-2 gap-3 mt-5 pt-4 border-t border-t-line-soft">
         ${statHTML('Inscritos', fmtNum(e.registered))}
         ${statHTML('Vagas', e.capacity)}
       </div>
-      <div style="margin-top:16px">${progressHTML(Math.min(e.registered, e.capacity * 5), e.capacity * 5, { sm: true, tone: closed ? 'ink' : 'accent' })}</div>
+      <div class="mt-4">${progressHTML(Math.min(e.registered, e.capacity * 5), e.capacity * 5, { sm: true, tone: closed ? 'ink' : 'accent' })}</div>
     </div>
-    <div style="padding:12px;border-top:1px solid var(--line-soft)">${cta}</div>
+    <div class="p-3 border-t border-t-line-soft">${cta}</div>
   </article>`;
 }
 
@@ -482,9 +482,9 @@ function eventShortName(e) {
 
 /* Estado vazio da grade — ocupa a linha inteira em vez de deixar o grid em branco. */
 function eventsEmptyHTML() {
-  return `<div class="card" style="grid-column:1 / -1;text-align:center;padding:40px 24px">
-    <div class="display" style="font-size:22px">Nenhuma peneira com esses filtros.</div>
-    <p style="font-size:14px;color:var(--ink-soft);margin:8px 0 16px">Tente outro status ou outro estado.</p>
+  return `<div class="card col-span-full text-center py-10 px-6">
+    <div class="display text-22">Nenhuma peneira com esses filtros.</div>
+    <p class="text-14 text-ink-soft mt-2 mb-4 mx-0">Tente outro status ou outro estado.</p>
     <button type="button" class="btn btn--ghost btn--sm" data-clear-filters>Limpar filtros</button>
   </div>`;
 }

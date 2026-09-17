@@ -12,11 +12,15 @@ Desktop.ini
 *.swp
 *~
 
-# Node (o projeto e' HTML/CSS/JS puro; isto e' so' rede de seguranca
-# caso alguem rode um servidor estatico como `npx serve` na pasta)
+# Node (Sprint 3: build do Tailwind via npm)
 node_modules/
-package-lock.json
 npm-debug.log*
+
+# CSS compilado pelo Tailwind — artefato de build, gerado por `npm run build`
+assets/css/tailwind.css
+
+# Pasta de deploy montada por `npm run build:site` (Vercel)
+dist/
 
 # Uploads e temporarios
 uploads/

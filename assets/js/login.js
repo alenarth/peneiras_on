@@ -45,8 +45,8 @@ document.querySelector('[data-side-tag]').textContent = cfg.tag;
 document.querySelector('[data-side-title]').textContent = cfg.title;
 document.querySelector('[data-side-sub]').textContent = cfg.sub;
 document.querySelector('[data-side-tips]').innerHTML =
-  `<div class="kicker" style="color:rgba(245,244,238,.55)">Lembretes</div>` +
-  cfg.tips.map((t,i)=>`<div class="g g-row-tip" style="gap:12px;font-size:14px;line-height:1.5;padding-top:10px;border-top:1px solid rgba(245,244,238,.15)"><span class="accent" style="font-family:var(--font-display);font-weight:900">0${i+1}</span><span>${t}</span></div>`).join('');
+  `<div class="kicker text-bg/55">Lembretes</div>` +
+  cfg.tips.map((t,i)=>`<div class="g g-row-tip gap-3 text-14 leading-normal pt-2.5 border-t border-t-bg/15"><span class="accent font-display font-black">0${i+1}</span><span>${t}</span></div>`).join('');
 
 // abas ativas
 document.querySelectorAll('.role-tab').forEach(t => {
@@ -79,11 +79,11 @@ document.querySelector('[data-toggle-pwd]').addEventListener('click', function()
 // linha inferior
 const bottom = document.querySelector('[data-bottom-row]');
 if (role === 'jogador') {
-  bottom.innerHTML = `<span style="font-size:13px;color:var(--ink-soft)">Ainda não se inscreveu?</span>
-    <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" style="font-family:var(--font-mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink);text-decoration:none">Inscreva-se grátis →</a>`;
+  bottom.innerHTML = `<span class="text-13 text-ink-soft">Ainda não se inscreveu?</span>
+    <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Inscreva-se grátis →</a>`;
 } else {
   const alts = Object.keys(ROLES).filter(r => r !== role);
-  bottom.innerHTML = `<span style="font-size:13px;color:var(--ink-soft)">É outro perfil?</span>
-    <div style="display:flex;gap:8px">` +
-    alts.map(r => `<a href="login.html?tipo=${r}" style="background:transparent;border:1px solid var(--ink);padding:6px 10px;font-family:var(--font-mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);text-decoration:none">Sou ${ROLES[r].label.toLowerCase()} →</a>`).join('') + `</div>`;
+  bottom.innerHTML = `<span class="text-13 text-ink-soft">É outro perfil?</span>
+    <div class="flex gap-2">` +
+    alts.map(r => `<a href="login.html?tipo=${r}" class="bg-transparent border border-ink py-1.5 px-2.5 font-mono text-11 font-semibold uppercase tracking-tab text-ink no-underline">Sou ${ROLES[r].label.toLowerCase()} →</a>`).join('') + `</div>`;
 }

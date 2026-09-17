@@ -69,9 +69,9 @@ function renderCadastro() {
   function scoreBlockHTML() {
     const sc = score();
     return `${progressHTML(sc,100,{label:'Score de completude',sublabel:sc+'%'})}
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-mute);display:flex;justify-content:space-between">
+          <div class="font-mono text-10 text-ink-mute flex justify-between">
             <span>0 → 100% · cada campo adicional sobe seu score</span>
-            <span style="color:${sc>=60?'var(--success)':'var(--ink-mute)'}">${sc>=80?'◆ alto':sc>=60?'◐ bom':'○ inicial'}</span>
+            <span class="${sc>=60?'text-success':'text-ink-mute'}">${sc>=80?'◆ alto':sc>=60?'◐ bom':'○ inicial'}</span>
           </div>`;
   }
 
@@ -81,25 +81,25 @@ function renderCadastro() {
     const v = valid();
     screenEl.innerHTML = `
       <div class="cad-head" data-cad-head>
-        <div style="max-width:920px;margin:0 auto;padding:20px 32px;display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <span class="kicker" style="text-transform:uppercase">${evento ? 'Inscrição · ' + eventShortName(evento) : 'Criar perfil gratuito'}</span>
+        <div class="max-w-narrow my-0 mx-auto py-5 px-8 flex flex-col gap-3">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <span class="kicker uppercase">${evento ? 'Inscrição · ' + eventShortName(evento) : 'Criar perfil gratuito'}</span>
             ${tagHTML('PASSO '+step+'/5 · '+STEPS[step-1],'outline')}
           </div>
-          ${evento ? `<p class="mono" style="margin:0;padding:10px 14px;background:var(--accent-soft);border:1px solid var(--line-soft);font-size:12px;text-transform:none;letter-spacing:0" data-event-context>Você está se inscrevendo em ${esc(evento.name)} · ${fmtDotDate(evento.date, 'full')}</p>` : ''}
+          ${evento ? `<p class="mono m-0 py-2.5 px-3.5 bg-accent-soft border border-line-soft text-12 normal-case tracking-normal" data-event-context>Você está se inscrevendo em ${esc(evento.name)} · ${fmtDotDate(evento.date, 'full')}</p>` : ''}
           <div data-score>${scoreBlockHTML()}</div>
         </div>
       </div>
 
-      <div class="cad-body" style="width:100%;max-width:920px;margin:0 auto;padding:40px 32px 120px">
-        <h1 class="display" style="font-size:clamp(32px,7vw,56px);margin:0 0 32px">${stepTitle()}</h1>
-        <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">${stepFields()}</div>
+      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-30 px-8">
+        <h1 class="display text-fluid-sm mt-0 mb-8 mx-0">${stepTitle()}</h1>
+        <div class="flex flex-col gap-5 max-w-copy">${stepFields()}</div>
       </div>
 
       <div class="cad-footer">
-        <div style="max-width:920px;margin:0 auto;display:flex;gap:12px;align-items:center">
+        <div class="max-w-narrow my-0 mx-auto flex gap-3 items-center">
           <span class="mono text-mute">${STEPS[step-1]} · ${step}/5</span>
-          <div style="margin-left:auto;display:flex;gap:8px">
+          <div class="ml-auto flex gap-2">
             ${step>1?`<button class="btn btn--ghost" id="back">← Voltar</button>`:''}
             ${step<5?`<button class="btn btn--primary" id="next" ${v[step]?'':'disabled'}>Próximo passo →</button>`:''}
             ${step===5?`<button class="btn btn--accent" id="finish" ${v[5]?'':'disabled'}>✓ Confirmar inscrição</button>`:''}
@@ -125,36 +125,36 @@ function renderCadastro() {
       if(step===2) return `
         ${field('Estado',`<select class="select" id="f-state">${['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'].map(s=>`<option ${s===form.state?'selected':''}>${s}</option>`).join('')}</select>`)}
         ${field('Cidade',`<input class="input" id="f-city" placeholder="Sua cidade" value="${esc(form.city)}">`)}
-        <div style="background:var(--bg-alt);padding:16px;border:1px solid var(--line-soft)">
-          <div class="kicker" style="text-transform:uppercase;margin-bottom:6px">${evento ? 'Peneira escolhida' : 'Peneira mais próxima'}</div>
-          <div style="display:flex;align-items:baseline;justify-content:space-between"><span class="display" style="font-size:18px">${eventShortName(nearest)}</span><span style="font-family:var(--font-mono);font-size:12px">${fmtDotDate(nearest.date)}</span></div>
-          <div style="margin-top:4px;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">${evento ? nearest.city + '/' + nearest.state : '0 km de você · alocação automática'}</div>
+        <div class="bg-bg-alt p-4 border border-line-soft">
+          <div class="kicker uppercase mb-1.5">${evento ? 'Peneira escolhida' : 'Peneira mais próxima'}</div>
+          <div class="flex items-baseline justify-between"><span class="display text-18">${eventShortName(nearest)}</span><span class="font-mono text-12">${fmtDotDate(nearest.date)}</span></div>
+          <div class="mt-1 font-mono text-11 text-ink-soft">${evento ? nearest.city + '/' + nearest.state : '0 km de você · alocação automática'}</div>
         </div>`;
       if(step===3) return `
-        ${field('Posição principal',`<div class="g g-2" style="gap:8px" id="f-pos">${['Goleiro','Zagueiro','Lateral','Volante','Meia','Ponta','Atacante'].map(p=>`<button type="button" class="choice ${form.position===p?'is-active':''}" data-pos="${p}">${p}</button>`).join('')}</div>`)}
-        ${field('Pé dominante',`<div style="display:flex;gap:8px" id="f-foot">${['Direito','Esquerdo','Ambidestro'].map(p=>`<button type="button" class="choice choice--accent ${form.foot===p?'is-active':''}" data-foot="${p}" style="flex:1;height:44px">${p}</button>`).join('')}</div>`)}
-        <div class="g g-2" style="gap:12px">
+        ${field('Posição principal',`<div class="g g-2 gap-2" id="f-pos">${['Goleiro','Zagueiro','Lateral','Volante','Meia','Ponta','Atacante'].map(p=>`<button type="button" class="choice ${form.position===p?'is-active':''}" data-pos="${p}">${p}</button>`).join('')}</div>`)}
+        ${field('Pé dominante',`<div class="flex gap-2" id="f-foot">${['Direito','Esquerdo','Ambidestro'].map(p=>`<button type="button" class="choice choice--accent ${form.foot===p?'is-active':''} flex-1 h-11" data-foot="${p}">${p}</button>`).join('')}</div>`)}
+        <div class="g g-2 gap-3">
           ${field('Altura (cm)',`<input class="input" id="f-h" inputmode="numeric" placeholder="ex.: 165" value="${esc(form.height)}">`,'',null,true)}
           ${field('Peso (kg)',`<input class="input" id="f-w" inputmode="numeric" placeholder="ex.: 58" value="${esc(form.weight)}">`,'',null,true)}
         </div>
         ${field('Onde joga hoje',`<input class="input" id="f-club" placeholder="Nome da escolinha ou clube" value="${esc(form.club)}">`,'',null,true)}
         ${field('Tempo de prática (anos)',`<input class="input" id="f-years" inputmode="numeric" placeholder="ex.: 2" value="${esc(form.years)}">`,'',null,true)}`;
       if(step===4) return `
-        <div style="background:var(--accent);color:var(--accent-ink);padding:16px;border:1px solid var(--ink);display:flex;align-items:center;gap:12px">
-          <span class="display" style="font-size:36px">+25</span>
-          <div><div style="font-family:var(--font-display);font-weight:800;font-size:14px;text-transform:uppercase">Vídeos aumentam seu score</div><div style="font-family:var(--font-mono);font-size:11px">até 25 pontos no ranking do olheiro</div></div>
+        <div class="bg-accent text-accent-ink p-4 border border-ink flex items-center gap-3">
+          <span class="display text-36">+25</span>
+          <div><div class="font-display font-extrabold text-14 uppercase">Vídeos aumentam seu score</div><div class="font-mono text-11">até 25 pontos no ranking do olheiro</div></div>
         </div>
         ${field('Link do Instagram com vídeos',`<input class="input" id="f-videos" placeholder="instagram.com/seu.usuario" value="${esc(form.videos)}">`,'@usuario ou link direto',null,true)}
-        ${field('Foto de rosto',`<button type="button" id="f-photo" style="height:120px;width:100%;background:var(--bg-alt);border:1px dashed var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--ink)">${form.photo?'<span class="display" style="font-size:20px">✓ Foto adicionada</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">clique para remover</span>':'<span class="display" style="font-size:20px">+ enviar</span><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)">jpg, png · até 5MB</span>'}</button>`,'',null,true)}`;
+        ${field('Foto de rosto',`<button type="button" id="f-photo" class="h-30 w-full bg-bg-alt border border-dashed border-ink cursor-pointer flex flex-col items-center justify-center gap-1.5 text-ink">${form.photo?'<span class="display text-20">✓ Foto adicionada</span><span class="font-mono text-11 text-ink-soft">clique para remover</span>':'<span class="display text-20">+ enviar</span><span class="font-mono text-11 text-ink-soft">jpg, png · até 5MB</span>'}</button>`,'',null,true)}`;
       // step 5
       if(needs) return `
         ${field('Nome do responsável legal',`<input class="input" id="f-resp" placeholder="Nome completo do responsável" value="${esc(form.responsible)}">`)}
         ${field('Celular do responsável',`<input class="input" id="f-resp-phone" inputmode="tel" placeholder="(21) 9 9999-9999" value="${esc(form.responsiblePhone)}">`,'Receberá SMS de confirmação')}
-        <button type="button" id="f-consent" style="display:flex;gap:12px;align-items:flex-start;background:${form.consent?'var(--accent)':'var(--card)'};color:${form.consent?'var(--accent-ink)':'var(--ink)'};border:1px solid var(--ink);padding:16px;cursor:pointer;text-align:left">
-          <span style="width:22px;height:22px;flex-shrink:0;border:1.5px solid var(--ink);background:${form.consent?'var(--ink)':'transparent'};display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:var(--font-display)">${form.consent?'✓':''}</span>
-          <span><span style="font-family:var(--font-display);font-weight:800;font-size:13px;text-transform:uppercase">Aceito o termo de responsável</span><br><span style="font-size:12px;line-height:1.5">Autorizo a participação do menor na peneira e o tratamento dos dados conforme LGPD/ECA.</span></span>
+        <button type="button" id="f-consent" class="flex gap-3 items-start border border-ink p-4 cursor-pointer text-left ${form.consent?'bg-accent text-accent-ink':'bg-card text-ink'}">
+          <span class="w-5.5 h-5.5 shrink-0 border-[1.5px] border-ink flex items-center justify-center text-accent font-display ${form.consent?'bg-ink':'bg-transparent'}">${form.consent?'✓':''}</span>
+          <span><span class="font-display font-extrabold text-13 uppercase">Aceito o termo de responsável</span><br><span class="text-12 leading-normal">Autorizo a participação do menor na peneira e o tratamento dos dados conforme LGPD/ECA.</span></span>
         </button>`;
-      return `<div style="padding:24px;background:var(--accent);color:var(--accent-ink);border:1px solid var(--ink)"><div class="display" style="font-size:24px">Você é maior.</div><div style="font-size:13px;margin-top:8px">Sem necessidade de responsável. Confirme sua inscrição.</div></div>`;
+      return `<div class="p-6 bg-accent text-accent-ink border border-ink"><div class="display text-24">Você é maior.</div><div class="text-13 mt-2">Sem necessidade de responsável. Confirme sua inscrição.</div></div>`;
     }
   }
 
@@ -186,21 +186,21 @@ function renderCadastro() {
     const loginHref = 'login.html?tipo=jogador' + (evento ? '&evento=' + encodeURIComponent(evento.id) : '');
     document.documentElement.style.setProperty('--cad-head-h', '0px');
     screenEl.innerHTML = `
-      <div class="cad-body" style="width:100%;max-width:920px;margin:0 auto;padding:40px 32px 64px">
+      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
         ${tagHTML('Inscrição enviada', 'accent')}
-        <h1 class="display" style="font-size:clamp(32px,7vw,56px);margin:16px 0 12px" tabindex="-1" data-done-title>Perfil criado.<br>Você está no jogo.</h1>
-        <p style="font-size:16px;line-height:1.6;color:var(--ink-soft);max-width:600px;margin:0 0 32px">${evento
+        <h1 class="display text-fluid-sm mt-4 mb-3 mx-0" tabindex="-1" data-done-title>Perfil criado.<br>Você está no jogo.</h1>
+        <p class="text-16 leading-copy text-ink-soft max-w-copy-sm mt-0 mb-8 mx-0">${evento
           ? `Sua inscrição em <strong>${esc(evento.name)}</strong> (${fmtDotDate(evento.date, 'full')}) foi registrada. Você recebe SMS com a confirmação e, se for convocado, com local e horário.`
           : 'Seu perfil foi registrado. Você recebe SMS com a confirmação e será alocado na peneira mais próxima com vaga.'}</p>
-        <div class="card" style="max-width:600px">
-          <div class="g g-2" style="gap:16px;margin-bottom:20px">
+        <div class="card max-w-copy-sm">
+          <div class="g g-2 gap-4 mb-5">
             ${statHTML('Score de completude', sc + '%', { sub: sc >= 80 ? 'alto' : sc >= 60 ? 'bom' : 'inicial' })}
             ${statHTML('Passos concluídos', '5/5', { sub: STEPS.length + ' etapas' })}
           </div>
           ${progressHTML(sc, 100, { sm: true })}
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--ink-mute);margin-top:8px">Você pode completar o perfil depois, pela sua área — cada campo adicional sobe o score.</div>
+          <div class="font-mono text-10 text-ink-mute mt-2">Você pode completar o perfil depois, pela sua área — cada campo adicional sobe o score.</div>
         </div>
-        <div class="btn-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:32px">
+        <div class="btn-row flex gap-2 flex-wrap mt-8">
           <a href="${loginHref}" class="btn btn--accent btn--lg">Entrar para acompanhar →</a>
           <a href="peneiras.html" class="btn btn--ghost btn--lg">Ver outras peneiras</a>
         </div>

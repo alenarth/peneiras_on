@@ -1,0 +1,86 @@
+/* ============================================================
+   PENEIRAS ON — CSS autoral residual (importado por input.css na camada
+   components). Tudo o que está aqui não faz sentido como utilitária do
+   Tailwind, por um destes motivos:
+
+   1. RADAR DE ATRIBUTOS (.radar-*) — é SVG desenhado por radar.js; texto e
+      traços dentro de <svg> usam `fill`/`stroke` e tipografia própria que
+      não têm utilitária equivalente sem virar valor arbitrário por elemento.
+   2. IMAGEM DE FUNDO DO PELÉ (.pele-bg) — `image-set()` com WebP e fallback
+      JPEG: função CSS de seleção de formato, sem utilitária.
+   3. SCRIMS E GRADIENTES DECORATIVOS (.hero__scrim, .hero__top-fade,
+      .login-side__scrim, .manifesto__scrim, .parceria__scrim, .glow-*,
+      .map-grid, .qr-pattern, .player-img) — gradientes de várias paradas;
+      como utilitária arbitrária virariam uma classe de 100+ caracteres com
+      underscores no lugar dos espaços, ilegível e impossível de manter.
+   4. MARQUEE DA LANDING (@keyframes marquee) — animação contínua com
+      keyframes próprios; o Tailwind só traz spin/ping/pulse/bounce.
+   5. FUNIL DO PIPELINE e MAPA DE CALOR — o clip-path do funil e a posição/
+      raio de cada estado no mapa são calculados em tempo de execução pelo JS
+      (dependem dos dados), então continuam como estilo inline dinâmico;
+      aqui fica só a moldura estática (.map-grid, .funnel-bar).
+   ============================================================ */
+
+/* 1. Radar de atributos (SVG) */
+.radar-svg { display: block; max-width: 100%; height: auto; }
+.radar-axis-label { font-family: var(--font-mono); font-size: 10px; fill: var(--color-ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+.radar-axis-value { font-family: var(--font-display); font-size: 12px; font-weight: 900; fill: var(--color-ink); }
+
+/* 2. Imagem de fundo do Pelé — WebP (100 KB) com fallback JPEG (156 KB).
+   Navegador sem suporte a image-set() ou a WebP fica no JPEG da 1a linha. */
+.pele-bg {
+  background-image: url("../pele-hero.jpg");
+  background-image: image-set(url("../pele-hero.webp") type("image/webp"),
+                              url("../pele-hero.jpg") type("image/jpeg"));
+  background-size: cover;
+  background-position: center;
+}
+
+/* 3. Scrims e gradientes decorativos */
+.hero__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,8,9,0.92) 0%, rgba(8,8,9,0.72) 28%, rgba(8,8,9,0.25) 55%, rgba(8,8,9,0.1) 100%); }
+.hero__top-fade { background: linear-gradient(180deg, rgba(8,8,9,0.55), transparent); }
+.login-side__scrim { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(14,14,15,0.92), rgba(14,14,15,0.65) 60%, rgba(14,14,15,0.45)); }
+.manifesto__scrim { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(14,14,15,0.95) 0%, rgba(14,14,15,0.7) 35%, rgba(14,14,15,0.2) 80%); }
+.parceria__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,14,15,0.95), rgba(14,14,15,0.7) 50%, rgba(14,14,15,0.15)); }
+.glow-accent { background: radial-gradient(circle at top right, rgba(84,245,66,0.25), transparent 70%); }
+.glow-gold { background: radial-gradient(circle at top right, rgba(200,164,21,0.45), transparent 70%); }
+.glow-gold-soft { background: radial-gradient(circle at top right, rgba(200,164,21,0.4), transparent 70%); }
+.glow-gold-softer { background: radial-gradient(circle at top right, rgba(200,164,21,0.35), transparent 70%); }
+.player-img {
+  background: repeating-linear-gradient(135deg, var(--color-bg-alt) 0 12px, var(--color-line-soft) 12px 13px);
+  border: 1px solid var(--color-line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.qr-pattern { aspect-ratio: 1; background: repeating-conic-gradient(var(--color-ink) 0% 4%, var(--color-bg) 4% 8%); }
+
+/* 4. Marquee da landing */
+.marquee { overflow: hidden; white-space: nowrap; }
+.marquee__track {
+  display: inline-flex; gap: 48px; padding: 14px 0;
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  text-transform: uppercase; letter-spacing: -0.02em;
+  animation: marquee 40s linear infinite;
+}
+.marquee__track span { color: inherit; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* 5. Mapa de calor e funil — moldura estática; posições e clip-path vêm do JS */
+.map-grid {
+  position: absolute; inset: 0; opacity: 0.5;
+  background-image: linear-gradient(var(--color-line-soft) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--color-line-soft) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.map-dot { position: absolute; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; }
+.funnel-bar { position: absolute; top: 0; left: 50%; height: 100%; transform: translateX(-50%); }
+
+/* 6. Cadastro — alturas medidas pelo JS (--header-h, --cad-head-h) alimentam
+   scroll-padding e min-height do <main>. Dependem de custom properties escritas
+   em tempo de execução e do seletor html:has(), sem utilitária equivalente.
+   Escopo: só a página cadastro.html. */
+:root { --header-h: 65px; --cad-head-h: 0px; }
+html:has(body[data-page="cadastro.html"]) { scroll-padding-top: calc(var(--header-h) + var(--cad-head-h) + 16px); scroll-padding-bottom: 110px; }
+body[data-page="cadastro.html"] main[data-screen] { min-height: calc(100vh - var(--header-h)); min-height: calc(100dvh - var(--header-h)); display: flex; flex-direction: column; }
+@media (max-height: 640px) { html:has(body[data-page="cadastro.html"]) { scroll-padding-top: calc(var(--header-h) + 16px); } }
