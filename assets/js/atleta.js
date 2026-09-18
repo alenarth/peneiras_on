@@ -3,6 +3,9 @@
    ============================================================ */
 const ME = MOCK.ATHLETES[0];
 const screenEl = document.querySelector('[data-screen]');
+if (!screenEl) {
+  throw new Error('atleta.html está sem [data-screen]; o script não pode inicializar.');
+}
 const params = new URLSearchParams(location.search);
 const SCREENS = { status: renderStatus, perfil: renderPerfil, peneiras: renderPeneiras };
 const telaParam = params.get('tela') || 'status';

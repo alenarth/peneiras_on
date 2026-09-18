@@ -7,6 +7,9 @@ const state = { step:1, channel:'sms', pwd:'', pwdConf:'', showPwd:false };
 const barsEl = document.querySelector('[data-bars]');
 const labelEl = document.querySelector('[data-step-label]');
 const contentEl = document.querySelector('[data-step-content]');
+if (!barsEl || !labelEl || !contentEl) {
+  throw new Error('recuperar.html está sem os containers do wizard de recuperação.');
+}
 
 function strength(pwd) {
   let s = 0;

@@ -2,6 +2,9 @@
    PENEIRAS ON — Gestora (dashboard · mapa · pipeline · eventos)
    ============================================================ */
 const screenEl = document.querySelector('[data-screen]');
+if (!screenEl) {
+  throw new Error('gestora.html está sem [data-screen]; o script não pode inicializar.');
+}
 const params = new URLSearchParams(location.search);
 const SCREENS = { dashboard: renderDashboard, mapa: renderMapa, pipeline: renderPipeline, eventos: renderEventos };
 const telaParam = params.get('tela') || 'dashboard';

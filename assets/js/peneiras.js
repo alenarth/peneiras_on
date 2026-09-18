@@ -8,6 +8,16 @@ mountSiteHeader('peneiras.html');
 mountSiteFooter();
 
 const season = MOCK.SEASON;
+const seasonLine = document.querySelector('[data-season-line]');
+const highlight = document.querySelector('[data-highlight]');
+const rows = document.querySelector('[data-rows]');
+const count = document.querySelector('[data-count]');
+const stateFilter = document.querySelector('[data-state-filter]');
+const statusFilters = document.querySelector('[data-status-filters]');
+
+if (!seasonLine || !highlight || !rows || !count || !stateFilter || !statusFilters) {
+  throw new Error('peneiras.html está incompleta: faltam elementos essenciais do calendário.');
+}
 const filters = { status: 'all', state: 'all' };
 
 /* ---------- Linha da temporada ---------- */

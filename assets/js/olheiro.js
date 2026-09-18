@@ -2,6 +2,9 @@
    PENEIRAS ON — Olheiro (lista · perfil · check-in · avaliação)
    ============================================================ */
 const screenEl = document.querySelector('[data-screen]');
+if (!screenEl) {
+  throw new Error('olheiro.html está sem [data-screen]; o script não pode inicializar.');
+}
 const params = new URLSearchParams(location.search);
 const SCREENS = { lista: renderLista, perfil: renderPerfil, checkin: renderCheckin, avaliacao: renderAvaliacao };
 const telaParam = params.get('tela') || 'lista';

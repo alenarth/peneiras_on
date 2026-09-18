@@ -64,7 +64,9 @@ const Validation = (() => {
     return input.id + '-error';
   }
   function setError(input, message) {
-    const wrap = input.closest('.field') || input.parentElement;
+    if (!input || !input.setAttribute) return null;
+    const wrap = input.closest ? (input.closest('.field') || input.parentElement) : input.parentElement;
+    if (!wrap) return null;
     const id = errorId(input);
     let el = document.getElementById(id);
     if (!el) {
@@ -82,6 +84,7 @@ const Validation = (() => {
     return el;
   }
   function clearError(input) {
+    if (!input || !input.removeAttribute) return;
     const id = errorId(input);
     const el = document.getElementById(id);
     if (el) el.remove();
@@ -95,13 +98,14 @@ const Validation = (() => {
      Devolve { validateAll(showErrors), validateField(el), reset() }.
      onValid(e) roda no submit só quando tudo passa. */
   function bind(form, fields, onValid) {
+    const validFields = (fields || []).filter(Boolean).filter(f => f.el && typeof f.validate === 'function');
     const touched = new WeakSet();
     const validateField = (f, show) => {
       const msg = f.validate(f.el.value);
       if (show) { if (msg) setError(f.el, msg); else clearError(f.el); }
       return !msg;
     };
-    fields.forEach(f => {
+    validFields.forEach(f => {
       f.el.addEventListener('blur', () => { touched.add(f.el); validateField(f, true); });
       f.el.addEventListener('input', () => { if (touched.has(f.el) || f.el.getAttribute('aria-invalid') === 'true') validateField(f, true); });
       // campos dependentes (ex.: confirmar senha) revalidam quando o par muda
@@ -109,7 +113,7 @@ const Validation = (() => {
     });
     const validateAll = (show = true) => {
       let first = null;
-      fields.forEach(f => { touched.add(f.el); const ok = validateField(f, show); if (!ok && !first) first = f.el; });
+      validFields.forEach(f => { touched.add(f.el); const ok = validateField(f, show); if (!ok && !first) first = f.el; });
       if (first && show) first.focus();
       return !first;
     };
@@ -117,8 +121,8 @@ const Validation = (() => {
       e.preventDefault();
       if (validateAll(true)) onValid && onValid(e);
     });
-    const reset = () => fields.forEach(f => clearError(f.el));
-    return { validateAll, validateField: el => { const f = fields.find(x => x.el === el); return f ? validateField(f, true) : true; }, reset };
+    const reset = () => validFields.forEach(f => clearError(f.el));
+    return { validateAll, validateField: el => { const f = validFields.find(x => x.el === el); return f ? validateField(f, true) : true; }, reset };
   }
 
   /* Move o foco para o 1º campo marcado como inválido dentro de root */

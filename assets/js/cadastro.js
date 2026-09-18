@@ -6,6 +6,9 @@
 mountSimpleHeader('Criar perfil', 'index.html', 'Voltar à home', { cta: false });
 
 const screenEl = document.querySelector('[data-screen]');
+if (!screenEl) {
+  throw new Error('cadastro.html está sem [data-screen]; o script não pode inicializar.');
+}
 
 // Alturas reais do cabeçalho e do bloco de score → variáveis CSS (sticky e
 // scroll-padding acompanham o que está na tela, sem 65px chumbado).
