@@ -54,7 +54,7 @@ function renderStep1(focusField) {
           <button type="button" data-ch="email" class="ch-btn">E-mail<br><span class="font-mono text-11 opacity-70">lu•••@gmail.com</span></button>
         </div>
       </div>
-      <button class="btn btn--primary btn--lg btn--full" id="send" disabled>Enviar código →</button>
+      <button class="btn btn--primary btn--lg btn--full" id="send">Enviar código →</button>
       <div class="pt-4 border-t border-t-line-soft flex justify-between">
         <span class="text-13 text-ink-soft">Lembrou a senha?</span>
         <a href="login.html?tipo=jogador" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Entrar →</a>
@@ -67,8 +67,14 @@ function renderStep1(focusField) {
   });
   const ident = contentEl.querySelector('#ident');
   const send = contentEl.querySelector('#send');
-  ident.addEventListener('input', () => { send.disabled = !ident.value; });
-  send.addEventListener('click', () => { state.step = 2; render(); });
+  // validation.js: CPF (11 dígitos) ou e-mail válido; erro no blur ou ao enviar
+  const v1 = Validation.bind(null, [{ el: ident, validate: v => Validation.rules.emailOrCpf(v) }]);
+  send.addEventListener('click', () => {
+    if (!v1.validateAll(true)) return;
+    state.ident = ident.value.trim();
+    toast(`Código enviado por ${state.channel === 'sms' ? 'SMS para ••• ••• ••42' : 'e-mail para lu•••@gmail.com'}.`, { type: 'success' });
+    state.step = 2; render();
+  });
   if (focusField) ident.focus();
 }
 
@@ -78,19 +84,23 @@ function renderStep2() {
   contentEl.innerHTML = `
     <h1 class="display h3 text-44 mt-1.5 mb-4 mx-0">Confirme<br>quem é você.</h1>
     <p class="text-15 leading-copy text-ink-soft mb-8">Enviamos um código de 6 dígitos por <strong>${chLabel}</strong> para <strong>${chMask}</strong>. Digite abaixo.</p>
-    <div class="flex gap-2 mb-6" id="code">
-      ${[0,1,2,3,4,5].map(i=>`<input class="code-input" data-i="${i}" inputmode="numeric" autocomplete="one-time-code" aria-label="Dígito ${i+1} de 6">`).join('')}
+    <div class="field mb-6">
+      <div class="flex gap-2" id="code" role="group" aria-label="Código de 6 dígitos">
+        ${[0,1,2,3,4,5].map(i=>`<input class="code-input" data-i="${i}" inputmode="numeric" autocomplete="one-time-code" aria-label="Dígito ${i+1} de 6">`).join('')}
+      </div>
     </div>
     <div class="flex justify-between items-center mb-6">
       <span class="mono text-mute normal-case">Código expira em <strong class="text-ink">09:32</strong></span>
       <button class="bg-transparent border-0 cursor-pointer font-mono text-11 font-bold uppercase tracking-label text-ink underline underline-offset-3">Reenviar</button>
     </div>
-    <button class="btn btn--primary btn--lg btn--full" id="verify" disabled>Verificar código →</button>
+    <button class="btn btn--primary btn--lg btn--full" id="verify">Verificar código →</button>
     <div class="mt-4 text-center"><button id="back1" class="bg-transparent border-0 cursor-pointer text-13 text-ink-soft underline underline-offset-3">← Voltar e trocar contato</button></div>`;
 
   const inputs = [...contentEl.querySelectorAll('.code-input')];
   const verify = contentEl.querySelector('#verify');
-  const check = () => { verify.disabled = !inputs.every(i => i.value); };
+  const group = contentEl.querySelector('#code');
+  // some o erro assim que os 6 dígitos estiverem preenchidos
+  const check = () => { if (inputs.every(i => i.value)) Validation.clearError(group); };
 
   /* Distribui uma sequência de dígitos a partir de um campo — usado tanto
      na colagem dos 6 dígitos quanto no preenchimento automático do SMS. */
@@ -125,7 +135,12 @@ function renderStep2() {
       if (e.key === 'ArrowRight' && i < 5) inputs[i+1].focus();
     });
   });
-  verify.addEventListener('click', () => { state.step = 3; render(); });
+  verify.addEventListener('click', () => {
+    const code = inputs.map(i => i.value).join('');
+    const msg = Validation.rules.code6(code);
+    if (msg) { Validation.setError(group, msg); (inputs.find(i => !i.value) || inputs[0]).focus(); return; }
+    state.step = 3; render();
+  });
   contentEl.querySelector('#back1').addEventListener('click', () => { state.step = 1; render(); });
   inputs[0].focus();
 }
@@ -144,16 +159,19 @@ function renderStep3() {
       <div id="meter"></div>
       <label class="field"><div class="field__label"><span>Confirmar nova senha</span></div>
         <input class="input" id="pwd2" type="${state.showPwd?'text':'password'}" placeholder="••••••••" value="${esc(state.pwdConf)}">
-        <span class="field__error hidden" id="mismatch" role="alert">As senhas não conferem</span>
       </label>
-      <button class="btn btn--primary btn--lg btn--full" id="save" disabled>Salvar e entrar →</button>
+      <button class="btn btn--primary btn--lg btn--full" id="save">Salvar e entrar →</button>
     </div>`;
 
   const pwd = contentEl.querySelector('#pwd');
   const pwd2 = contentEl.querySelector('#pwd2');
   const meter = contentEl.querySelector('#meter');
   const save = contentEl.querySelector('#save');
-  const mismatch = contentEl.querySelector('#mismatch');
+  // validation.js: força mínima (8+, maiúscula, número) e confirmação igual
+  const v3 = Validation.bind(null, [
+    { el: pwd, validate: v => Validation.rules.strongPassword(v) },
+    { el: pwd2, validate: v => Validation.rules.match(v, pwd.value, 'As senhas não conferem — digite a mesma senha nos dois campos.'), dependsOn: pwd },
+  ]);
 
   function update() {
     state.pwd = pwd.value; state.pwdConf = pwd2.value;
@@ -170,9 +188,6 @@ function renderStep3() {
         ${req(/\d/.test(pwd.value),'1 número')}
         ${req(/[^A-Za-z0-9]/.test(pwd.value),'1 caractere especial')}
       </div>`;
-    const valid = pwd.value.length>=8 && pwd.value===pwd2.value && s>=50;
-    mismatch.style.display = (pwd2.value && pwd2.value !== pwd.value) ? 'block' : 'none';
-    save.disabled = !valid;
   }
   function req(ok, text) {
     return `<span class="req ${ok?'text-success':'text-ink-mute'}"><span class="w-3.5 text-center">${ok?'✓':'○'}</span>${text}</span>`;
@@ -181,7 +196,7 @@ function renderStep3() {
   pwd2.addEventListener('input', update);
   pwd.focus();
   contentEl.querySelector('#tog').addEventListener('click', () => { state.showPwd = !state.showPwd; render(); });
-  save.addEventListener('click', () => { state.step = 4; render(); });
+  save.addEventListener('click', () => { if (v3.validateAll(true)) { toast('Senha atualizada com sucesso.', { type: 'success' }); state.step = 4; render(); } });
   update();
 }
 

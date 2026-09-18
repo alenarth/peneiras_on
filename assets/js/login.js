@@ -63,10 +63,17 @@ document.querySelector('[data-google]').addEventListener('click', () => {
   location.href = cfg.dest;
 });
 
-document.querySelector('[data-login-form]').addEventListener('submit', e => {
-  e.preventDefault();
-  location.href = cfg.dest;
-});
+// Validação (validation.js): jogador entra com CPF ou e-mail; olheiro e academia,
+// com e-mail corporativo. Senha não pode ficar vazia. O erro só aparece depois
+// que o campo perde o foco ou na tentativa de entrar; nesse caso o foco vai
+// para o primeiro campo inválido e o envio é bloqueado.
+idInput.id = idInput.id || 'login-id';
+const pwdInput = document.querySelector('[data-pwd]');
+pwdInput.id = pwdInput.id || 'login-pwd';
+Validation.bind(document.querySelector('[data-login-form]'), [
+  { el: idInput, validate: v => role === 'jogador' ? Validation.rules.emailOrCpf(v) : Validation.rules.email(v) },
+  { el: pwdInput, validate: v => Validation.rules.password(v) },
+], () => { location.href = cfg.dest; });
 
 // mostrar/ocultar senha
 const pwd = document.querySelector('[data-pwd]');

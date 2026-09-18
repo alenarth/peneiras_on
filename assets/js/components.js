@@ -50,6 +50,7 @@ function mountSiteHeader(active) {
           <a href="index.html#como-funciona">Como funciona</a>
           <a href="index.html#planos">Planos</a>
           <a href="peneiras.html">Peneiras</a>
+          <a href="feed.html">Feed</a>
           <a href="sobre.html">Sobre</a>
           <a href="index.html#faq">FAQ</a>
         </nav>
@@ -281,6 +282,7 @@ function mountSiteFooter(opts = {}) {
             <a href="sobre.html">Sobre</a>
             <a href="index.html#faq">FAQ</a>
             <a href="index.html#planos">Planos</a>
+            <a href="feed.html">Feed</a>
           </div>
         </div>
         <div>
@@ -356,24 +358,8 @@ function tagHTML(text, tone) {
   return `<span class="tag ${tone ? 'tag--'+tone : ''}">${text}</span>`;
 }
 
-/* ---------- Região aria-live global (acessibilidade dinâmica) ----------
-   Região polite invisível + window.announce(msg). Usada para anunciar
-   mudanças que acontecem sem recarregar a página: filtros e busca da lista
-   de inscritos, favoritar, check-in, salvar nota e decisão de avaliação. */
-document.addEventListener('DOMContentLoaded', () => {
-  if (!document.querySelector('[data-live-region]')) {
-    const lr = document.createElement('div');
-    lr.setAttribute('data-live-region', '');
-    lr.setAttribute('aria-live', 'polite');
-    lr.setAttribute('aria-atomic', 'true');
-    lr.className = 'sr-only';
-    document.body.appendChild(lr);
-  }
-});
-window.announce = function (msg) {
-  const lr = document.querySelector('[data-live-region]');
-  if (lr) { lr.textContent = ''; setTimeout(() => { lr.textContent = msg; }, 50); }
-};
+/* A região aria-live global e o announce() moraram aqui até a Sprint 3;
+   agora estão em ui.js (carregado antes deste arquivo), junto dos toasts. */
 
 /* ============================================================
    EVENTOS (peneiras) — compartilhado entre peneiras.html (público)

@@ -33,6 +33,7 @@ npm run build:site   # build + monta dist/ (páginas + assets) — é o que a Ve
 | `index.html` | Landing pública (hero, planos, FAQ) | — |
 | `sobre.html` | Institucional (missão, equipe, parceria) | — |
 | `peneiras.html` | Calendário público da temporada (filtros por status e estado, CTA para login) | — |
+| `feed.html` | Feed de destaques: confirmação de tags de atributo, votos, seguir, filtros por posição e estado | — |
 | `cadastro.html` | Criar perfil — wizard público de 5 passos | `?evento=<id>` (contexto vindo de `login.html`; id inválido cai no cadastro normal) |
 | `privacidade.html` | Política de Privacidade (LGPD/ECA) | — |
 | `login.html` | Login (3 perfis) | `?tipo=jogador\|olheiro\|academia` · `?evento=<id>` (contexto vindo de `peneiras.html`; id inválido cai no login normal) |
@@ -57,7 +58,11 @@ assets/
   css/tailwind.css               → SAÍDA compilada (gerada pelo build, fora do git)
   js/
     data.js                      → dados mockados (atletas, eventos, regiões)
-    components.js                → header, footer, dropdown, helpers de UI
+    ui.js                        → camada de interface genérica: toasts, announce() (aria-live),
+                                   helpers de DOM e localStorage defensivo — carregado antes dos demais
+    components.js                → header, footer, dropdown, helpers de markup (tagHTML, statHTML…)
+    feed.js                      → feed: cards, tags de atributo, votos, seguir, filtros, persistência
+    validation.js                → regras de validação e renderização de erro dos formulários
     radar.js                     → radar tático (SVG) + classificador de posição
     privacidade.js               → conteúdo da política
     login.js, recuperar.js       → lógica das telas de acesso
@@ -65,9 +70,38 @@ assets/
     gestora.js                   → lógica de cada persona
 ```
 
+## Manual de Interatividade
+
+Todo o comportamento é **JavaScript vanilla com manipulação direta do DOM** — sem framework,
+sem runtime além do navegador. Os módulos são carregados por `<script>` na ordem
+`data.js → ui.js → components.js → (módulo da tela)`. Quem controla o quê:
+
+| Tela | Funcionalidade | Arquivo(s) |
+|---|---|---|
+| Todas | Header público (nav, hambúrguer, menu "Entrar", scrollspy, sombra ao rolar), rodapé, card de peneira, contagem regressiva | `components.js` |
+| Todas | Toasts de sucesso/erro/informação, região `aria-live` (`announce()`), helpers de DOM, `localStorage` com try/catch | `ui.js` |
+| `feed.html` | Mural de destaques a partir de `MOCK.ATHLETES`; **confirmação de tags de atributo** (`aria-pressed` + contador), **votos** (um por pessoa, votar de novo desfaz), **seguir** (contador de seguidores); **filtros em tempo real** por posição e estado, combináveis, com contador e estado vazio; persistência em `localStorage` (`peneiras-on.feed.v1`) e botão "Zerar interações" | `feed.js` (usa `ui.js` para toast/announce/storage) |
+| `atleta.html?tela=perfil` | Bloco "Comunidade": as mesmas tags confirmáveis e o botão seguir do feed, reaproveitando `Feed.attrTagsHTML`, `Feed.followButtonHTML` e `Feed.bind` | `feed.js` + `atleta.js` |
+| `atleta.html` | Status (contagem regressiva), perfil (radar tático), minhas peneiras (filtros, inscrição) | `atleta.js`, `radar.js` |
+| `cadastro.html` | Wizard de 5 passos, score de completude ao vivo; **validação** por passo (nome, idade 07–19, CPF com 11 dígitos, cidade, posição/pé, responsável e termo para menores) com erro no blur ou na tentativa de avançar e foco no primeiro campo inválido; toast na conclusão | `cadastro.js` + `validation.js` |
+| `login.html` | Perfis por `?tipo=`; **validação** (jogador: CPF ou e-mail; olheiro/academia: e-mail; senha obrigatória) bloqueando o envio até corrigir; contexto `?evento=` | `login.js` + `validation.js` |
+| `recuperar.html` | 4 passos; **validação** de CPF/e-mail, código de 6 dígitos e confirmação de senha coincidente; toast ao enviar código e ao salvar | `recuperar.js` + `validation.js` |
+| `peneiras.html` | Calendário com filtros por status/estado, destaque com contagem regressiva | `peneiras.js` |
+| `olheiro.html` | Lista com busca/filtros (anúncio com debounce), favoritar (toast), check-in, avaliação (nota, decisão, toast) | `olheiro.js`, `radar.js` |
+| `gestora.html` | Dashboard, mapa de calor (filtros, bolhas escaladas pelo container), pipeline, eventos | `gestora.js` |
+| `privacidade.html` | Sumário com rolagem e foco, conteúdo da política | `privacidade.js` |
+
+**Padrões de acessibilidade das interações:** estado de alternância em `aria-pressed`;
+contadores com texto para leitor de tela (`sr-only`); toasts em região `aria-live="polite"`
+(erros com `role="alert"`), sem roubar foco e com botão de fechar; mensagens de validação
+ligadas ao campo por `aria-describedby` + `aria-invalid="true"` e `role="alert"`; filtros
+anunciados por `announce()`; nada de animação sob `prefers-reduced-motion`.
+
 ## Tecnologia / decisões
 
 - **Sem framework de UI.** Telas geradas por funções JS que retornam HTML (template strings) e injetam no DOM.
+  Código modular por responsabilidade: `ui.js` (interface genérica), `feed.js` (feed e interações
+  sociais), `validation.js` (formulários), `components.js` (markup compartilhado) e um arquivo por tela.
 - **Tailwind CSS v4** com `@tailwindcss/cli`. O tema é configurado em CSS, no bloco `@theme` de
   `assets/css/input.css` (forma prevista para a v4, equivalente ao `tailwind.config.js` da v3).
 - **Design system da Sprint 1 como tokens do Tailwind** — os 27 tokens do antigo `:root` viraram

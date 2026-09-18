@@ -60,10 +60,6 @@ function renderCadastro() {
     if(m<0||(m===0&&now.getDate()<d.getDate()))a--;
     return isNaN(a)?null:a;
   }
-  function valid() {
-    const a=age(), bad=a!=null&&(a<7||a>19), needs=a!=null&&a<18;
-    return { 1: form.name&&form.dob&&!bad&&form.cpf.length===11, 2: form.state&&form.city, 3: form.position&&form.foot, 4: true, 5: needs?(form.consent&&form.responsible&&form.responsiblePhone.replace(/\D/g,'').length>=10):true };
-  }
 
   /* Bloco do score — redesenhado a cada tecla, não só a cada troca de passo. */
   function scoreBlockHTML() {
@@ -78,7 +74,6 @@ function renderCadastro() {
   function render() {
     const a = age();
     const bad = a!=null&&(a<7||a>19), needs = a!=null&&a<18;
-    const v = valid();
     screenEl.innerHTML = `
       <div class="cad-head" data-cad-head>
         <div class="max-w-narrow my-0 mx-auto py-5 px-8 flex flex-col gap-3">
@@ -101,8 +96,8 @@ function renderCadastro() {
           <span class="mono text-mute">${STEPS[step-1]} · ${step}/5</span>
           <div class="ml-auto flex gap-2">
             ${step>1?`<button class="btn btn--ghost" id="back">← Voltar</button>`:''}
-            ${step<5?`<button class="btn btn--primary" id="next" ${v[step]?'':'disabled'}>Próximo passo →</button>`:''}
-            ${step===5?`<button class="btn btn--accent" id="finish" ${v[5]?'':'disabled'}>✓ Confirmar inscrição</button>`:''}
+            ${step<5?`<button class="btn btn--primary" id="next">Próximo passo →</button>`:''}
+            ${step===5?`<button class="btn btn--accent" id="finish">✓ Confirmar inscrição</button>`:''}
           </div>
         </div>
       </div>`;
@@ -111,8 +106,26 @@ function renderCadastro() {
     if (measure) measure.observe(screenEl.querySelector('[data-cad-head]'));
     const back=screenEl.querySelector('#back'), next=screenEl.querySelector('#next'), finish=screenEl.querySelector('#finish');
     if(back) back.onclick=()=>{ step--; render(); };
-    if(next) next.onclick=()=>{ step++; render(); };
-    if(finish) finish.onclick=()=>{ renderDone(); };
+    // Regras do passo (validation.js): erro aparece no blur ou na tentativa de
+    // avançar; aí o foco vai para o primeiro campo inválido. Grupos de botões
+    // (posição, pé, termo) validam pelo estado do formulário.
+    const q = id => screenEl.querySelector('#' + id);
+    const R = Validation.rules;
+    const stepRules = {
+      1: [{ el: q('f-name'), validate: v => R.required(v, 'Digite seu nome completo.') },
+          { el: q('f-dob'), validate: v => R.ageRange(v, 7, 19) },
+          { el: q('f-cpf'), validate: v => R.cpf(v) }],
+      2: [{ el: q('f-city'), validate: v => R.required(v, 'Informe a cidade onde você mora.') }],
+      3: [{ el: q('f-pos'), validate: () => form.position ? '' : 'Escolha sua posição principal.' },
+          { el: q('f-foot'), validate: () => form.foot ? '' : 'Escolha o pé dominante.' }],
+      4: [],
+      5: needs ? [{ el: q('f-resp'), validate: v => R.required(v, 'Informe o nome completo do responsável legal.') },
+                  { el: q('f-resp-phone'), validate: v => R.phone(v) },
+                  { el: q('f-consent'), validate: () => form.consent ? '' : 'Aceite o termo de responsável para continuar.' }] : [],
+    };
+    const validator = Validation.bind(null, (stepRules[step] || []).filter(f => f.el));
+    if(next) next.onclick=()=>{ if (validator.validateAll(true)) { step++; render(); } };
+    if(finish) finish.onclick=()=>{ if (validator.validateAll(true)) renderDone(); };
 
     function stepTitle() {
       return ['Quem é você?','De onde vem<br>o futebol?','Como você joga?','Mostre o seu jogo.','Falta só o responsável.'][step-1];
@@ -120,7 +133,7 @@ function renderCadastro() {
     function stepFields() {
       if(step===1) return `
         ${field('Nome completo',`<input class="input" id="f-name" placeholder="Seu nome completo" value="${esc(form.name)}">`)}
-        ${field('Data de nascimento',`<input class="input" type="date" id="f-dob" value="${esc(form.dob)}">`, a!=null?(bad?'':'Você tem '+a+' anos'):'', bad?'Idade fora da faixa permitida (07–19)':'')}
+        ${field('Data de nascimento',`<input class="input" type="date" id="f-dob" value="${esc(form.dob)}">`, a!=null&&!bad?'Você tem '+a+' anos':'')}
         ${field('CPF',`<input class="input" id="f-cpf" inputmode="numeric" placeholder="000.000.000-00" value="${esc(form.cpf)}">`,'11 dígitos, só números')}`;
       if(step===2) return `
         ${field('Estado',`<select class="select" id="f-state">${['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'].map(s=>`<option ${s===form.state?'selected':''}>${s}</option>`).join('')}</select>`)}
@@ -208,7 +221,7 @@ function renderCadastro() {
     const title = screenEl.querySelector('[data-done-title]');
     window.scrollTo(0, 0);
     title.focus({ preventScroll: true });
-    announce('Inscrição enviada. Perfil criado com ' + sc + '% de completude.');
+    toast('Inscrição enviada! Perfil criado com ' + sc + '% de completude.', { type: 'success', duration: 6000 });
   }
 
   /* Idade calculada sem redesenhar o passo: redesenhar recriava o <input type="date">
@@ -217,19 +230,14 @@ function renderCadastro() {
   function paintDobHint(dob) {
     const wrap = dob.closest('.field'); if (!wrap) return;
     const a = age(), bad = a != null && (a < 7 || a > 19);
-    wrap.querySelectorAll('.field__hint, .field__error').forEach(e => e.remove());
-    if (bad) dob.setAttribute('aria-invalid', 'true'); else dob.removeAttribute('aria-invalid');
-    if (bad) wrap.insertAdjacentHTML('beforeend', '<span class="field__error" role="alert">Idade fora da faixa permitida (07–19)</span>');
-    else if (a != null) wrap.insertAdjacentHTML('beforeend', `<span class="field__hint">Você tem ${a} anos</span>`);
+    wrap.querySelectorAll('.field__hint').forEach(e => e.remove());
+    // o erro de faixa etária é responsabilidade do validation.js (blur / tentativa)
+    if (a != null && !bad) wrap.insertAdjacentHTML('beforeend', `<span class="field__hint">Você tem ${a} anos</span>`);
   }
 
   /* Atualiza o que muda a cada tecla sem recriar os campos:
      estado dos botões e a barra de score. */
   function updateLive() {
-    const v=valid();
-    const next=screenEl.querySelector('#next'), finish=screenEl.querySelector('#finish');
-    if(next) next.disabled=!v[step];
-    if(finish) finish.disabled=!v[5];
     const sc=screenEl.querySelector('[data-score]');
     if(sc) sc.innerHTML=scoreBlockHTML();
   }

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feed — Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/tailwind.css">
+</head>
+<body data-page="feed.html">
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-site-header></div>
+
+  <main id="conteudo" tabindex="-1">
+
+  <!-- CABEÇALHO -->
+  <section class="section">
+    <div class="wrap g g-hero px-8 pt-20 pb-14 gap-14 items-end max-md:px-5">
+      <div>
+        <span class="tag tag--outline">Feed</span>
+        <h1 class="display text-fluid-hero leading-display-tight tracking-tighter mt-4 mb-0 mx-0">
+          Destaques<br>da <span class="mark inline-block leading-display-loose">temporada</span>.
+        </h1>
+      </div>
+      <div>
+        <p class="lead">Os atletas que estão chamando atenção nas peneiras. Confirme os atributos que você viu em campo, vote nos destaques e siga quem quer acompanhar — tudo fica salvo neste navegador.</p>
+        <div class="font-mono text-13 text-ink-soft mt-6 pt-6 border-t border-t-line-soft uppercase tracking-label" data-feed-line></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MURAL -->
+  <section class="section" id="mural">
+    <div class="wrap section__pad">
+      <div class="flex gap-2 mb-6 pb-4 border-b border-line flex-wrap items-center" role="group" aria-label="Filtrar atletas">
+        <label for="feed-pos" class="mono text-soft">Posição</label>
+        <select id="feed-pos" class="select w-auto min-w-40 h-8 pl-3 pr-8 text-13" data-filter-pos></select>
+        <label for="feed-uf" class="mono text-soft ml-2">Estado</label>
+        <select id="feed-uf" class="select w-auto min-w-30 h-8 pl-3 pr-8 text-13" data-filter-uf></select>
+        <button type="button" class="btn btn--ghost btn--sm" data-feed-clear>Limpar filtros</button>
+        <span class="ml-auto font-mono text-11 text-ink-soft" data-feed-count></span>
+      </div>
+
+      <div class="g g-3 gap-5" data-feed-grid></div>
+
+      <div class="card text-center py-10 px-6" data-feed-empty hidden>
+        <div class="display text-22">Nenhum atleta com esses filtros.</div>
+        <p class="text-14 text-ink-soft mt-2 mb-0">Tente outra posição ou outro estado.</p>
+      </div>
+
+      <div class="flex items-center gap-3 flex-wrap mt-10 pt-5 border-t border-t-line-soft">
+        <span class="font-mono text-11 text-ink-mute">Votos, confirmações e seguidores ficam salvos neste navegador.</span>
+        <button type="button" class="btn btn--ghost btn--sm ml-auto" data-feed-reset>Zerar interações</button>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <div data-site-footer></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/feed.js"></script>
+  <script>
+    mountSiteHeader('feed.html');
+    mountSiteFooter();
+    document.querySelector('[data-feed-line]').textContent =
+      `${MOCK.ATHLETES.length} atletas · ${new Set(MOCK.ATHLETES.map(a => a.state)).size} estados · ${MOCK.SEASON.events} peneiras`;
+    Feed.mount(document.getElementById('mural'));
+  </script>
+</body>
+</html>

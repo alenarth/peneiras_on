@@ -203,12 +203,13 @@ function renderPerfil() {
     favBtn.className='btn '+(fav?'btn--gold':'btn--ghost')+' btn--sm';
     favBtn.textContent='★ '+(fav?'Favorito':'Favoritar');
     favBtn.setAttribute('aria-pressed', String(fav));
-    announce(`${a.name} ${fav?'marcado como favorito':'removido dos favoritos'}`);
+    // toast (região polite) no lugar do announce — sem anúncio duplicado
+    toast(`${a.name} ${fav?'marcado como favorito.':'removido dos favoritos.'}`, { type: fav ? 'success' : 'info' });
   };
   favBtn.setAttribute('aria-pressed', String(fav));
 
   const saveNote = screenEl.querySelector('[data-save-note]');
-  if (saveNote) saveNote.onclick = () => announce('Nota salva.');
+  if (saveNote) saveNote.onclick = () => toast(`Nota sobre ${a.name} salva (privada).`, { type: 'success' });
 }
 
 /* ---------------- CHECK-IN ---------------- */
@@ -320,7 +321,7 @@ function renderAvaliacao() {
     screenEl.querySelectorAll('[data-dec]').forEach(b=>b.onclick=()=>{
       evalState[active]={...ev,decision:b.dataset.dec};
       render();
-      announce(`${a.name}: ${b.dataset.dec}.`);
+      toast(`${a.name}: avaliação registrada como "${b.dataset.dec}".`, { type: b.dataset.dec === 'descartar' ? 'info' : 'success' });
     });
     const cm = screenEl.querySelector('#comments'); if(cm) cm.oninput=()=>{ evalState[active]={...ev,comments:cm.value}; };
   }

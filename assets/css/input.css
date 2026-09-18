@@ -142,6 +142,13 @@
 
   /* Transições curtas do sistema */
   --default-transition-duration: 120ms;
+
+  /* Entrada do toast (só com motion-safe:) */
+  --animate-toast-in: toast-in 180ms ease-out;
+  @keyframes toast-in {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
 }
 
 /* ---------- 2. BASE ---------- */
@@ -551,6 +558,25 @@
   .rights__item { @apply grid grid-cols-[40px_1fr] gap-3 items-baseline p-3.5 odd:border-r odd:border-line-soft [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-line-soft max-md:odd:border-r-0 max-md:[&:nth-child(n+2)]:border-t max-md:[&:nth-child(n+2)]:border-line-soft; }
   .rights__n { @apply font-mono text-11 text-accent-text font-bold; }
   .toc-btn { @apply grid grid-cols-[32px_1fr] gap-2 items-baseline w-full px-0 py-2.5 cursor-pointer bg-transparent border-0 border-t border-line-soft text-left text-ink; }
+
+  /* --- toasts (ui.js) — pilha fixa, região polite; erro leva role=alert --- */
+  .toast-stack { @apply fixed bottom-4 right-4 z-60 flex flex-col gap-2 w-[min(360px,calc(100vw-32px))] pointer-events-none; }
+  .toast { @apply pointer-events-auto flex items-start gap-3 p-3.5 border border-line border-l-4 shadow-menu text-13 leading-normal; }
+  .toast--success { @apply bg-accent-soft text-ink border-l-success; }   /* ícone --success sobre --accent-soft: 4,9:1 */
+  .toast--success .toast__icon { @apply text-success; }
+  .toast--error { @apply bg-danger-soft text-ink border-l-danger; }      /* ícone --danger sobre --danger-soft: 4,95:1 */
+  .toast--error .toast__icon { @apply text-danger; }
+  .toast--info { @apply bg-ink text-bg border-ink border-l-accent; }     /* texto --bg sobre --ink: 17,5:1; ícone neon 13,3:1 */
+  .toast--info .toast__icon { @apply text-accent; }
+  .toast--info :focus-visible { @apply outline-accent; }
+  .toast__icon { @apply shrink-0 font-display font-black text-14 leading-none mt-0.5; }
+  .toast__body { @apply flex-1; }
+  .toast__close { @apply shrink-0 inline-flex items-center justify-center size-6 p-0 bg-transparent border-0 rounded cursor-pointer text-16 leading-none opacity-70 hover:opacity-100; }
+
+  /* --- tag de atributo confirmável (feed.js): aria-pressed é a fonte da verdade --- */
+  .attr-tag { @apply inline-flex items-center gap-1.5 h-8 px-2.5 border border-ink rounded bg-card text-ink font-mono text-11 uppercase tracking-label cursor-pointer transition-colors duration-120 hover:bg-bg-alt; }
+  .attr-tag[aria-pressed="true"] { @apply bg-accent text-accent-ink border-accent hover:bg-accent-hover; }
+  .attr-tag__count { @apply font-display font-extrabold text-12 tracking-normal; }
 
   /* Movimento reduzido: hover mantém só a troca de cor — sem subir, sem sombra
      animada, sem giro do chevron. */
