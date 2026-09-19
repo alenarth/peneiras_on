@@ -87,9 +87,19 @@ Três regras foram mantidas em todos os prompts:
 
 ### 7. Camada de interatividade (Sprint 3 — WD)
 
-**Objetivo:** atender aos requisitos de Web Development — feed com interações, filtros dinâmicos e validação de formulários.
+**Objetivo:** atender aos requisitos de Web Development — feed com interações sociais, filtros dinâmicos e validação de formulários.
 
-**Pedido:** implementação de feed com confirmação de tags de atributos, contadores de votos e ação de seguir; filtros por posição e região em tempo real, sem recarregamento; validação de formulários com mensagens de erro associadas aos campos; sistema de notificações (toasts); e reorganização do JavaScript em módulos funcionais (`ui.js`, `feed.js`, `validation.js`).
+**Pedido:** feed público (`feed.html`) com confirmação de tags de atributo por atleta, voto único por pessoa (votar de novo desfaz) e ação de seguir, cada interação com seu próprio contador; filtros por posição e por estado, combináveis, aplicados em tempo real sobre os cards já montados, sem recarregar a página; validação de formulário nas telas de acesso e cadastro — incluindo `login.html`, que até então não validava nenhum campo — com a mensagem de erro associada ao campo (`aria-describedby` + `aria-invalid`), aparecendo só no blur ou na tentativa de envio, e foco no primeiro campo inválido quando o envio é bloqueado; sistema de toasts para os avisos de sucesso, erro e informação; reorganização do JavaScript em três módulos por responsabilidade — `ui.js` (camada de interface genérica), `feed.js` (feed e interações sociais) e `validation.js` (regras e renderização de erro); persistência das interações do feed em `localStorage`, sobrevivendo a F5.
+
+**Resultado verificado:** `feed.js` guarda votos, tags confirmadas e follows num único objeto em `localStorage` (`peneiras-on.feed.v1`), com fallback para estado vazio se a chave estiver ausente ou corrompida; os contadores exibidos somam um valor-base determinístico, derivado dos dados do próprio atleta no mock, à interação da pessoa — nascem preenchidos, mas não dependem de `Math.random()`. `validation.js` expõe um contrato único (`Validation.bind`) reaproveitado por `login.js`, `cadastro.js` e `recuperar.js`, com regras como `email`, `cpf`, `emailOrCpf` (login e recuperação aceitam os dois no mesmo campo), `password`, `code6`, `match` e `ageRange`; `login.html` passou a bloquear o envio até CPF/e-mail e senha serem válidos. `ui.js` centraliza `toast()` (pilha fixa, `role="alert"` no erro e `role="status"` nos demais, pausa ao passar o mouse ou focar, sem animação sob `prefers-reduced-motion`) e `announce()` (região `aria-live` única, usada pelos filtros). Os módulos carregam na ordem `data.js → ui.js → components.js → módulo da tela`; o bloco de tags e o botão de seguir do feed são reaproveitados em `atleta.html?tela=perfil` a partir das funções exportadas por `Feed` (`attrTagsHTML`, `followButtonHTML`, `bind`).
+
+### 8. Fechamento documental (Sprint 3)
+
+**Objetivo:** completar, no repositório, os itens de entrega exigidos pelo enunciado que o código por si só não cobre, antes do prazo de 25/09.
+
+**Pedido:** inclusão, no `README.md`, de um bloco de identificação (nome do projeto, disciplinas da entrega, integrantes com RM e link de deploy) logo abaixo do título; declaração explícita de que o MVP visual da equipe é a interface implementada e publicada, e não um protótipo em Figma; criação da tabela de contribuições exigida pelo enunciado, com a linha do responsável pelo front-end preenchida a partir do que consta no repositório e marcadores para os demais integrantes completarem branch e PR; reescrita da seção 7 deste documento, que descrevia o pedido antes daquela rodada ser executada, para refletir o que de fato foi implementado; e remoção de `about.html`, um stub de redirecionamento para `sobre.html` sem nenhuma referência em HTML, JS ou neste documento.
+
+**Restrições dadas:** nenhum commit automático; `integrantes.txt` preservado intacto, porque cada integrante preenche o próprio dado; nenhuma alteração em código de aplicação, estilo ou build além da remoção do arquivo órfão.
 
 ---
 

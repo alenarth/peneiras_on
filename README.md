@@ -1,5 +1,27 @@
 # Peneiras On — Front-end (HTML + Tailwind CSS + JS vanilla)
 
+## Identificação
+
+**Projeto:** Peneiras On — Challenge Pelé Academia · FIAP · Engenharia de Software · 1º ano ·
+Semi-presencial Rio de Janeiro · Sprint 3 · 2º semestre de 2026
+
+**Disciplinas desta entrega:** Front-End Design (FED) e Web Development (WD)
+
+**Integrantes:**
+
+- Arthur Alen Amorelli Pereira — RM 571897
+- [NOME COMPLETO DO INTEGRANTE 2] — RM [RM]
+- [NOME COMPLETO DO INTEGRANTE 3] — RM [RM]
+- [NOME COMPLETO DO INTEGRANTE 4] — RM [RM]
+- [NOME COMPLETO DO INTEGRANTE 5] — RM [RM]
+
+**Deploy:** [https://peneirason.vercel.app](https://peneirason.vercel.app)
+
+**Protótipo / Figma:** este projeto não tem Figma. O enunciado define o entregável-âncora da
+Sprint 3 como "protótipo navegável (ex.: Figma interativo) **ou** interface implementada" — esta
+equipe optou pela segunda forma. O MVP visual é a aplicação acima, implementada e publicada; não
+há protótipo em Figma associado.
+
 Plataforma de captação de talentos — protótipo de front-end multi-página.
 **HTML5 + Tailwind CSS v4 + JavaScript (ES2017) vanilla**, sem framework de UI. A única
 dependência é o Tailwind (e seu CLI), usado no passo de build do CSS.
@@ -173,6 +195,16 @@ minificado 86 KB (13,4 KB gzip) — o Tailwind emite cada componente já expandi
 `vercel.json` define `installCommand: npm install`, `buildCommand: npm run build:site` e
 `outputDirectory: dist`. A cada push na `main` a Vercel instala o Tailwind, compila o CSS e
 publica só `dist/` (páginas + assets, sem `node_modules` nem os fontes do CSS).
+
+## Equipe e contribuições
+
+| Integrante | RM | Branch(es) | Pull Request(s) | Telas/Componentes entregues |
+|---|---|---|---|---|
+| Arthur Alen Amorelli Pereira | 571897 | [branch] | [PR] | Migração completa para Tailwind CSS v4 (tema em `@theme`, componentização com `@apply`, `residual.css` justificado bloco a bloco, build npm e configuração de deploy na Vercel); páginas públicas `peneiras.html`, `cadastro.html` e `feed.html`; módulos `ui.js` (toasts, `announce()`, storage defensivo), `feed.js` (tags de atributo, votos, seguir, filtros, persistência) e `validation.js` (validação de formulários, incluindo o login); auditoria de acessibilidade WCAG 2.1 AA |
+| [NOME COMPLETO DO INTEGRANTE 2] | [RM] | [branch] | [PR] | [a preencher] |
+| [NOME COMPLETO DO INTEGRANTE 3] | [RM] | [branch] | [PR] | [a preencher] |
+| [NOME COMPLETO DO INTEGRANTE 4] | [RM] | [branch] | [PR] | [a preencher] |
+| [NOME COMPLETO DO INTEGRANTE 5] | [RM] | [branch] | [PR] | [a preencher] |
 
 ---
 FIAP — Engenharia de Software — Semi-Presencial RJ · 2026
