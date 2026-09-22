@@ -16,15 +16,15 @@
 }
 
 /* 3. Scrims e gradientes decorativos */
-.hero__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,8,9,0.92) 0%, rgba(8,8,9,0.72) 28%, rgba(8,8,9,0.25) 55%, rgba(8,8,9,0.1) 100%); }
-.hero__top-fade { background: linear-gradient(180deg, rgba(8,8,9,0.55), transparent); }
-.login-side__scrim { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(14,14,15,0.92), rgba(14,14,15,0.65) 60%, rgba(14,14,15,0.45)); }
-.manifesto__scrim { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(14,14,15,0.95) 0%, rgba(14,14,15,0.7) 35%, rgba(14,14,15,0.2) 80%); }
-.parceria__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,14,15,0.95), rgba(14,14,15,0.7) 50%, rgba(14,14,15,0.15)); }
-.glow-accent { background: radial-gradient(circle at top right, rgba(84,245,66,0.25), transparent 70%); }
-.glow-gold { background: radial-gradient(circle at top right, rgba(200,164,21,0.45), transparent 70%); }
-.glow-gold-soft { background: radial-gradient(circle at top right, rgba(200,164,21,0.4), transparent 70%); }
-.glow-gold-softer { background: radial-gradient(circle at top right, rgba(200,164,21,0.35), transparent 70%); }
+.hero__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,15,18,0.94) 0%, rgba(13,15,18,0.78) 28%, rgba(13,15,18,0.36) 55%, rgba(13,15,18,0.16) 100%); }
+.hero__top-fade { background: linear-gradient(180deg, rgba(13,15,18,0.65), transparent); }
+.login-side__scrim { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(13,15,18,0.94), rgba(13,15,18,0.72) 60%, rgba(13,15,18,0.5)); }
+.manifesto__scrim { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(13,15,18,0.96) 0%, rgba(13,15,18,0.76) 35%, rgba(13,15,18,0.28) 80%); }
+.parceria__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,15,18,0.96), rgba(13,15,18,0.76) 50%, rgba(13,15,18,0.22)); }
+.glow-accent { background: radial-gradient(circle at top right, rgba(249,115,22,0.30), transparent 70%); }
+.glow-gold { background: radial-gradient(circle at top right, rgba(251,146,60,0.42), transparent 70%); }
+.glow-gold-soft { background: radial-gradient(circle at top right, rgba(251,146,60,0.34), transparent 70%); }
+.glow-gold-softer { background: radial-gradient(circle at top right, rgba(251,146,60,0.28), transparent 70%); }
 .player-img {
   background: repeating-linear-gradient(135deg, var(--color-bg-alt) 0 12px, var(--color-line-soft) 12px 13px);
   border: 1px solid var(--color-line);
@@ -54,19 +54,6 @@
 }
 .map-dot { position: absolute; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; }
 .funnel-bar { position: absolute; top: 0; left: 50%; height: 100%; transform: translateX(-50%); }
-
-/* 5b. Mapa de oportunidades — cada <path> pinta a partir de --uf-fill (escrito
-   inline pelo JS via color-mix, nunca hex). O fill precisa vir de CSS (não de
-   atributo inline) para o :hover/:focus poder sobrescrevê-lo com --color-primary.
-   Stroke fixo derivado do foreground por color-mix; hover/focus em UF ativa
-   acende o laranja cheio. Escopo: seção #mapa da gestora. */
-.uf-opp {
-  fill: var(--uf-fill);
-  stroke: color-mix(in oklab, var(--color-ink) 22%, transparent);
-  stroke-width: 1.2; stroke-linejoin: round;
-}
-.uf-opp[data-active="1"]:hover,
-.uf-opp[data-active="1"]:focus-visible { fill: var(--color-primary); outline: none; }
 
 /* 6. Cadastro — alturas medidas pelo JS (--header-h, --cad-head-h) alimentam
    scroll-padding e min-height do <main>. Dependem de custom properties escritas
