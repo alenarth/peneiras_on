@@ -10,7 +10,7 @@ Semi-presencial Rio de Janeiro · Sprint 3 · 2º semestre de 2026
 **Integrantes:**
 
 - Arthur Alen Amorelli Pereira — RM 571897
-- [NOME COMPLETO DO INTEGRANTE 2] — RM [RM]
+- Caio Viana de Faria — RM 570634
 - [NOME COMPLETO DO INTEGRANTE 3] — RM [RM]
 - [NOME COMPLETO DO INTEGRANTE 4] — RM [RM]
 - [NOME COMPLETO DO INTEGRANTE 5] — RM [RM]
@@ -201,7 +201,7 @@ publica só `dist/` (páginas + assets, sem `node_modules` nem os fontes do CSS)
 | Integrante | RM | Branch(es) | Pull Request(s) | Telas/Componentes entregues |
 |---|---|---|---|---|
 | Arthur Alen Amorelli Pereira | 571897 | [branch] | [PR] | Migração completa para Tailwind CSS v4 (tema em `@theme`, componentização com `@apply`, `residual.css` justificado bloco a bloco, build npm e configuração de deploy na Vercel); páginas públicas `peneiras.html`, `cadastro.html` e `feed.html`; módulos `ui.js` (toasts, `announce()`, storage defensivo), `feed.js` (tags de atributo, votos, seguir, filtros, persistência) e `validation.js` (validação de formulários, incluindo o login); auditoria de acessibilidade WCAG 2.1 AA |
-| [NOME COMPLETO DO INTEGRANTE 2] | [RM] | [branch] | [PR] | [a preencher] |
+| Caio Viana de Faria | 570634 | caio | [PR] | Mudança na palheta de cores do site. |
 | [NOME COMPLETO DO INTEGRANTE 3] | [RM] | [branch] | [PR] | [a preencher] |
 | [NOME COMPLETO DO INTEGRANTE 4] | [RM] | [branch] | [PR] | [a preencher] |
 | [NOME COMPLETO DO INTEGRANTE 5] | [RM] | [branch] | [PR] | [a preencher] |
