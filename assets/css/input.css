@@ -219,7 +219,7 @@
   .wrap--narrow { @apply max-w-narrow; }
   .wrap--tight { @apply max-w-tight; }
   .section { @apply border-b border-line; }
-  .section__pad { @apply py-16; }
+  .section__pad { @apply py-20; }
   .grid-2 { @apply grid grid-cols-[repeat(2,1fr)] gap-6 max-md:grid-cols-[1fr]; }
   .grid-3 { @apply grid grid-cols-[repeat(3,1fr)] gap-6 max-md:grid-cols-[1fr]; }
   .grid-4 { @apply grid grid-cols-[repeat(4,1fr)] gap-6 max-md:grid-cols-[1fr]; }
@@ -513,7 +513,9 @@
   .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
   .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
-  .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-14 items-end px-0 pt-14 pb-10 max-md:grid-cols-[1fr] max-md:px-5; }
+  /* Altura mínima independente do tamanho do título: a foto precisa de espaço
+     acima do texto para aparecer. items-end deixa esse espaço no topo. */
+  .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-24 pb-14 min-h-[640px] max-md:grid-cols-[1fr] max-md:px-5 max-md:min-h-0 max-md:pt-16; }
   .glass { @apply border border-ink/25 p-6 bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
   .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink/60; }
   .glass-stat__value { @apply font-display font-black text-28 leading-display tracking-display-lg; }
