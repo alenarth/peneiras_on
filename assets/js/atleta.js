@@ -48,7 +48,7 @@ function renderStatus() {
             <span class="kicker text-ink/55">Sua próxima peneira</span>
             <span class="font-mono text-11 text-accent">● ATIVA</span>
           </div>
-          <div class="display text-44 tracking-display-lg">Rio · Caxias</div>
+          <div class="display text-56 tracking-display-lg">Rio · Caxias</div>
           <div class="g g-3 gap-6 mt-8 pt-6 border-t border-t-ink/20">
             <div><div class="kicker text-ink/55">Data</div><div class="display text-22 mt-1">${fmtDotDate(nextEvent.date, 'short')}</div></div>
             <div><div class="kicker text-ink/55">Horário</div><div class="display text-22 mt-1">08h00</div></div>
