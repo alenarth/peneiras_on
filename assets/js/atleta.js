@@ -48,13 +48,13 @@ function renderStatus() {
             <span class="kicker text-ink/55">Sua próxima peneira</span>
             <span class="font-mono text-11 text-accent">● ATIVA</span>
           </div>
-          <div class="display text-56 tracking-display-lg">Rio · Caxias</div>
+          <div class="display text-56 tracking-display-lg">${eventShortName(nextEvent)}</div>
           <div class="g g-3 gap-6 mt-8 pt-6 border-t border-t-ink/20">
             <div><div class="kicker text-ink/55">Data</div><div class="display text-22 mt-1">${fmtDotDate(nextEvent.date, 'short')}</div></div>
             <div><div class="kicker text-ink/55">Horário</div><div class="display text-22 mt-1">08h00</div></div>
             <div><div class="kicker text-ink/55">Sua vaga</div><div class="display text-22 mt-1">#047/120</div></div>
           </div>
-          <div class="mt-6 text-14 opacity-85">Estádio Municipal de Caxias · Rua Manoel Reis, 380 · Duque de Caxias/RJ</div>
+          <div class="mt-6 text-14 opacity-85">${nextEvent.city}/${nextEvent.state} · local exato e horário chegam por SMS na convocação</div>
           <div class="btn-row mt-5 flex gap-2">
             <button class="btn btn--accent">Adicionar ao calendário</button>
             <button class="btn btn--ghost btn--on-dark">Ver instruções</button>

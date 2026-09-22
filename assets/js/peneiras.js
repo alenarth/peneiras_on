@@ -63,11 +63,76 @@ function renderHighlight() {
   startCountdown(new Date(e.date + 'T08:00:00'), document);
 }
 
+/* ---------- Mapa interativo ----------
+   O mapa e o <select> de estado são duas vistas do mesmo filtro: mudar um
+   muda o outro. O painel ao lado resume o estado escolhido. */
+let mapa = null;
+function renderMapPanel() {
+  const panel = document.querySelector('[data-map-panel]');
+  const uf = filters.state;
+  if (!mapa || !panel) return;
+  const c = mapa.counts[uf];
+  if (uf === 'all' || !c) {
+    const open = Object.values(mapa.counts).reduce((a, x) => a + x.open, 0);
+    panel.innerHTML = `
+      <div class="kicker">Escolha um estado</div>
+      <div class="display text-28 mt-2">Toque num estado<br>do mapa.</div>
+      <p class="text-13 leading-copy text-ink-soft mt-3 mb-0">${open ? `Há ${open} peneira${open === 1 ? '' : 's'} com inscrição aberta agora. Estados em cinza já tiveram peneira nesta temporada; os apagados recebem em breve.` : 'Nenhuma inscrição aberta neste momento. Novas peneiras abrem onde a demanda aparece.'}</p>`;
+    return;
+  }
+  const list = filterEvents(MOCK.EVENTS, { state: uf });
+  panel.innerHTML = `
+    <div class="flex items-baseline justify-between gap-3">
+      <div class="kicker">${esc(mapa.stateName(uf))}</div>
+      ${tagHTML(c.open ? `${c.open} aberta${c.open === 1 ? '' : 's'}` : 'só encerradas', c.open ? 'accent' : 'outline')}
+    </div>
+    <div class="display text-28 mt-2">${uf} · ${c.total} peneira${c.total === 1 ? '' : 's'}</div>
+    <div class="flex flex-col mt-4 border-t border-line-soft">
+      ${list.map(e => { const st = eventStatus(e); return `
+        <div class="flex items-center justify-between gap-3 py-2.5 border-b border-line-soft text-13">
+          <span><span class="font-semibold">${esc(e.city)}</span> <span class="font-mono text-11 text-ink-mute">· ${fmtDotDate(e.date)}</span></span>
+          ${tagHTML(st, EVENT_STATUS_TONE[st] || 'outline')}
+        </div>`; }).join('')}
+    </div>
+    <div class="flex gap-2 mt-4 flex-wrap">
+      <a href="#calendario" class="btn btn--primary btn--sm" data-map-go>Ver na lista ↓</a>
+      <button type="button" class="btn btn--ghost btn--sm" data-map-clear>Limpar</button>
+    </div>`;
+  panel.querySelector('[data-map-clear]').onclick = () => setState('all', true);
+  panel.querySelector('[data-map-go]').onclick = e => {
+    e.preventDefault();
+    document.getElementById('calendario').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+}
+/* Único ponto que muda o filtro de estado: mapa, select e painel seguem juntos. */
+function setState(uf, announceResult) {
+  filters.state = uf || 'all';
+  if (mapa) mapa.select(filters.state === 'all' ? null : filters.state);
+  renderMapPanel();
+  paint(announceResult);
+}
+function mountMap() {
+  const host = document.querySelector('[data-map]');
+  if (!host || typeof MapaPeneiras === 'undefined' || typeof BRAZIL_MAP === 'undefined') return;
+  mapa = MapaPeneiras.mount(host, {
+    events: MOCK.EVENTS,
+    onSelect: uf => {
+      setState(uf || 'all', true);
+      if (uf) announce(`${mapa.stateName(uf)}: ${mapa.counts[uf].open} aberta(s) de ${mapa.counts[uf].total}. Lista filtrada.`);
+    },
+  });
+  const counts = Object.values(mapa.counts);
+  const open = counts.reduce((a, x) => a + x.open, 0);
+  document.querySelector('[data-map-kpis]').innerHTML =
+    statHTML('Abertas agora', open) + statHTML('Na temporada', MOCK.EVENTS.length) + statHTML('Estados', counts.length, { sub: `meta ${MOCK.SEASON.statesGoal}` });
+  renderMapPanel();
+}
+
 /* ---------- Filtros + grade ---------- */
 function paint(announceResult) {
   const data = filterEvents(MOCK.EVENTS, filters);
   document.querySelector('[data-rows]').innerHTML =
-    data.length ? data.map(e => eventCardHTML(e, 'publico')).join('') : eventsEmptyHTML();
+    data.length ? data.map((e, i) => eventCardHTML(e, 'publico').replace('<article ', `<article style="--i:${i}" `)).join('') : eventsEmptyHTML();
   document.querySelector('[data-count]').textContent = `${data.length} de ${MOCK.EVENTS.length} peneiras`;
   document.querySelectorAll('[data-status]').forEach(b => {
     const on = b.dataset.status === filters.status;
@@ -76,7 +141,7 @@ function paint(announceResult) {
   });
   document.querySelector('[data-state-filter]').value = filters.state;
   const clear = document.querySelector('[data-clear-filters]');
-  if (clear) clear.onclick = () => { filters.status = 'all'; filters.state = 'all'; paint(true); };
+  if (clear) clear.onclick = () => { filters.status = 'all'; setState('all', true); };
   if (announceResult) announce(`${data.length} peneiras na lista`);
 }
 
@@ -88,7 +153,10 @@ document.querySelector('[data-state-filter]').innerHTML =
   eventStates(MOCK.EVENTS).map(uf => `<option value="${uf}">${uf}</option>`).join('');
 
 document.querySelectorAll('[data-status]').forEach(b => b.onclick = () => { filters.status = b.dataset.status; paint(true); });
-document.querySelector('[data-state-filter]').onchange = e => { filters.state = e.target.value; paint(true); };
+document.querySelector('[data-state-filter]').onchange = e => setState(e.target.value, true);
 
 renderHighlight();
-paint(false);
+mountMap();
+// ?uf=RJ (link vindo de outra tela) já chega com o estado escolhido
+const ufParam = (new URLSearchParams(location.search).get('uf') || '').toUpperCase();
+setState(eventStates(MOCK.EVENTS).includes(ufParam) ? ufParam : 'all', false);

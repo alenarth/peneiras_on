@@ -31,19 +31,28 @@
 
   <main id="conteudo" tabindex="-1">
 
-  <!-- CABEÇALHO -->
-  <section class="section">
-    <div class="wrap g g-hero pt-24 pb-16 px-8 gap-14 items-end">
-      <div>
-        <span class="tag tag--outline">Calendário</span>
-        <h1 class="display text-fluid-hero leading-display-tight tracking-tighter mt-4 mb-0 mx-0">
-          Peneiras<br>na <span class="mark inline-block leading-display-loose">temporada</span><br>2026.
-        </h1>
+  <!-- CABEÇALHO + MAPA INTERATIVO: o mapa é a primeira coisa da página.
+       Clique num estado → painel ao lado e calendário abaixo filtram por ele. -->
+  <section class="section" id="mapa">
+    <div class="wrap g g-map-hero pt-16 pb-14 px-8 gap-12 items-start">
+      <div class="flex flex-col gap-6">
+        <div>
+          <span class="tag tag--outline">Temporada 2026</span>
+          <h1 class="display text-fluid-hero leading-display-tight tracking-tighter mt-4 mb-0 mx-0">
+            Peneiras na<br><span class="mark inline-block leading-display-loose">temporada</span> 2026.
+          </h1>
+          <p class="lead mt-5 mb-0 max-w-copy-sm">O número em cima de cada estado é a quantidade de peneiras com inscrição aberta. Clique no estado para ver só as peneiras dele. A inscrição é sempre gratuita.</p>
+          <div class="font-mono text-12 text-ink-soft mt-5 pt-4 border-t border-t-line-soft uppercase tracking-label" data-season-line></div>
+        </div>
+        <div class="kpi-strip kpi-strip--3 card card--flush rounded-xl" data-map-kpis></div>
+        <div class="card map-panel" data-map-panel aria-live="polite"></div>
+        <div class="flex flex-wrap gap-4 font-mono text-10 uppercase tracking-label text-ink-mute">
+          <span class="flex items-center gap-2"><span class="size-3 rounded-sm bg-accent"></span>Inscrições abertas</span>
+          <span class="flex items-center gap-2"><span class="size-3 rounded-sm bg-ink/25"></span>Só encerradas</span>
+          <span class="flex items-center gap-2"><span class="size-3 rounded-sm bg-ink/8 border border-line"></span>Em breve</span>
+        </div>
       </div>
-      <div>
-        <p class="lead">Escolha a peneira mais perto de você, veja quantas vagas ainda existem e garanta a sua. A inscrição é sempre gratuita, em todas as peneiras e em todos os planos.</p>
-        <div class="font-mono text-13 text-ink-soft mt-6 pt-6 border-t border-t-line-soft uppercase tracking-label" data-season-line></div>
-      </div>
+      <div data-map class="max-md:order-first"></div>
     </div>
   </section>
 
@@ -100,6 +109,8 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/ui.js"></script>
   <script src="assets/js/components.js"></script>
+  <script src="assets/js/brazil-map.js"></script>
+  <script src="assets/js/mapa.js"></script>
   <script src="assets/js/peneiras.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
    ============================================================ */
 
 const ATHLETES = [
-  { id:'a-001', name:'Lucas Oliveira', age:15, city:'Duque de Caxias', state:'RJ', position:'Ponta', side:'Direita', foot:'Direito', height:172, weight:64, club:'Escolinha Vila Operária', yearsPlaying:3, score:87, completeness:92, status:'convocado', present:true, favorite:true, notes:'Pé direito letal, drible curto. Falta marcação.', attrs:{Velocidade:18,Finalização:14,Passe:12,Drible:17,Defesa:6,Cabeceio:9,Físico:13,Reflexo:4}, videos:3, region:'Baixada Fluminense', plan:'premium', registrations:['e-01'] },
+  { id:'a-001', name:'Lucas Oliveira', age:15, city:'Duque de Caxias', state:'RJ', position:'Ponta', side:'Direita', foot:'Direito', height:172, weight:64, club:'Escolinha Vila Operária', yearsPlaying:3, score:87, completeness:92, status:'convocado', present:true, favorite:true, notes:'Pé direito letal, drible curto. Falta marcação.', attrs:{Velocidade:18,Finalização:14,Passe:12,Drible:17,Defesa:6,Cabeceio:9,Físico:13,Reflexo:4}, videos:3, region:'Baixada Fluminense', plan:'premium', registrations:['e-01','e-06'] },
   { id:'a-002', name:'Matheus Pereira', age:16, city:'Manaus', state:'AM', position:'Atacante', foot:'Direito', height:178, weight:71, club:'Liga Amazonas Sub-17', yearsPlaying:5, score:91, completeness:88, status:'convocado', present:true, favorite:true, notes:'Físico acima da média. Boa cabeçada.', attrs:{Velocidade:17,Finalização:18,Passe:11,Drible:13,Defesa:5,Cabeceio:16,Físico:17,Reflexo:3}, videos:2, region:'Norte', plan:'premium' },
   { id:'a-003', name:'Davi Sousa', age:14, city:'Recife', state:'PE', position:'Meia', foot:'Esquerdo', height:168, weight:58, club:'Sport Sub-15', yearsPlaying:4, score:82, completeness:95, status:'convocado', present:true, favorite:false, notes:'', attrs:{Velocidade:13,Finalização:12,Passe:18,Drible:16,Defesa:11,Cabeceio:8,Físico:11,Reflexo:4}, videos:4, region:'Nordeste', plan:'premium' },
   { id:'a-004', name:'Gabriel Lima', age:17, city:'Belo Horizonte', state:'MG', position:'Zagueiro', foot:'Direito', height:186, weight:78, club:'Atlético Sub-17', yearsPlaying:7, score:79, completeness:80, status:'inscrito', favorite:false, notes:'', attrs:{Velocidade:11,Finalização:6,Passe:13,Drible:8,Defesa:18,Cabeceio:17,Físico:16,Reflexo:5}, videos:1, region:'Sudeste', plan:'gratuito' },
@@ -23,6 +23,15 @@ const EVENTS = [
   { id:'e-03', name:'Peneira Norte — Manaus', city:'Manaus', state:'AM', date:'2026-07-05', capacity:100, registered:218, called:0, present:0, approved:0, status:'inscrições', age:'13-17' },
   { id:'e-04', name:'Peneira SP — Capital', city:'São Paulo', state:'SP', date:'2026-05-08', capacity:180, registered:1124, called:180, present:165, approved:22, status:'encerrada', age:'13-17' },
   { id:'e-05', name:'Peneira Sul — Curitiba', city:'Curitiba', state:'PR', date:'2026-05-22', capacity:120, registered:543, called:120, present:108, approved:16, status:'encerrada', age:'13-17' },
+  // 2º semestre: as cinco acima já passaram no calendário real; sem estas, o
+  // mapa e a "próxima peneira" ficariam vazios. Datas e status alimentam
+  // SEASON, o mapa (mapa.js), o calendário e a contagem regressiva.
+  { id:'e-06', name:'Peneira Rio — Niterói', city:'Niterói', state:'RJ', date:'2026-10-10', capacity:120, registered:311, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-07', name:'Peneira Nordeste — Salvador', city:'Salvador', state:'BA', date:'2026-10-17', capacity:150, registered:428, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-08', name:'Peneira Minas — BH', city:'Belo Horizonte', state:'MG', date:'2026-10-24', capacity:120, registered:296, called:0, present:0, approved:0, status:'inscrições', age:'12-16' },
+  { id:'e-09', name:'Peneira Nordeste — Fortaleza', city:'Fortaleza', state:'CE', date:'2026-11-07', capacity:120, registered:187, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-10', name:'Peneira Centro-Oeste — Brasília', city:'Brasília', state:'DF', date:'2026-11-21', capacity:100, registered:142, called:0, present:0, approved:0, status:'inscrições', age:'13-17' },
+  { id:'e-11', name:'Peneira Sul — Porto Alegre', city:'Porto Alegre', state:'RS', date:'2026-12-05', capacity:120, registered:98, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
 ];
 
 const REGIONS = [

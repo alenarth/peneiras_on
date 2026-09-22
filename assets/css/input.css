@@ -99,8 +99,8 @@
   /* Display fluido (heros e títulos de seção) */
   /* Só os títulos-hero (landing e cabeçalhos de página) foram reduzidos; o resto
      da escala é o da Sprint 1 — encolher tudo achatava as seções. */
-  --text-fluid-hero: clamp(34px, 7vw, 108px);
-  --text-fluid-hero-sm: clamp(34px, 7vw, 100px);
+  --text-fluid-hero: clamp(34px, 5vw, 72px);
+  --text-fluid-hero-sm: clamp(34px, 5vw, 68px);
   --text-fluid-h1: clamp(56px, 6vw, 96px);
   --text-fluid-lg: clamp(28px, 6vw, 80px);
   --text-fluid-md: clamp(36px, 5vw, 72px);
@@ -249,6 +249,7 @@
   .g-main-wide { @apply grid-cols-[1.6fr_1fr] max-md:grid-cols-[1fr]; }
   .g-hero      { @apply grid-cols-[1.3fr_1fr] max-md:grid-cols-[1fr]; }
   .g-faq       { @apply grid-cols-[1fr_2fr] max-md:grid-cols-[1fr]; }
+  .g-map-hero  { @apply grid-cols-[1fr_1.05fr] max-md:grid-cols-[1fr]; }
   .g-aside-sm  { @apply grid-cols-[260px_1fr] max-md:grid-cols-[1fr]; }
   .g-aside-md  { @apply grid-cols-[380px_1fr] max-md:grid-cols-[1fr]; }
   .g-panel-sm  { @apply grid-cols-[1fr_320px] max-md:grid-cols-[1fr]; }
@@ -522,6 +523,7 @@
   .page-head__actions { @apply max-md:flex-wrap; }
   .kpi-strip { @apply grid border-b border-line; }
   .kpi-strip > div { @apply px-6 py-5 border-r border-line-soft last:border-r-0 max-md:border-r-0 max-md:border-b max-md:border-line-soft; }
+  .kpi-strip--3 { @apply grid-cols-[repeat(3,1fr)] max-sm:grid-cols-[1fr]; }
   .kpi-strip--4 { @apply grid-cols-[repeat(4,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
   .kpi-strip--5 { @apply grid-cols-[repeat(5,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
 
@@ -630,6 +632,47 @@
   .rights__item { @apply grid grid-cols-[40px_1fr] gap-3 items-baseline p-3.5 odd:border-r odd:border-line-soft [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-line-soft max-md:odd:border-r-0 max-md:[&:nth-child(n+2)]:border-t max-md:[&:nth-child(n+2)]:border-line-soft; }
   .rights__n { @apply font-mono text-11 text-accent-text font-bold; }
   .toc-btn { @apply grid grid-cols-[32px_1fr] gap-2 items-baseline w-full px-0 py-2.5 cursor-pointer bg-transparent border-0 border-t border-line-soft text-left text-ink; }
+
+  /* --- mapa interativo (peneiras.html, mapa.js) ---
+     Cor por estado: laranja com intensidade --heat (0,55–1) onde há inscrição
+     aberta; cinza onde só há encerradas; quase apagado onde não há nada.
+     Entrada em cascata (--i) quando .is-in chega; hover levanta o estado
+     (transform-box: fill-box para escalar a partir do próprio centro). */
+  .br-map { @apply relative w-full; }
+  .br-map__svg { @apply block w-full h-auto overflow-visible; }
+  .br-map__state {
+    fill: color-mix(in oklab, var(--color-ink) 7%, transparent);
+    stroke: var(--color-bg); stroke-width: 1.2; stroke-linejoin: round;
+    transform-box: fill-box; transform-origin: center;
+    transition: fill .25s ease, transform .25s cubic-bezier(.22,.8,.3,1), filter .25s ease, opacity .5s ease;
+  }
+  .br-map__state.is-closed { fill: color-mix(in oklab, var(--color-ink) 22%, transparent); cursor: pointer; }
+  .br-map__state.is-open { fill: color-mix(in oklab, var(--color-accent) calc(var(--heat, .7) * 100%), var(--color-card)); cursor: pointer; }
+  .br-map__state[role="button"]:hover, .br-map__state[role="button"]:focus-visible { transform: translateY(-3px) scale(1.03); filter: drop-shadow(0 8px 14px rgba(0,0,0,.45)); fill: var(--color-accent); outline: none; }
+  .br-map__state.is-closed:hover, .br-map__state.is-closed:focus-visible { fill: color-mix(in oklab, var(--color-ink) 40%, transparent); }
+  .br-map__state.is-selected { fill: var(--color-accent); stroke: var(--color-ink); stroke-width: 2; filter: drop-shadow(0 0 14px color-mix(in oklab, var(--color-accent) 70%, transparent)); }
+  .br-map__svg.has-selection .br-map__state:not(.is-selected):not(:hover) { opacity: .55; }
+  .br-map__label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; fill: var(--color-ink); pointer-events: none; }
+  .br-map__badge-ring { fill: none; stroke: var(--color-accent); stroke-width: 1.5; opacity: .7; transform-box: fill-box; transform-origin: center; }
+  /* selo claro com número escuro: legível tanto sobre o laranja quanto sobre o cinza */
+  .br-map__badge-dot { fill: var(--color-ink); stroke: var(--color-bg); stroke-width: 2; }
+  .br-map__badge-num { font-family: var(--font-display); font-size: 13px; font-weight: 900; fill: var(--color-bg); text-anchor: middle; }
+  .br-map__tip { @apply absolute z-10 pointer-events-none flex flex-col gap-0.5 min-w-40 rounded-lg border border-line bg-card/92 backdrop-blur-lg px-3 py-2 text-12 leading-tight shadow-menu motion-safe:animate-pop-in; }
+  .br-map__tip strong { @apply font-display font-extrabold text-13 uppercase; }
+  .br-map__tip span { @apply text-ink-soft; }
+  .br-map__tip em { @apply not-italic font-mono text-10 uppercase tracking-label text-accent-text mt-1; }
+  .map-panel { @apply min-h-60; }
+  @media (prefers-reduced-motion: no-preference) {
+    .br-map:not(.is-in) .br-map__state { opacity: 0; transform: translateY(10px); }
+    .br-map.is-in .br-map__state { animation: map-in .5s cubic-bezier(.22,.8,.3,1) both; animation-delay: calc(var(--i, 0) * 22ms); }
+    .br-map:not(.is-in) .br-map__badge { opacity: 0; }
+    .br-map.is-in .br-map__badge { animation: pop-in .4s cubic-bezier(.2,.9,.3,1.4) both; animation-delay: calc(600ms + var(--i, 0) * 60ms); }
+    .br-map.is-in .br-map__badge-ring { animation: badge-pulse 2.2s ease-out infinite; animation-delay: calc(1s + var(--i, 0) * 60ms); }
+    /* cards da lista entram em cascata a cada filtro */
+    [data-rows] > .card { animation: rise .45s cubic-bezier(.22,.8,.3,1) both; animation-delay: calc(var(--i, 0) * 50ms); }
+  }
+  @keyframes map-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes badge-pulse { 0% { transform: scale(1); opacity: .8; } 70% { transform: scale(1.9); opacity: 0; } 100% { transform: scale(1.9); opacity: 0; } }
 
   /* --- toasts (ui.js) — pilha fixa, região polite; erro leva role=alert --- */
   .toast-stack { @apply fixed bottom-4 right-4 z-60 flex flex-col gap-2 w-[min(360px,calc(100vw-32px))] pointer-events-none; }

@@ -54,7 +54,7 @@ npm run build:site   # build + monta dist/ (páginas + assets) — é o que a Ve
 |---|---|---|
 | `index.html` | Landing pública (hero, planos, FAQ) | — |
 | `sobre.html` | Institucional (missão, equipe, parceria) | — |
-| `peneiras.html` | Calendário público da temporada (filtros por status e estado, CTA para login) | — |
+| `peneiras.html` | Calendário público da temporada: mapa interativo do Brasil (número de peneiras abertas por estado; clique filtra a lista), filtros por status e estado, CTA para login | `?uf=<UF>` (chega com o estado já escolhido no mapa e na lista) |
 | `feed.html` | Feed de destaques: confirmação de tags de atributo, votos, seguir, filtros por posição e estado | — |
 | `cadastro.html` | Criar perfil — wizard público de 5 passos | `?evento=<id>` (contexto vindo de `login.html`; id inválido cai no cadastro normal) |
 | `privacidade.html` | Política de Privacidade (LGPD/ECA) | — |
@@ -93,6 +93,9 @@ assets/
     components.js                → header, footer, dropdown, helpers de markup (tagHTML, statHTML…)
     hero.js                      → carrossel de fundo do hero da landing (crossfade, indicadores,
                                    pausa em hover/foco/aba oculta, respeita prefers-reduced-motion)
+    brazil-map.js                → malha SVG dos 27 estados (@svg-maps/brazil, MIT)
+    mapa.js                      → mapa interativo de peneiras.html: cor e selo por estado a partir de
+                                   MOCK.EVENTS, tooltip, teclado, seleção sincronizada com o filtro
     feed.js                      → feed: cards, tags de atributo, votos, seguir, filtros, persistência
     validation.js                → regras de validação e renderização de erro dos formulários
     radar.js                     → radar tático (SVG) + classificador de posição

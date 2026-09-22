@@ -34,7 +34,7 @@
   <!-- HERO -->
   <section class="hero">
     <!-- Carrossel de fundo: imagens decorativas (aria-hidden), troca por crossfade a cada
-         3,2 s; os indicadores são os únicos controles. hero.js cuida do avanço, da pausa
+         2,4 s; os indicadores são os únicos controles. hero.js cuida do avanço, da pausa
          (hover, foco, aba oculta) e de prefers-reduced-motion. -->
     <div class="hero__slides" data-hero-slides aria-hidden="true">
       <div class="hero__slide hero__slide--flip pele-bg is-active" data-slide></div>
@@ -262,7 +262,7 @@
   <script>
     mountSiteHeader('index.html');
     mountSiteFooter();
-    mountHeroSlider(document.querySelector('.hero'), { interval: 3200 });
+    mountHeroSlider(document.querySelector('.hero'), { interval: 2400 });
 
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;
