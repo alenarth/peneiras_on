@@ -101,6 +101,16 @@ Três regras foram mantidas em todos os prompts:
 
 **Restrições dadas:** nenhum commit automático; `integrantes.txt` preservado intacto, porque cada integrante preenche o próprio dado; nenhuma alteração em código de aplicação, estilo ou build além da remoção do arquivo órfão.
 
+### 9. Identidade visual e revisão da paleta escura
+
+**Objetivo:** aplicar a marca oficial (símbolo + wordmark PENEIRAS-ON, entregue em três PNGs de 1440×720) sem pesar o site, e revisar o que ficou conflitante depois da troca para o tema escuro (rodadas `ajuste_paleta` e `fix_colorchange_issues`).
+
+**Pedido:** transformar as artes em SVG e usá-las como logo do header, rodapé e painéis, favicon (que não existia) e imagem de compartilhamento; completar o `<head>` das páginas (título, description, theme-color, Open Graph, manifesto); e fazer uma revisão geral atrás de conflitos e bugs visuais causados pela inversão de cores.
+
+**Resultado verificado:** os PNGs foram vetorizados por traçado de contorno (contourpy + simplificação Douglas-Peucker sobre o canal alfa, uma máscara por cor) em `assets/brand/` — 2,8 a 5,8 KB por arquivo, comparados lado a lado com o original. `wordmarkHTML()` passou a injetar `logo-horizontal.svg`; `favicon.svg` (símbolo sobre quadrado escuro, legível em aba clara e escura), `favicon.ico` (16/32/48), `apple-touch-icon.png`, `icon-192/512.png`, `og-image.png` e `site.webmanifest` foram gerados a partir dos vetores; `build-dist.mjs` copia os arquivos de raiz. Na revisão, o bloco de `!important` em `@layer utilities` (que remapeava `.text-bg`, `.border-bg`, `.bg-ink`, `.border-ink` e os botões) foi removido e cada uso corrigido na origem: `text-bg/NN` → `text-ink/NN` e `border-bg/NN` → `border-ink/NN` no markup e nos módulos; seções `bg-ink` → `bg-bg`; bordas de campos e menus em `--line`. Bugs que o remapeamento escondia: barras de progresso "encerrada", passos concluídos da recuperação de senha, pontos da linha do tempo, barras do funil e do gráfico da gestora e o check de consentimento eram escuros sobre fundo escuro (invisíveis); chevron dos `<select>` preto; `--danger` igual a `--accent` (erro de formulário e "demanda crítica" do mapa indistinguíveis do laranja de destaque); `POS_COLORS` com sete posições em quatro cores repetidas; `--ink-soft`/`--ink-mute` quase iguais a `--ink` (hierarquia tipográfica perdida); texto claro sobre o ponto laranja do mapa; menu "Entrar" saindo da tela no celular. Ajustes: erro em vermelho `#F87171`, secundário `#CBD5E1` e auxiliar `#A3ADBA` (contrastes recalculados e anotados no `input.css`), botão primário claro para restabelecer a hierarquia laranja > claro > fantasma, `color-scheme: dark` para os controles nativos. Cada página foi capturada em 1440 px e em 390 px (emulação móvel via DevTools Protocol) antes e depois, incluindo estados abertos (menu, dropdown, erro de validação).
+
+**Restrições dadas:** nenhum commit automático; nome "Peneiras On" mantido nos textos (o hífen é tratamento visual da marca); design system da Sprint 1 preservado em tokens, tipografia e componentes — só a paleta mudou.
+
 ---
 
 ## Observações sobre a autoria

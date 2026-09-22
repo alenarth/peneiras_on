@@ -45,14 +45,14 @@ function renderStatus() {
         <div class="absolute top-0 right-0 w-50 h-50 glow-accent"></div>
         <div class="relative">
           <div class="flex justify-between items-baseline mb-4">
-            <span class="kicker text-bg/55">Sua próxima peneira</span>
+            <span class="kicker text-ink/55">Sua próxima peneira</span>
             <span class="font-mono text-11 text-accent">● ATIVA</span>
           </div>
           <div class="display text-56 tracking-display-lg">Rio · Caxias</div>
-          <div class="g g-3 gap-6 mt-8 pt-6 border-t border-t-bg/20">
-            <div><div class="kicker text-bg/55">Data</div><div class="display text-22 mt-1">${fmtDotDate(nextEvent.date, 'short')}</div></div>
-            <div><div class="kicker text-bg/55">Horário</div><div class="display text-22 mt-1">08h00</div></div>
-            <div><div class="kicker text-bg/55">Sua vaga</div><div class="display text-22 mt-1">#047/120</div></div>
+          <div class="g g-3 gap-6 mt-8 pt-6 border-t border-t-ink/20">
+            <div><div class="kicker text-ink/55">Data</div><div class="display text-22 mt-1">${fmtDotDate(nextEvent.date, 'short')}</div></div>
+            <div><div class="kicker text-ink/55">Horário</div><div class="display text-22 mt-1">08h00</div></div>
+            <div><div class="kicker text-ink/55">Sua vaga</div><div class="display text-22 mt-1">#047/120</div></div>
           </div>
           <div class="mt-6 text-14 opacity-85">Estádio Municipal de Caxias · Rua Manoel Reis, 380 · Duque de Caxias/RJ</div>
           <div class="btn-row mt-5 flex gap-2">
@@ -157,7 +157,7 @@ function renderPerfil() {
         <div class="section-label"><span class="section-label__title">Mídias</span><span class="section-label__action">${tagHTML('+25 pts','outline')}</span></div>
         <div class="g g-4 gap-3">
           ${[1,2,3].map(i=>`<div class="player-img aspect-[3/4]">VÍDEO ${i}</div>`).join('')}
-          <button class="player-img bg-card bg-none border border-dashed border-ink cursor-pointer flex-col gap-1 text-ink aspect-[3/4]"><span class="text-24">+</span><span class="font-mono text-10 uppercase">Adicionar</span></button>
+          <button class="player-img bg-card bg-none border border-dashed border-line cursor-pointer flex-col gap-1 text-ink aspect-[3/4]"><span class="text-24">+</span><span class="font-mono text-10 uppercase">Adicionar</span></button>
         </div>
       </div>
 

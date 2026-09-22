@@ -1,0 +1,14 @@
+{
+  "name": "Peneiras On",
+  "short_name": "Peneiras On",
+  "description": "Plataforma de captação de talentos no futebol: inscrição gratuita, alocação automática na peneira mais próxima e avaliação por olheiros credenciados.",
+  "lang": "pt-BR",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#111417",
+  "theme_color": "#111417",
+  "icons": [
+    { "src": "assets/brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/brand/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

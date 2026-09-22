@@ -65,7 +65,7 @@ function renderStep1(focusField) {
     </div>`;
   // estilo dos botões de canal
   contentEl.querySelectorAll('.ch-btn').forEach(b => {
-    b.className = 'ch-btn flex-1 p-3.5 cursor-pointer border border-ink text-left font-display font-extrabold text-14 uppercase ' + (b.dataset.ch === state.channel ? 'bg-ink text-bg' : 'bg-card text-ink');
+    b.className = 'ch-btn flex-1 p-3.5 cursor-pointer border border-line text-left font-display font-extrabold text-14 uppercase ' + (b.dataset.ch === state.channel ? 'bg-ink text-bg' : 'bg-card text-ink');
     b.addEventListener('click', () => { state.channel = b.dataset.ch; render(); });
   });
   const ident = contentEl.querySelector('#ident');

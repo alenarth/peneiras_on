@@ -11,8 +11,10 @@ if (!existsSync(join(root, 'assets', 'css', 'tailwind.css'))) {
 }
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
+// páginas + arquivos de raiz que o navegador pede pelo caminho fixo (favicon, manifest)
+const ROOT_FILES = ['favicon.ico', 'site.webmanifest'];
 for (const f of readdirSync(root)) {
-  if (f.endsWith('.html')) cpSync(join(root, f), join(out, f));
+  if (f.endsWith('.html') || ROOT_FILES.includes(f)) cpSync(join(root, f), join(out, f));
 }
 cpSync(join(root, 'assets'), join(out, 'assets'), {
   recursive: true,

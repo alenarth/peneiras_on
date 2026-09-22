@@ -25,11 +25,15 @@ function fmtDotDate(iso, year) {
   return d + '·' + M[+m - 1] + tail;
 }
 
-/* ---------- Wordmark ---------- */
-function wordmarkHTML(onDark) {
-  return `<a href="index.html" class="wordmark ${onDark ? 'wordmark--on-dark' : ''}">
-    <span class="wordmark__diamond"></span>
-    <span class="wordmark__text">Peneiras<span class="dot">·</span>On</span>
+/* ---------- Wordmark ----------
+   Logo horizontal (símbolo + PENEIRAS-ON) em SVG vetorizado da arte oficial —
+   assets/brand/logo-horizontal.svg, ~6 KB, uma requisição cacheada para o site
+   inteiro. O <img> leva alt com o nome da marca: é o texto do link para leitor
+   de tela. A variante `sm` é o tamanho da barra lateral dos painéis. */
+function wordmarkHTML(opts = {}) {
+  const size = opts.size === 'sm' ? ' wordmark--sm' : '';
+  return `<a href="index.html" class="wordmark${size}" aria-label="Peneiras On — página inicial">
+    <img class="wordmark__logo" src="assets/brand/logo-horizontal.svg" alt="Peneiras-On" width="1459" height="180" decoding="async">
   </a>`;
 }
 
@@ -44,7 +48,7 @@ function mountSiteHeader(active) {
     <div class="header-sentinel" aria-hidden="true"></div>
     <header class="site-header">
       <div class="wrap site-header__inner">
-        ${wordmarkHTML(false)}
+        ${wordmarkHTML()}
         <button class="nav-toggle" type="button" data-nav-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Abrir menu de navegação">☰</button>
         <nav class="site-nav" id="site-nav">
           <a href="index.html#como-funciona">Como funciona</a>
@@ -201,7 +205,7 @@ function mountSimpleHeader(crumb, backHref, backLabel, opts = {}) {
     <div class="header-sentinel" aria-hidden="true"></div>
     <header class="site-header">
       <div class="wrap site-header__inner">
-        ${wordmarkHTML(false)}
+        ${wordmarkHTML()}
         <span class="site-header__crumb">/ ${crumb}</span>
         <div class="site-header__actions">
           <a href="${backHref || 'index.html'}" class="bg-transparent border-0 cursor-pointer font-mono text-11 uppercase tracking-label text-ink-soft no-underline">← ${backLabel || 'Voltar à home'}</a>
@@ -264,7 +268,7 @@ function mountSiteFooter(opts = {}) {
 
       <div class="wrap site-footer__cols">
         <div>
-          ${wordmarkHTML(true)}
+          ${wordmarkHTML()}
           <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo, independentemente de onde estiver.</p>
           <!-- Sem perfis reais ainda: marcas não interativas, fora da ordem de tabulação -->
           <div class="social" aria-label="Redes sociais (em breve)">

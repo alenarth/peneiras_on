@@ -245,14 +245,14 @@ function renderCheckin() {
         </div>
         <div class="sticky top-6 flex flex-col gap-4">
           <div class="card--dark p-5">
-            <div class="kicker text-bg/55">Comparecimento</div>
+            <div class="kicker text-ink/55">Comparecimento</div>
             <div class="display text-72 leading-display-xtight mt-2">${Math.round(present/list.length*100)}<span class="text-32">%</span></div>
             <div class="mt-3.5"><div class="progress progress--sm"><div class="progress__fill" style="width:${present/list.length*100}%"></div></div></div>
             <div class="flex justify-between mt-2 font-mono text-11 opacity-70"><span>${present} presentes</span><span>${list.length-present} aguardando</span></div>
           </div>
           <div class="card p-4">
             <div class="kicker uppercase">QR Code presença</div>
-            <div class="qr-pattern mt-2.5 border border-ink"></div>
+            <div class="qr-pattern mt-2.5 border border-line"></div>
             <div class="font-mono text-10 text-ink-soft mt-2 text-center">Inscritos podem fazer check-in com o celular.</div>
           </div>
           <button class="btn btn--primary btn--full">Encerrar check-in</button>
@@ -299,7 +299,7 @@ function renderAvaliacao() {
             ${[['tecnica','Técnica','Domínio, passe, finalização'],['fisico','Físico','Velocidade, força, condicionamento'],['tatico','Tático','Posicionamento, tomada de decisão'],['atitude','Atitude','Postura, liderança, foco']].map((c,i)=>`
               <div class="crit-row ${i?'border-t border-line-soft':''}">
                 <div><div class="font-display font-extrabold text-14 uppercase">${c[1]}</div><div class="font-mono text-10 text-ink-soft">${c[2]}</div></div>
-                <div class="flex gap-1">${Array.from({length:10},(_,n)=>`<button class="crit flex-1 h-8.5 cursor-pointer border border-ink font-display font-extrabold text-12 ${(n+1)<=ev[c[0]]?(n>=7?'bg-accent text-accent-ink':'bg-ink text-bg'):'bg-card text-ink'}" data-k="${c[0]}" data-v="${n+1}">${n+1}</button>`).join('')}</div>
+                <div class="flex gap-1">${Array.from({length:10},(_,n)=>`<button class="crit flex-1 h-8.5 cursor-pointer border font-display font-extrabold text-12 ${(n+1)<=ev[c[0]]?(n>=7?'bg-accent text-accent-ink border-accent':'bg-ink text-bg border-ink'):'bg-card text-ink border-line hover:bg-bg-alt'}" data-k="${c[0]}" data-v="${n+1}">${n+1}</button>`).join('')}</div>
                 <div class="text-right font-display font-black text-32">${ev[c[0]]||'—'}</div>
               </div>`).join('')}
           </div>

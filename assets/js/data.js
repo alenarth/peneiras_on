@@ -53,7 +53,7 @@ const POSITION_PROFILES = {
   Atacante: {Velocidade:16,Finalização:18,Passe:13,Drible:14,Defesa:6,Cabeceio:15,Físico:16,Reflexo:3},
 };
 
-const POS_COLORS = { Goleiro:'#F97316', Zagueiro:'#FB923C', Lateral:'#22C55E', Volante:'#9CA3AF', Meia:'#FB923C', Ponta:'#F97316', Atacante:'#22C55E' };
+const POS_COLORS = { Goleiro:'#F97316', Zagueiro:'#60A5FA', Lateral:'#22C55E', Volante:'#A78BFA', Meia:'#F472B6', Ponta:'#FBBF24', Atacante:'#F87171' };
 
 function classifyPosition(attrs) {
   const keys = Object.keys(POSITION_PROFILES.Goleiro);

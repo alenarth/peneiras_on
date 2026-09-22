@@ -30,9 +30,9 @@
   --color-card: #20252D;
   --color-surface: #151A1F;
   --color-surface-alt: #1C2128;
-  --color-ink: #F8FAFC;
-  --color-ink-soft: #EFF4FA;
-  --color-ink-mute: #E6ECF4;
+  --color-ink: #F8FAFC;          /* texto principal — 17:1 sobre --bg */
+  --color-ink-soft: #CBD5E1;     /* texto secundário — 10,4:1 sobre --card */
+  --color-ink-mute: #A3ADBA;     /* rótulos e auxiliares — 6,8:1 sobre --card, 8:1 sobre --bg */
   --color-line: #374151;
   --color-line-soft: rgba(255,255,255,0.14);
 
@@ -47,15 +47,17 @@
 
   --color-focus: #FBBF24;
 
-  --color-danger: #F97316;
-  --color-danger-soft: rgba(249,115,22,0.14);
-  --color-success: #22C55E;
+  /* Erro é vermelho, não laranja: laranja é a cor da marca (CTA, destaque) e
+     não pode significar "problema" ao mesmo tempo. #F87171 dá 5,6:1 sobre --card. */
+  --color-danger: #F87171;
+  --color-danger-soft: rgba(248,113,113,0.14);
+  --color-success: #22C55E;      /* 6,8:1 sobre --card */
 
-  /* Estados de interação derivados da nova paleta. */
-  --color-ink-hover: #EEF2F7;
-  --color-accent-hover: #EA580C;
-  --color-gold-hover: #F59E0B;
-  --color-danger-hover: #EA580C;
+  /* Estados de interação — cada um verificado contra o texto que carrega. */
+  --color-ink-hover: #E2E8F0;    /* botão claro: texto --bg 14:1 */
+  --color-accent-hover: #EA580C; /* texto --accent-ink 6,5:1 */
+  --color-gold-hover: #F59E0B;   /* texto --gold-ink 9,6:1 */
+  --color-danger-hover: #EF4444; /* texto --bg 5,9:1 */
 
   /* Cantos: só o que se clica e o que se preenche. Cards, tags, tabelas,
      avatares e menus continuam retos (rounded-none). */
@@ -155,6 +157,10 @@
 
 /* ---------- 2. BASE ---------- */
 @layer base {
+  /* Tema escuro único: avisa o navegador para os controles nativos (lista do
+     <select>, calendário do <input type="date">, barras de rolagem) também
+     renderizarem escuros — sem isso a lista do select abre branca. */
+  html { color-scheme: dark; }
   body {
     @apply font-body bg-bg text-ink antialiased leading-normal;
     text-rendering: optimizeLegibility;
@@ -189,11 +195,11 @@
   }
 
   /* Anel de foco consistente (3px): outline nunca é removido sem substituto.
-     Sobre fundo claro usa tinta (16:1+). */
+     Âmbar (--color-focus) sobre as superfícies escuras: 11:1 sobre --bg. */
   a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
     @apply outline-solid outline-3 outline-focus outline-offset-2 rounded;
   }
-  /* Sobre superfícies escuras, o anel vira verde neon (13:1 sobre preto) */
+  /* Sobre as superfícies com foto/vidro o anel usa o laranja da marca (7,9:1 sobre --bg) */
   .site-footer :focus-visible, .login-side :focus-visible, .card--dark :focus-visible,
   .plan--featured :focus-visible, .glass :focus-visible, .on-dark :focus-visible {
     @apply outline-accent;
@@ -247,23 +253,19 @@
   .crit-row { @apply grid grid-cols-[180px_1fr_60px] gap-4 items-center py-4 max-md:grid-cols-[1fr] max-md:gap-2.5; }
   .crit-row > div:last-child { @apply max-md:text-left!; }
 
-  /* --- utilitários semânticos de cor (AA sobre claro; neon/dourado sobre escuro) --- */
+  /* --- utilitários semânticos de cor ---
+     Na paleta escura, `bg` é a superfície escura e `ink` o texto claro. Texto
+     claro com transparência é sempre `text-ink/NN`; borda clara, `border-ink/NN`.
+     Preenchimento "cheio" neutro (barra, ponto, estado selecionado) é `bg-ink`
+     com texto `text-bg` — o inverso exato do que era no tema claro. */
   .text-soft { @apply text-ink-soft; }
   .text-mute { @apply text-ink-mute; }
-  .accent { @apply text-accent-text; }
-  .gold { @apply text-gold-deep; }
+  .accent { @apply text-accent-text; }                                                     /* 6,4:1 sobre --card */
+  .gold { @apply text-gold-deep; }                                                         /* 9,6:1 sobre --card */
   .site-footer .accent, .login-side .accent, .glass .accent,
-  .card--dark .accent, .plan--featured .accent, .on-dark .accent { @apply text-accent; }  /* 13,3:1 */
+  .card--dark .accent, .plan--featured .accent, .on-dark .accent { @apply text-accent; }  /* 5,4:1 sobre --bg */
   .site-footer .gold, .login-side .gold, .card--dark .gold,
-  .plan--featured .gold, .on-dark .gold { @apply text-gold; }                              /* 8,1:1 */
-
-  .on-dark .text-bg, .card--dark .text-bg, .site-footer .text-bg,
-  .login-side .text-bg, .plan--featured .text-bg, .glass .text-bg,
-  .wordmark--on-dark .text-bg { color: var(--color-ink) !important; }
-
-  .on-dark .border-bg, .card--dark .border-bg, .site-footer .border-bg,
-  .login-side .border-bg, .plan--featured .border-bg, .glass .border-bg,
-  .wordmark--on-dark .border-bg { border-color: var(--color-ink) !important; }
+  .plan--featured .gold, .on-dark .gold { @apply text-gold; }                              /* 7,3:1 sobre --bg */
 
   /* --- tipografia --- */
   .kicker { @apply font-mono text-11 uppercase tracking-kicker-lg text-ink-mute; }
@@ -278,30 +280,28 @@
   .mark { @apply bg-accent text-accent-ink px-[0.06em]; }
   .mark-gold { @apply bg-gold-soft text-gold-deep px-[0.06em]; }
 
-  /* --- wordmark --- */
-  .wordmark { @apply inline-flex items-center gap-2.5 text-ink no-underline transition-transform duration-120 hover:-translate-y-px; }
-  .wordmark:hover .wordmark__text { @apply text-accent-text; }        /* 5,6:1 sobre --bg */
-  .wordmark--on-dark { @apply text-ink; }
-  .wordmark--on-dark:hover .wordmark__text { @apply text-accent; }    /* 13,3:1 sobre --ink */
-  .wordmark--on-dark:hover .wordmark__text .dot { @apply text-ink; }
-  .wordmark__diamond { @apply size-4.5 bg-accent; clip-path: polygon(50% 0%, 95% 35%, 78% 100%, 22% 100%, 5% 35%); }
-  .wordmark__text { @apply font-display font-black text-20 tracking-display-lg leading-none uppercase; }
-  .wordmark__text .dot { @apply text-accent; }
+  /* --- wordmark (logo SVG, assets/brand/logo-horizontal.svg) ---
+     A altura fixa o tamanho; a largura vem da proporção do arquivo (8,1:1).
+     Hover sobe 1px e clareia — a arte já é clara + laranja, não se recolore. */
+  .wordmark { @apply inline-flex items-center shrink-0 no-underline transition-[transform,opacity] duration-120 hover:-translate-y-px hover:opacity-85; }
+  .wordmark__logo { @apply block h-7.5 w-auto max-md:h-6.5; }
+  .wordmark--sm .wordmark__logo { @apply h-6; }
 
   /* --- botões --- */
   .btn {
     @apply inline-flex items-center justify-center gap-2 h-11 px-5
       font-display font-extrabold text-13 uppercase tracking-btn
-      border border-line rounded bg-bg text-ink cursor-pointer no-underline whitespace-nowrap
+      border border-ink rounded bg-ink text-bg cursor-pointer no-underline whitespace-nowrap
       transition-[transform,box-shadow,background-color,color,border-color] duration-120
       disabled:opacity-40 disabled:cursor-not-allowed;
   }
-  /* Hover: sobe 1px com sombra curta e troca para a cor de hover da variante.
-     Sem filter: brightness() — clarear o preto não aparece e escurecer o neon
-     derruba o contraste. Desabilitado não reage a nada. */
+  /* Hierarquia: --accent (CTA laranja) > --primary (claro, texto escuro) >
+     --ghost (superfície de card com borda). Hover: sobe 1px com sombra curta e
+     troca para a cor de hover da variante. Sem filter: brightness() — escurecer o
+     laranja derruba o contraste. Desabilitado não reage a nada. */
   .btn:not(:disabled):hover { @apply -translate-y-px shadow-btn bg-ink-hover border-ink-hover; }
   .btn:not(:disabled):active { @apply translate-y-px shadow-none; }
-  .btn--primary { @apply bg-bg text-ink border-line; }
+  .btn--primary { @apply bg-ink text-bg border-ink; }
   .btn--primary:not(:disabled):hover { @apply bg-ink-hover border-ink-hover; }
   .btn--accent { @apply bg-accent text-accent-ink border-accent; }
   .btn--accent:not(:disabled):hover { @apply bg-accent-hover border-accent-hover; }
@@ -309,20 +309,21 @@
   .btn--gold:not(:disabled):hover { @apply bg-gold-hover border-gold-hover; }
   .btn--ghost { @apply bg-card text-ink border-line; }
   .btn--ghost:not(:disabled):hover { @apply bg-bg-alt text-ink border-line; }
-  .btn--danger { @apply bg-danger text-white border-danger; }
+  .btn--danger { @apply bg-danger text-bg border-danger; }
   .btn--danger:not(:disabled):hover { @apply bg-danger-hover border-danger-hover; }
   .btn--sm { @apply h-8 px-3.5 text-12; }
   .btn--lg { @apply h-14 px-7 text-15; }
   .btn--full { @apply w-full; }
-  .btn--on-dark { @apply bg-card text-ink border-line; }
-  .btn--on-dark:not(:disabled):hover { @apply bg-bg-alt text-ink border-line; }
+  /* Sobre foto/vidro (hero, rodapé): fantasma com borda clara em vez de cinza */
+  .btn--on-dark { @apply bg-transparent text-ink border-ink/45; }
+  .btn--on-dark:not(:disabled):hover { @apply bg-ink/10 text-ink border-ink; }
   .btn-row { @apply flex max-md:flex-wrap; }
 
   /* --- tags --- */
   .tag { @apply inline-flex items-center gap-1.5 px-2 py-[3px] font-mono text-10 uppercase tracking-label font-semibold bg-bg-alt text-ink border border-line-soft; }
   .tag--accent { @apply bg-accent text-accent-ink border-accent; }
   .tag--gold { @apply bg-gold-soft text-gold-deep border-gold/50; }
-  .tag--ink { @apply bg-bg text-ink border-line; }
+  .tag--ink { @apply bg-ink text-bg border-ink; }
   .tag--outline { @apply bg-transparent text-ink border-ink; }
   .tag--outline-on-dark { @apply bg-transparent text-ink border-ink/60; }
   .tag--danger { @apply bg-transparent text-danger border-danger; }
@@ -341,7 +342,7 @@
   /* --- progress --- */
   .progress { @apply relative h-2 bg-bg-alt border border-line-soft; }
   .progress__fill { @apply h-full bg-accent transition-[width] duration-400 ease-[cubic-bezier(.2,.7,.2,1)]; }
-  .progress__fill--ink { @apply bg-bg; }
+  .progress__fill--ink { @apply bg-ink/45; }
   .progress--sm { @apply h-1; }
   .progress--xs { @apply h-[3px]; }
   .progress-head { @apply flex justify-between items-baseline mb-1.5; }
@@ -367,34 +368,34 @@
   /* Estado de erro: ícone + texto + borda + fundo. Nunca só cor. */
   .field__error { @apply flex items-center gap-1.5 text-11 text-danger font-semibold; }
   .field__error::before { content: "⚠"; @apply text-12 leading-none; }
-  .input, .select { @apply h-12 px-3.5 w-full bg-card text-ink border border-ink rounded font-body text-15 outline-none; }
+  .input, .select { @apply h-12 px-3.5 w-full bg-card text-ink border border-line rounded font-body text-15 outline-none; }
   .input:focus-visible, .select:focus-visible, .textarea:focus-visible { @apply outline-solid outline-3 outline-focus outline-offset-2; }
   /* <input type="date">: ao tabular para o segmento do mês/ano o Chromium deixa de
      casar :focus e :focus-visible no input; só :focus-within segue casando. */
   .input[type="date"]:focus-within { @apply outline-solid outline-3 outline-focus outline-offset-2; }
   .select {
     @apply appearance-none cursor-pointer bg-no-repeat pr-9;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><polyline points='1,1 6,7 11,1' fill='none' stroke='%230E0E0F' stroke-width='1.5'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><polyline points='1,1 6,7 11,1' fill='none' stroke='%23F8FAFC' stroke-width='1.5'/></svg>");
     background-position: right 14px center;
   }
-  .textarea { @apply w-full min-h-[90px] p-3 bg-card text-ink border border-ink rounded resize-y font-body text-13 leading-normal outline-none; }
+  .textarea { @apply w-full min-h-[90px] p-3 bg-card text-ink border border-line rounded resize-y font-body text-13 leading-normal outline-none; }
   .input--error, .input[aria-invalid="true"], .select[aria-invalid="true"], .textarea[aria-invalid="true"] { @apply border-danger bg-danger-soft; }
-  .choice { @apply h-13 bg-card text-ink border border-ink rounded cursor-pointer font-display font-extrabold text-13 uppercase tracking-btn; }
-  .choice.is-active { @apply bg-bg text-ink; }
+  .choice { @apply h-13 bg-card text-ink border border-line rounded cursor-pointer font-display font-extrabold text-13 uppercase tracking-btn hover:bg-bg-alt; }
+  .choice.is-active { @apply bg-ink text-bg border-ink; }
   .choice--accent.is-active { @apply bg-accent text-accent-ink; }
   /* selects compactos e toggles de filtro (olheiro/gestora) */
   .sel, .sel2 {
-    @apply pl-3 pr-7 bg-card text-ink border border-ink rounded font-mono text-11 uppercase tracking-label cursor-pointer appearance-none bg-no-repeat;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><polyline points='1,1 5,5 9,1' fill='none' stroke='%230E0E0F' stroke-width='1.5'/></svg>");
+    @apply pl-3 pr-7 bg-card text-ink border border-line rounded font-mono text-11 uppercase tracking-label cursor-pointer appearance-none bg-no-repeat;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><polyline points='1,1 5,5 9,1' fill='none' stroke='%23F8FAFC' stroke-width='1.5'/></svg>");
     background-position: right 10px center;
   }
   .sel { @apply h-10; }
   .sel2 { @apply h-9; }
-  .ftoggle, .map-filter { @apply px-3.5 bg-card text-ink border border-ink rounded font-mono text-11 uppercase tracking-label cursor-pointer; }
+  .ftoggle, .map-filter { @apply px-3.5 bg-card text-ink border border-line rounded font-mono text-11 uppercase tracking-label cursor-pointer; }
   .ftoggle { @apply h-10; }
   .map-filter { @apply h-9; }
   .ftoggle:hover:not(.is-active), .map-filter:hover:not(.is-active) { @apply bg-bg-alt; }
-  .ftoggle.is-active, .map-filter.is-active { @apply bg-bg text-ink; }
+  .ftoggle.is-active, .map-filter.is-active { @apply bg-ink text-bg border-ink; }
   .filter-bar { @apply px-8 py-4 border-b border-line flex gap-2.5 items-center flex-wrap bg-bg-alt max-md:grid max-md:grid-cols-[repeat(2,1fr)] max-md:px-5 max-md:py-3; }
   .filter-bar > :first-child, .filter-bar > :last-child { @apply max-md:col-span-full; }
   .filter-bar .input, .filter-bar .sel, .filter-bar .ftoggle { @apply max-md:w-full!; }
@@ -412,7 +413,7 @@
   .site-nav a.is-active { @apply text-ink; }
   /* Link que sai da página leva um marcador discreto; âncora da mesma página, não. */
   .site-nav a[data-kind="page"]::after { content: "↗" / ""; @apply text-9 ml-1 opacity-60; }
-  .nav-toggle { @apply hidden max-md:inline-flex size-10 ml-auto items-center justify-center bg-transparent text-ink border border-ink rounded cursor-pointer text-16 leading-none transition-[transform,background-color,color] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:text-ink; }
+  .nav-toggle { @apply hidden max-md:inline-flex size-10 ml-auto items-center justify-center bg-transparent text-ink border border-line rounded cursor-pointer text-16 leading-none transition-[transform,background-color,color] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:border-ink; }
   .site-header__actions { @apply ml-auto flex items-center gap-3 max-md:ml-3; }
   .site-header__crumb { @apply ml-2 font-mono text-11 uppercase tracking-kicker text-ink-mute; }
 
@@ -422,7 +423,9 @@
   .entrar.is-open .entrar__btn { @apply border-ink; }
   .entrar__chevron { @apply inline-block text-8 opacity-60 transition-transform duration-120; }
   .entrar.is-open .entrar__chevron { @apply rotate-180; }
-  .entrar__menu { @apply hidden absolute right-0 top-[calc(100%+6px)] min-w-65 bg-card border border-ink shadow-menu z-30; }
+  /* No celular o botão "Entrar" fica no canto esquerdo da segunda linha do
+     header: ancorado à direita, o menu saía da tela. */
+  .entrar__menu { @apply hidden absolute right-0 top-[calc(100%+6px)] min-w-65 bg-card border border-line shadow-menu z-30 max-md:right-auto max-md:left-0; }
   .entrar.is-open .entrar__menu { @apply block; }
   .entrar__head { @apply px-3.5 py-3 border-b border-line-soft bg-bg-alt font-mono text-10 uppercase tracking-kicker text-ink-mute; }
   .entrar__item { @apply grid grid-cols-[32px_1fr_16px] gap-3 items-center w-full p-3.5 cursor-pointer border-0 border-t border-line-soft bg-transparent text-left text-ink no-underline first-of-type:border-t-0 hover:bg-accent hover:text-accent-ink; }
@@ -434,23 +437,23 @@
   .entrar__foot { @apply flex justify-between items-center px-3.5 py-2.5 border-t border-line-soft bg-bg-alt; }
 
   /* --- rodapé --- */
-  .site-footer { @apply bg-bg text-ink; }
+  .site-footer { @apply bg-surface text-ink border-t border-line; }
   .site-footer a:not(.btn) { @apply text-ink no-underline; }
-  .site-footer__cta { @apply border-b border-bg/15; }
+  .site-footer__cta { @apply border-b border-ink/15; }
   .site-footer__cta-inner { @apply grid grid-cols-[1.4fr_1fr] gap-12 items-end px-0 py-12 max-md:grid-cols-[1fr] max-md:px-5; }
   .site-footer__cols { @apply grid grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-8 px-0 pt-14 pb-8 max-md:grid-cols-[1fr] max-md:px-5; }
-  .foot-col__title { @apply font-mono text-10 uppercase tracking-kicker text-bg/55 mb-3.5 pb-2.5 border-b border-bg/15; }
+  .foot-col__title { @apply font-mono text-10 uppercase tracking-kicker text-ink/55 mb-3.5 pb-2.5 border-b border-ink/15; }
   .foot-col__links { @apply flex flex-col gap-2.5; }
   .foot-col__links a { @apply text-13 transition-colors duration-150 hover:text-accent; }
-  .site-footer__desc { @apply mt-4 text-bg/65 text-13 max-w-desc leading-copy; }
+  .site-footer__desc { @apply mt-4 text-ink/65 text-13 max-w-desc leading-copy; }
   .social { @apply flex gap-2 mt-5; }
-  .social a, .social span { @apply inline-flex items-center justify-center size-9 border border-bg/25 font-mono text-11 font-semibold transition-colors duration-150; }
+  .social a, .social span { @apply inline-flex items-center justify-center size-9 border border-ink/25 font-mono text-11 font-semibold transition-colors duration-150; }
   .social span { @apply opacity-50 cursor-default; }
   .social a:hover { @apply bg-accent text-accent-ink; }
-  .site-footer__bottom { @apply border-t border-bg/15; }
+  .site-footer__bottom { @apply border-t border-ink/15; }
   .site-footer--compact { @apply border-t border-line; }
   .site-footer--compact .site-footer__bottom { @apply border-t-0; }
-  .site-footer__bottom-inner { @apply flex justify-between items-center flex-wrap gap-3 px-0 py-5 font-mono text-11 text-bg/50 max-md:px-5; }
+  .site-footer__bottom-inner { @apply flex justify-between items-center flex-wrap gap-3 px-0 py-5 font-mono text-11 text-ink/55 max-md:px-5; }
 
   /* --- tabela --- */
   .table { @apply w-full border-collapse font-body text-13; }
@@ -463,19 +466,19 @@
   .app { @apply grid grid-cols-[240px_1fr] min-h-screen max-md:grid-cols-[1fr]; }
   .app__aside { @apply flex flex-col border-r border-line bg-bg text-ink max-md:flex-row max-md:flex-wrap max-md:items-center; }
   .app__main { @apply overflow-auto; }
-  .aside__brand { @apply px-5 py-6 border-b border-bg; }
+  .aside__brand { @apply px-5 py-6 border-b border-line; }
   .aside__badge { @apply mt-4 p-2.5; }
   .aside__badge--accent { @apply bg-accent text-accent-ink; }
   .aside__badge--gold { @apply bg-gold text-gold-ink; }
   .aside__nav { @apply py-4 flex-1 max-md:flex max-md:flex-wrap max-md:basis-full max-md:py-2; }
   .aside__group { @apply font-mono text-10 opacity-50 uppercase tracking-kicker px-5 pt-1 pb-2 max-md:hidden; }
-  .nav-item { @apply flex items-center gap-2.5 w-full px-5 py-2.5 border-0 border-l-[3px] border-transparent cursor-pointer bg-transparent text-bg font-body text-13 font-medium text-left no-underline max-md:w-auto max-md:flex-[1_0_150px] max-md:border-l-0 max-md:border-b-[3px]; }
-  .nav-item.is-active { @apply bg-accent text-accent-ink border-l-bg font-bold max-md:border-l-transparent max-md:border-b-bg; }
+  .nav-item { @apply flex items-center gap-2.5 w-full px-5 py-2.5 border-0 border-l-[3px] border-transparent cursor-pointer bg-transparent text-ink font-body text-13 font-medium text-left no-underline hover:bg-bg-alt max-md:w-auto max-md:flex-[1_0_150px] max-md:border-l-0 max-md:border-b-[3px]; }
+  .nav-item.is-active { @apply bg-accent text-accent-ink border-l-accent-ink font-bold hover:bg-accent max-md:border-l-transparent max-md:border-b-accent-ink; }
   /* Item ainda não implementado: não é link, não entra no Tab, avisa "em breve" */
   .nav-item--soon { @apply opacity-50 cursor-default; }
   .nav-item--soon .nav-item__count { @apply opacity-100 uppercase tracking-label; }
   .nav-item__count { @apply ml-auto font-mono text-10 opacity-60; }
-  .aside__foot { @apply p-5 border-t border-bg opacity-85 max-md:basis-full; }
+  .aside__foot { @apply p-5 border-t border-line opacity-85 max-md:basis-full; }
   .page-head { @apply flex justify-between items-end gap-4 px-8 py-6 border-b border-line max-md:px-5 max-md:py-4 max-md:flex-wrap max-md:items-start; }
   .page-head__actions { @apply max-md:flex-wrap; }
   .kpi-strip { @apply grid border-b border-line; }
@@ -495,7 +498,7 @@
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
   .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-20 pb-14 max-md:grid-cols-[1fr] max-md:px-5; }
   .glass { @apply border border-ink/25 p-6 bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
-  .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-bg/55; }
+  .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink/60; }
   .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg; }
   .glass-stat__delta { @apply font-mono text-11 text-accent; }
 
@@ -532,9 +535,9 @@
   /* --- recuperar senha (recuperar.html) --- */
   .step-bars { @apply flex gap-1.5 mb-6; }
   .step-bars > div { @apply flex-1 h-1 bg-line-soft; }
-  .step-bars > div.is-done { @apply bg-bg; }
+  .step-bars > div.is-done { @apply bg-ink; }
   .step-bars > div.is-final { @apply bg-accent; }
-  .code-input { @apply flex-1 h-16 font-display font-black text-32 text-center tracking-display bg-card text-ink border border-ink rounded outline-none; }
+  .code-input { @apply flex-1 h-16 font-display font-black text-32 text-center tracking-display bg-card text-ink border border-line rounded outline-none; }
   .code-input:focus, .code-input.filled { @apply border-2 border-ink; }
   .strength-bar { @apply flex gap-0.5 h-1 bg-bg-alt; }
   .strength-bar > div { @apply flex-1; }
@@ -572,11 +575,11 @@
   /* --- toasts (ui.js) — pilha fixa, região polite; erro leva role=alert --- */
   .toast-stack { @apply fixed bottom-4 right-4 z-60 flex flex-col gap-2 w-[min(360px,calc(100vw-32px))] pointer-events-none; }
   .toast { @apply pointer-events-auto flex items-start gap-3 p-3.5 border border-line border-l-4 shadow-menu text-13 leading-normal; }
-  .toast--success { @apply bg-accent-soft text-ink border-l-success; }   /* ícone --success sobre --accent-soft: 4,9:1 */
+  .toast--success { @apply bg-card text-ink border-l-success; }         /* ícone --success sobre --card: 6,8:1 */
   .toast--success .toast__icon { @apply text-success; }
-  .toast--error { @apply bg-danger-soft text-ink border-l-danger; }      /* ícone --danger sobre --danger-soft: 4,95:1 */
+  .toast--error { @apply bg-card text-ink border-l-danger; }            /* ícone --danger sobre --card: 5,6:1 */
   .toast--error .toast__icon { @apply text-danger; }
-  .toast--info { @apply bg-bg text-ink border-line border-l-accent; }     /* texto --ink sobre --bg: 17,5:1; ícone neon 13,3:1 */
+  .toast--info { @apply bg-card text-ink border-line border-l-accent; }   /* texto --ink sobre --card: 15:1; ícone laranja 4,8:1 */
   .toast--info .toast__icon { @apply text-accent; }
   .toast--info :focus-visible { @apply outline-accent; }
   .toast__icon { @apply shrink-0 font-display font-black text-14 leading-none mt-0.5; }
@@ -584,7 +587,7 @@
   .toast__close { @apply shrink-0 inline-flex items-center justify-center size-6 p-0 bg-transparent border-0 rounded cursor-pointer text-16 leading-none opacity-70 hover:opacity-100; }
 
   /* --- tag de atributo confirmável (feed.js): aria-pressed é a fonte da verdade --- */
-  .attr-tag { @apply inline-flex items-center gap-1.5 h-8 px-2.5 border border-ink rounded bg-card text-ink font-mono text-11 uppercase tracking-label cursor-pointer transition-colors duration-120 hover:bg-bg-alt; }
+  .attr-tag { @apply inline-flex items-center gap-1.5 h-8 px-2.5 border border-line rounded bg-card text-ink font-mono text-11 uppercase tracking-label cursor-pointer transition-colors duration-120 hover:bg-bg-alt; }
   .attr-tag[aria-pressed="true"] { @apply bg-accent text-accent-ink border-accent hover:bg-accent-hover; }
   .attr-tag__count { @apply font-display font-extrabold text-12 tracking-normal; }
 
@@ -597,60 +600,3 @@
   }
 }
 
-@layer utilities {
-  /* Paleta de contraste do projeto: todas as superfícies escuras mantêm texto e bordas claros. */
-  .text-bg,
-  .text-bg\/55, .text-bg\/60, .text-bg\/65, .text-bg\/70, .text-bg\/75, .text-bg\/80, .text-bg\/85, .text-bg\/90,
-  .border-bg,
-  .border-bg\/15, .border-bg\/25, .border-bg\/35, .border-bg\/45, .border-bg\/60,
-  .text-bg\/50 {
-    color: var(--color-ink) !important;
-  }
-
-  .border-bg,
-  .border-bg\/15, .border-bg\/25, .border-bg\/35, .border-bg\/45, .border-bg\/60 {
-    border-color: rgba(245,247,250,0.92) !important;
-  }
-
-  .text-bg\/55, .text-bg\/60, .text-bg\/65, .text-bg\/70, .text-bg\/75, .text-bg\/80,
-  .text-bg\/50, .text-bg\/85, .text-bg\/90,
-  .kicker, .lead, .text-soft, .text-mute,
-  .site-nav a, .site-footer__desc, .site-footer__bottom-inner,
-  .field__hint, .field__optional, .stat__sub,
-  .dt__row > div:nth-child(3), .glass-stat__label {
-    color: rgba(248,250,252,0.86) !important;
-  }
-
-  .btn--primary,
-  .btn--accent,
-  .btn--gold,
-  .btn--ghost,
-  .btn--danger,
-  .btn--on-dark {
-    color: inherit !important;
-  }
-
-  .btn--primary { color: var(--color-ink) !important; }
-  .btn--accent { color: var(--color-accent-ink) !important; }
-  .btn--gold { color: var(--color-gold-ink) !important; }
-  .btn--ghost, .btn--on-dark { color: var(--color-ink) !important; }
-  .btn--danger { color: #fff !important; }
-
-  .btn--ghost, .btn--on-dark {
-    background-color: var(--color-card) !important;
-    border-color: var(--color-line) !important;
-    color: var(--color-ink) !important;
-  }
-
-  .btn--primary {
-    background-color: var(--color-bg-alt) !important;
-    border-color: var(--color-line) !important;
-    color: var(--color-ink) !important;
-  }
-
-  .bg-bg { background-color: var(--color-bg) !important; }
-  .bg-bg-alt { background-color: var(--color-bg-alt) !important; }
-  .bg-card { background-color: var(--color-card) !important; }
-  .bg-ink { background-color: var(--color-bg) !important; }
-  .border-ink { border-color: var(--color-line) !important; }
-}

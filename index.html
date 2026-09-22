@@ -7,7 +7,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:,">
+  <meta name="description" content="Peneiras On é a plataforma que descentraliza a captação de talentos no futebol brasileiro: inscrição gratuita, alocação automática na peneira mais próxima e avaliação por olheiros credenciados.">
+  <meta name="theme-color" content="#111417">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Peneiras On">
+  <meta property="og:title" content="Peneiras On — Onde o talento encontra o jogo">
+  <meta property="og:description" content="Peneiras On é a plataforma que descentraliza a captação de talentos no futebol brasileiro: inscrição gratuita, alocação automática na peneira mais próxima e avaliação por olheiros credenciados.">
+  <meta property="og:image" content="https://peneirason.vercel.app/assets/brand/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="assets/css/tailwind.css">
 </head>
 <body data-page="index.html">
@@ -24,12 +38,12 @@
     <div class="hero__top-fade"></div>
     <div class="wrap hero__inner">
       <div>
-        <h1 class="display h-hero text-bg">
+        <h1 class="display h-hero text-ink">
           Onde o<br>
           <span class="mark inline-block leading-display-loose">talento</span><br>
           encontra<br>o&nbsp;jogo<span class="text-[0.6em]">.</span>
         </h1>
-        <p class="lead max-w-form mt-8 text-bg/78">
+        <p class="lead max-w-form mt-8 text-ink/78">
           Peneiras On é a plataforma que descentraliza a captação de talentos no Brasil. De Manaus a Caxias, do Piauí ao Rio Grande do Sul, o olheiro chega até você.
         </p>
         <div class="flex gap-3 mt-8 flex-wrap">
@@ -46,7 +60,7 @@
           <div><div class="glass-stat__label">Aprovados</div><div class="glass-stat__value">187</div><div class="glass-stat__label">seguem em formação</div></div>
         </div>
         <div class="glass p-0 border-accent">
-          <div class="py-5 px-6 flex items-baseline justify-between border-b border-b-bg/20">
+          <div class="py-5 px-6 flex items-baseline justify-between border-b border-b-ink/20">
             <span class="glass-stat__label">Próxima peneira</span>
             <span class="font-mono text-10 text-accent" data-next-status></span>
           </div>
@@ -68,7 +82,7 @@
     </div>
 
     <!-- Marquee -->
-    <div class="marquee relative border-t border-t-bg/20 bg-[rgba(8,8,9,.7)] text-bg">
+    <div class="marquee relative border-t border-t-ink/20 bg-bg/70 text-ink">
       <div class="marquee__track" id="marquee-track"></div>
     </div>
   </section>
@@ -107,7 +121,7 @@
   </section>
 
   <!-- MANIFESTO -->
-  <section id="manifesto" class="on-dark relative bg-ink text-bg overflow-hidden">
+  <section id="manifesto" class="on-dark relative bg-bg text-ink overflow-hidden">
     <div class="pele-bg bg-left absolute inset-0 opacity-35 grayscale-[40%]"></div>
     <div class="manifesto__scrim"></div>
     <div class="wrap relative py-24 px-8">
@@ -118,8 +132,8 @@
       <p class="display text-fluid-p leading-heading-xs tracking-display max-w-wide normal-case">
         O Brasil é o país do futebol, mas não para todo mundo. Milhares de crianças com talento real nunca serão vistas por um olheiro. Não por falta de habilidade. Por falta de <span class="accent">acesso</span>. O Peneiras On existe para mudar isso.
       </p>
-      <div class="mt-12 pt-6 border-t border-t-bg/20 flex justify-between items-baseline">
-        <span class="kicker text-bg/50">Em parceria com</span>
+      <div class="mt-12 pt-6 border-t border-t-ink/20 flex justify-between items-baseline">
+        <span class="kicker text-ink/55">Em parceria com</span>
         <span class="display gold text-24 tracking-btn">Pelé Academia</span>
       </div>
     </div>
@@ -161,22 +175,22 @@
         <!-- Premium -->
         <div class="plan plan--featured">
           <div class="plan__ribbon"><span>Mais escolhido</span><span>★</span></div>
-          <div class="mono text-bg/55 mt-4.5">Premium</div>
+          <div class="mono text-ink/55 mt-4.5">Premium</div>
           <div>
             <h3 class="display h3 m-0">Visibilidade</h3>
-            <p class="mt-2 text-14 leading-normal text-bg/75">Para quem quer maximizar a chance de ser visto.</p>
+            <p class="mt-2 text-14 leading-normal text-ink/75">Para quem quer maximizar a chance de ser visto.</p>
           </div>
-          <div class="flex items-baseline gap-2 pt-4 border-t border-t-bg/15">
-            <span class="plan__price gold">R$ 14,90</span><span class="mono text-bg/55">/ mês</span>
+          <div class="flex items-baseline gap-2 pt-4 border-t border-t-ink/15">
+            <span class="plan__price gold">R$ 14,90</span><span class="mono text-ink/55">/ mês</span>
           </div>
           <ul class="plan__features">
             <li><span class="plan__check">✓</span><span>Tudo do plano Acesso, mais:</span></li>
-            <li class="border-t-bg/8"><span class="plan__check">✓</span><span>Score completo detalhado por critério</span></li>
-            <li class="border-t-bg/8"><span class="plan__check">✓</span><span>Posição no ranking em tempo real</span></li>
-            <li class="border-t-bg/8"><span class="plan__check">✓</span><span>Destaque visual do perfil para olheiros</span></li>
-            <li class="border-t-bg/8"><span class="plan__check">✓</span><span>Histórico completo de avaliações</span></li>
-            <li class="border-t-bg/8"><span class="plan__check">✓</span><span>Acesso antecipado a novas peneiras</span></li>
-            <li class="border-t-bg/8"><span class="plan__check">✓</span><span>Dicas personalizadas para subir o score</span></li>
+            <li class="border-t-ink/10"><span class="plan__check">✓</span><span>Score completo detalhado por critério</span></li>
+            <li class="border-t-ink/10"><span class="plan__check">✓</span><span>Posição no ranking em tempo real</span></li>
+            <li class="border-t-ink/10"><span class="plan__check">✓</span><span>Destaque visual do perfil para olheiros</span></li>
+            <li class="border-t-ink/10"><span class="plan__check">✓</span><span>Histórico completo de avaliações</span></li>
+            <li class="border-t-ink/10"><span class="plan__check">✓</span><span>Acesso antecipado a novas peneiras</span></li>
+            <li class="border-t-ink/10"><span class="plan__check">✓</span><span>Dicas personalizadas para subir o score</span></li>
           </ul>
           <div class="mt-auto pt-4"><a href="cadastro.html" class="btn btn--gold btn--full">Assinar Premium →</a></div>
         </div>

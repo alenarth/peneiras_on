@@ -156,21 +156,21 @@ function renderCadastro() {
         ${field('Onde joga hoje',`<input class="input" id="f-club" placeholder="Nome da escolinha ou clube" value="${esc(form.club)}">`,'',null,true)}
         ${field('Tempo de prática (anos)',`<input class="input" id="f-years" inputmode="numeric" placeholder="ex.: 2" value="${esc(form.years)}">`,'',null,true)}`;
       if(step===4) return `
-        <div class="bg-accent text-accent-ink p-4 border border-ink flex items-center gap-3">
+        <div class="bg-accent text-accent-ink p-4 border border-accent flex items-center gap-3">
           <span class="display text-36">+25</span>
           <div><div class="font-display font-extrabold text-14 uppercase">Vídeos aumentam seu score</div><div class="font-mono text-11">até 25 pontos no ranking do olheiro</div></div>
         </div>
         ${field('Link do Instagram com vídeos',`<input class="input" id="f-videos" placeholder="instagram.com/seu.usuario" value="${esc(form.videos)}">`,'@usuario ou link direto',null,true)}
-        ${field('Foto de rosto',`<button type="button" id="f-photo" class="h-30 w-full bg-bg-alt border border-dashed border-ink cursor-pointer flex flex-col items-center justify-center gap-1.5 text-ink">${form.photo?'<span class="display text-20">✓ Foto adicionada</span><span class="font-mono text-11 text-ink-soft">clique para remover</span>':'<span class="display text-20">+ enviar</span><span class="font-mono text-11 text-ink-soft">jpg, png · até 5MB</span>'}</button>`,'',null,true)}`;
+        ${field('Foto de rosto',`<button type="button" id="f-photo" class="h-30 w-full bg-bg-alt border border-dashed border-line cursor-pointer flex flex-col items-center justify-center gap-1.5 text-ink">${form.photo?'<span class="display text-20">✓ Foto adicionada</span><span class="font-mono text-11 text-ink-soft">clique para remover</span>':'<span class="display text-20">+ enviar</span><span class="font-mono text-11 text-ink-soft">jpg, png · até 5MB</span>'}</button>`,'',null,true)}`;
       // step 5
       if(needs) return `
         ${field('Nome do responsável legal',`<input class="input" id="f-resp" placeholder="Nome completo do responsável" value="${esc(form.responsible)}">`)}
         ${field('Celular do responsável',`<input class="input" id="f-resp-phone" inputmode="tel" placeholder="(21) 9 9999-9999" value="${esc(form.responsiblePhone)}">`,'Receberá SMS de confirmação')}
-        <button type="button" id="f-consent" class="flex gap-3 items-start border border-ink p-4 cursor-pointer text-left ${form.consent?'bg-accent text-accent-ink':'bg-card text-ink'}">
+        <button type="button" id="f-consent" class="flex gap-3 items-start border border-line p-4 cursor-pointer text-left ${form.consent?'bg-accent text-accent-ink':'bg-card text-ink'}">
           <span class="w-5.5 h-5.5 shrink-0 border-[1.5px] border-ink flex items-center justify-center text-accent font-display ${form.consent?'bg-ink':'bg-transparent'}">${form.consent?'✓':''}</span>
           <span><span class="font-display font-extrabold text-13 uppercase">Aceito o termo de responsável</span><br><span class="text-12 leading-normal">Autorizo a participação do menor na peneira e o tratamento dos dados conforme LGPD/ECA.</span></span>
         </button>`;
-      return `<div class="p-6 bg-accent text-accent-ink border border-ink"><div class="display text-24">Você é maior.</div><div class="text-13 mt-2">Sem necessidade de responsável. Confirme sua inscrição.</div></div>`;
+      return `<div class="p-6 bg-accent text-accent-ink border border-accent"><div class="display text-24">Você é maior.</div><div class="text-13 mt-2">Sem necessidade de responsável. Confirme sua inscrição.</div></div>`;
     }
   }
 

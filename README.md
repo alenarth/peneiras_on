@@ -73,7 +73,13 @@ cai na tela padrão da persona.
 
 ```
 index.html, sobre.html, …        → páginas (markup)
+favicon.ico, site.webmanifest    → ícone legado (16/32/48) e manifesto PWA, copiados para dist/
 assets/
+  brand/                         → identidade visual, vetorizada da arte oficial (2 cores, 3–6 KB cada)
+    logo.svg                     → símbolo + wordmark empilhados (og-image, materiais)
+    logo-horizontal.svg          → lockup do header, rodapé e painéis (via wordmarkHTML())
+    logo-mark.svg / logo-wordmark.svg → símbolo e wordmark isolados
+    favicon.svg, icon-192/512.png, apple-touch-icon.png, og-image.png
   pele-hero.webp / .jpg          → imagem de fundo (WebP + fallback JPEG)
   css/input.css                  → entrada do Tailwind: @theme (tokens) + base + componentes (@apply)
   css/residual.css               → CSS autoral residual, justificado bloco a bloco (ver abaixo)
@@ -175,20 +181,35 @@ minificado 86 KB (13,4 KB gzip) — o Tailwind emite cada componente já expandi
   pontos (`.g-3` → 2 colunas ≤900px → 1 coluna ≤560px).
 - Fontes: Archivo (display), Inter (corpo), JetBrains Mono (rótulos) via Google Fonts.
 
-## Paleta
+## Identidade visual e paleta
 
-- Verde `#54F542` (destaque) · Dourado `#C8A415` (legado Pelé)
-- Preto `#0E0E0F` · Off-white `#F5F4EE`
-- Erro `#C62828` · Sucesso `#1B7A3D`
+A marca (símbolo "P" com bola + wordmark PENEIRAS-ON) está em `assets/brand/`, vetorizada a
+partir da arte oficial em duas cores — `--color-ink` e `--color-accent` — para não pesar: o
+lockup do header tem 6 KB e é uma única requisição cacheada para o site inteiro. O `<head>` de
+cada página declara favicon (SVG + `.ico`), `apple-touch-icon`, manifesto, `theme-color`,
+`description` e Open Graph (`og-image.png`, 1200×630). Nos painéis internos
+(`atleta`, `olheiro`, `gestora`) há `robots: noindex`.
 
-> **Uso e contraste (WCAG 2.1 AA).** O verde neon e o dourado são usados como **fundo**
-> (com texto preto) ou sobre **superfícies escuras** — nunca como texto sobre fundo claro,
-> onde reprovam contraste. Para texto/ícone verde ou dourado sobre fundo claro use os tokens
-> `--color-accent-text` (`#177038`) e `--color-gold-deep` (`#7E660E`), que passam AA. Texto
-> auxiliar usa `--color-ink-mute` (`#67675C`, 5.2:1+). Anel de foco: `--color-focus` (tinta,
-> 16:1+) sobre claro, verde neon sobre superfícies escuras. Cores de hover, todas AA com o texto
-> que carregam: `--color-ink-hover` #333336 (11,43:1), `--color-accent-hover` #45E634 (11,60:1),
-> `--color-gold-hover` #B4930F (6,54:1), `--color-danger-hover` #A82020 (7,26:1).
+Tema escuro único (`color-scheme: dark`), com laranja como cor de marca:
+
+- Fundo `#111417` (`--bg`) · superfície `#151A1F` · cards `#20252D` · linhas `#374151`
+- Texto `#F8FAFC` (`--ink`) · secundário `#CBD5E1` · auxiliar `#A3ADBA`
+- Laranja `#F97316` (`--accent`, fundo com texto `#120E0B`) · `#FB923C` (`--accent-text`, texto)
+- Dourado `#FB923C` / `#FBBF24` (`--gold` / `--gold-deep`, legado Pelé e plano Premium)
+- Erro `#F87171` · Sucesso `#22C55E` · Foco `#FBBF24`
+
+> **Uso e contraste (WCAG 2.1 AA).** Na paleta escura, `bg` é sempre a superfície e `ink` o
+> texto: texto claro com transparência é `text-ink/NN`, borda clara é `border-ink/NN`, e o
+> preenchimento neutro "cheio" (barra, ponto de linha do tempo, toggle selecionado, botão
+> primário) é `bg-ink` com `text-bg`. Razões medidas: `--ink` 17:1 sobre `--bg`;
+> `--ink-soft` 10,4:1 e `--ink-mute` 6,8:1 sobre `--card`; `--accent-text` 6,4:1;
+> `--gold-deep` 9,6:1; `--danger` 5,6:1; `--success` 6,8:1. Erro é vermelho, não laranja —
+> laranja é CTA e destaque e não pode significar "problema" ao mesmo tempo. Hierarquia dos
+> botões: `--accent` (laranja) > `--primary` (claro) > `--ghost` (card com borda). Hover, todos
+> AA com o texto que carregam: `--color-ink-hover` #E2E8F0 (14:1), `--color-accent-hover`
+> #EA580C (6,5:1), `--color-gold-hover` #F59E0B (9,6:1), `--color-danger-hover` #EF4444 (5,9:1).
+> As cores de posição do radar (`POS_COLORS`, em `data.js`) são sete matizes distintas — uma
+> paleta categórica, não a paleta de interface.
 
 ## Deploy (Vercel)
 
@@ -201,7 +222,7 @@ publica só `dist/` (páginas + assets, sem `node_modules` nem os fontes do CSS)
 | Integrante | RM | Branch(es) | Pull Request(s) | Telas/Componentes entregues |
 |---|---|---|---|---|
 | Arthur Alen Amorelli Pereira | 571897 | arthur | [PR] | Migração completa para Tailwind CSS v4 (tema em `@theme`, componentização com `@apply`, `residual.css` justificado bloco a bloco, build npm e configuração de deploy na Vercel); páginas públicas `peneiras.html`, `cadastro.html` e `feed.html`; módulos `ui.js` (toasts, `announce()`, storage defensivo), `feed.js` (tags de atributo, votos, seguir, filtros, persistência) e `validation.js` (validação de formulários, incluindo o login); auditoria de acessibilidade WCAG 2.1 AA |
-| Caio Viana de Faria | 570634 | caio | [PR] | Mudança na palheta de cores do site. |
+| Caio Viana de Faria | 570634 | caio | [PR] | Mudança na paleta de cores do site (tema escuro + laranja). |
 | [NOME COMPLETO DO INTEGRANTE 3] | [RM] | [branch] | [PR] | [a preencher] |
 | [NOME COMPLETO DO INTEGRANTE 4] | [RM] | [branch] | [PR] | [a preencher] |
 | [NOME COMPLETO DO INTEGRANTE 5] | [RM] | [branch] | [PR] | [a preencher] |

@@ -49,8 +49,8 @@ if (sideTag) sideTag.textContent = cfg.tag;
 if (sideTitle) sideTitle.textContent = cfg.title;
 if (sideSub) sideSub.textContent = cfg.sub;
 if (sideTips) sideTips.innerHTML =
-  `<div class="kicker text-bg/55">Lembretes</div>` +
-  cfg.tips.map((t,i)=>`<div class="g g-row-tip gap-3 text-14 leading-normal pt-2.5 border-t border-t-bg/15"><span class="accent font-display font-black">0${i+1}</span><span>${t}</span></div>`).join('');
+  `<div class="kicker text-ink/55">Lembretes</div>` +
+  cfg.tips.map((t,i)=>`<div class="g g-row-tip gap-3 text-14 leading-normal pt-2.5 border-t border-t-ink/15"><span class="accent font-display font-black">0${i+1}</span><span>${t}</span></div>`).join('');
 
 // abas ativas
 document.querySelectorAll('.role-tab').forEach(t => {
@@ -103,5 +103,5 @@ if (role === 'jogador') {
   const alts = Object.keys(ROLES).filter(r => r !== role);
   bottom.innerHTML = `<span class="text-13 text-ink-soft">É outro perfil?</span>
     <div class="flex gap-2">` +
-    alts.map(r => `<a href="login.html?tipo=${r}" class="bg-transparent border border-ink py-1.5 px-2.5 font-mono text-11 font-semibold uppercase tracking-tab text-ink no-underline">Sou ${ROLES[r].label.toLowerCase()} →</a>`).join('') + `</div>`;
+    alts.map(r => `<a href="login.html?tipo=${r}" class="bg-transparent border border-line py-1.5 px-2.5 font-mono text-11 font-semibold uppercase tracking-tab text-ink no-underline">Sou ${ROLES[r].label.toLowerCase()} →</a>`).join('') + `</div>`;
 }

@@ -166,7 +166,7 @@ function renderMapa() {
             const op=dotOpacity(r);
             const sel=selected&&selected.id===r.id;
             const fs=Math.min(11,radius*0.5).toFixed(0);
-            return `<button class="map-dot absolute rounded-full cursor-pointer flex items-center justify-center font-display font-black ${color} ${r.demand>0.65?'text-ink':'text-bg'}" data-id="${r.id}" style="left:calc(${r.x*100}% - ${radius}px * var(--dot-scale,1));top:calc(${r.y*100}% - ${radius}px * var(--dot-scale,1));width:calc(${radius*2}px * var(--dot-scale,1));height:calc(${radius*2}px * var(--dot-scale,1));opacity:${op};border:${sel?'3px solid var(--color-ink)':'none'};font-size:max(8px, calc(${fs}px * var(--dot-scale,1)))">${r.state}</button>`;
+            return `<button class="map-dot absolute rounded-full cursor-pointer flex items-center justify-center font-display font-black ${color} ${r.demand>0.65?'text-accent-ink':'text-bg'}" data-id="${r.id}" style="left:calc(${r.x*100}% - ${radius}px * var(--dot-scale,1));top:calc(${r.y*100}% - ${radius}px * var(--dot-scale,1));width:calc(${radius*2}px * var(--dot-scale,1));height:calc(${radius*2}px * var(--dot-scale,1));opacity:${op};border:${sel?'3px solid var(--color-ink)':'none'};font-size:max(8px, calc(${fs}px * var(--dot-scale,1)))">${r.state}</button>`;
           }).join('')}
           <div class="absolute bottom-4 left-4 bg-card border border-line p-3">
             <div class="kicker uppercase mb-2">Intensidade</div>
