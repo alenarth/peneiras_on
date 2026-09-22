@@ -32,17 +32,20 @@
   <main id="conteudo" tabindex="-1">
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" data-spotlight>
     <!-- Carrossel de fundo: imagens decorativas (aria-hidden), troca por crossfade a cada
-         2,4 s; os indicadores são os únicos controles. hero.js cuida do avanço, da pausa
+         5,5 s, enquanto a imagem caminha lentamente para o lado; os
+         indicadores são os únicos controles. hero.js cuida do avanço, da pausa
          (hover, foco, aba oculta) e de prefers-reduced-motion. -->
     <div class="hero__slides" data-hero-slides aria-hidden="true">
+      <!-- a luz do cursor entra por cima das imagens (ui.js) -->
       <div class="hero__slide hero__slide--flip pele-bg is-active" data-slide></div>
       <div class="hero__slide hero-gol-bg" data-slide></div>
       <div class="hero__slide hero-app-bg" data-slide></div>
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__top-fade"></div>
+    <div class="spotlight" aria-hidden="true"></div>
     <div class="wrap hero__inner">
       <div>
         <h1 class="display h-hero text-ink">
@@ -53,7 +56,7 @@
         <p class="lead max-w-form mt-8 text-ink/78">
           Peneiras On é a plataforma que descentraliza a captação de talentos no Brasil. De Manaus a Caxias, do Piauí ao Rio Grande do Sul, o olheiro chega até você.
         </p>
-        <div class="flex gap-3 mt-8 flex-wrap">
+        <div class="btn-row btn-row--even gap-3 mt-8">
           <a href="cadastro.html" class="btn btn--accent btn--lg">Inscreva-se agora</a>
           <a href="peneiras.html" class="btn btn--gold btn--lg">Encontrar peneiras →</a>
         </div>
@@ -82,7 +85,10 @@
                 <span data-next-registered></span><span data-next-capacity></span>
               </div>
             </div>
-            <a href="peneiras.html" class="btn btn--ghost btn--sm btn--on-dark btn--full mt-5">Ver todas as peneiras →</a>
+            <div class="btn-row btn-row--even gap-2 mt-5">
+              <a class="btn btn--accent btn--sm" data-next-cta>Quero me inscrever →</a>
+              <a href="peneiras.html" class="btn btn--ghost btn--sm btn--on-dark">Ver todas</a>
+            </div>
           </div>
         </div>
       </div>
@@ -132,16 +138,20 @@
   </section>
 
   <!-- MANIFESTO -->
-  <section id="manifesto" class="on-dark relative bg-bg text-ink overflow-hidden">
+  <section id="manifesto" class="on-dark relative bg-bg text-ink overflow-hidden" data-spotlight>
     <div class="pele-bg bg-left absolute inset-0 opacity-35 grayscale-[40%]"></div>
     <div class="manifesto__scrim"></div>
+    <div class="spotlight" aria-hidden="true"></div>
     <div class="wrap relative py-24 px-8">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-6 h-px bg-accent"></span>
         <span class="kicker accent">MANIFESTO</span>
       </div>
-      <p class="display text-fluid-p leading-heading-xs tracking-display max-w-wide normal-case">
-        O Brasil é o país do futebol, mas não para todo mundo. Milhares de crianças com talento real nunca serão vistas por um olheiro. Não por falta de habilidade. Por falta de <span class="accent">acesso</span>. O Peneiras On existe para mudar isso.
+      <p class="manifesto__text">
+        O Brasil é o país do futebol,<br class="max-md:hidden"> mas não para todo mundo.
+        Milhares de crianças com talento real<br class="max-md:hidden"> nunca serão vistas por um olheiro.
+        <span class="block mt-6">Não por falta de habilidade.<br class="max-md:hidden"> Por falta de <span class="accent">acesso</span>.</span>
+        <span class="block mt-6">O Peneiras On existe para mudar isso.</span>
       </p>
       <div class="mt-12 pt-6 border-t border-t-ink/20 flex justify-between items-baseline">
         <span class="kicker text-ink/55">Em parceria com</span>
@@ -262,7 +272,7 @@
   <script>
     mountSiteHeader('index.html');
     mountSiteFooter();
-    mountHeroSlider(document.querySelector('.hero'), { interval: 2400 });
+    mountHeroSlider(document.querySelector('.hero'), { interval: 5500 });
 
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;
@@ -288,6 +298,17 @@
     document.querySelector('[data-next-registered]').textContent = `${fmtNum(next.registered)} inscritos`;
     document.querySelector('[data-next-capacity]').textContent =
       `${next.capacity} vagas${daysLeft > 1 ? ' · ' + daysLeft + ' dias restantes' : daysLeft === 1 ? ' · último dia' : ''}`;
+
+    // Inscrição exige conta: o botão leva ao login já com o evento no endereço,
+    // e é lá que a mensagem "para se inscrever, crie sua conta" aparece.
+    const nextCta = document.querySelector('[data-next-cta]');
+    if (closed) {
+      nextCta.replaceWith(Object.assign(document.createElement('button'), {
+        className: 'btn btn--ghost btn--sm', disabled: true, textContent: 'Inscrições encerradas',
+      }));
+    } else {
+      nextCta.href = `login.html?tipo=jogador&evento=${encodeURIComponent(next.id)}`;
+    }
 
     // Marquee
     const items = ['07 → 19 anos',`${season.states} estados`,'Inscrição gratuita','Score em tempo real','Anexe seus vídeos e fotos','Inteligência na análise dos seus dados esportivos','Tecnologia de alocação automática'];

@@ -41,77 +41,36 @@
         </h1>
       </div>
       <div>
-        <p class="lead">Somos uma plataforma criada para aproximar atletas, famílias, olheiros e academias. Organizamos a jornada da inscrição à avaliação para que mais talentos tenham uma oportunidade real.</p>
+        <p class="lead">O Peneiras On nasceu de uma parceria entre a <strong class="gold">Pelé Academia</strong> e a <strong>FIAP</strong>: a experiência de quem já transforma vidas pelo futebol somada à tecnologia desenvolvida por estudantes de Engenharia de Software.</p>
         <div class="grid-2 mt-8 pt-6 border-t border-t-line-soft" data-stats></div>
       </div>
-    </div>
-  </section>
-
-  <!-- MVV -->
-  <section class="section">
-    <div class="wrap section__pad">
-      <div class="grid-2 items-end mb-12">
-        <div>
-          <span class="tag tag--outline">Direção</span>
-          <h2 class="display h2 mt-3">Missão.<br>Visão.<br>Valores.</h2>
-        </div>
-        <p class="text-16 leading-copy text-ink-soft">Nossa direção combina acesso, dados e cuidado para tornar a descoberta de talentos mais justa, transparente e próxima de cada comunidade.</p>
-      </div>
-      <div class="grid-3 gap-0 border-t border-t-line">
-        <div class="pad border-r border-r-line flex flex-col gap-3.5">
-          <div class="mono text-mute">01</div><div class="display h3">Missão</div>
-          <div class="display gold text-16 leading-heading">Democratizar o futebol.</div>
-          <p class="text-14 leading-copy text-ink-soft">Abrir portas para quem ainda não teve acesso a uma avaliação de qualidade, independentemente de cidade, rede de contatos ou condição financeira.</p>
-        </div>
-        <div class="pad border-r border-r-line flex flex-col gap-3.5">
-          <div class="mono text-mute">02</div><div class="display h3">Visão</div>
-          <div class="display gold text-16 leading-heading">O olheiro vai até você.</div>
-          <p class="text-14 leading-copy text-ink-soft">Fazer com que a oportunidade chegue a regiões e atletas que costumam ficar fora dos circuitos tradicionais de captação.</p>
-        </div>
-        <div class="pad flex flex-col gap-3.5">
-          <div class="mono text-mute">03</div><div class="display h3">Valores</div>
-          <div class="display gold text-16 leading-heading">Acesso, dado, respeito.</div>
-          <p class="text-14 leading-copy text-ink-soft">Tratar cada atleta com respeito, usar dados com responsabilidade e deixar os critérios de avaliação claros para todos.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TIMELINE -->
-  <section class="section">
-    <div class="wrap section__pad">
-      <div class="grid-2 items-end mb-12">
-        <div>
-          <span class="tag tag--outline">Histórico</span>
-          <h2 class="display h2 mt-3">Do briefing<br>ao campo.</h2>
-        </div>
-        <p class="text-16 leading-copy text-ink-soft">O projeto nasceu de uma pergunta simples: como levar uma primeira oportunidade a quem tem talento, mas está longe dos grandes centros?</p>
-      </div>
-      <div data-timeline></div>
     </div>
   </section>
 
   <!-- EQUIPE -->
   <section class="section">
     <div class="wrap section__pad">
-      <div class="mb-12">
-        <span class="tag tag--outline">Equipe</span>
-        <h2 class="display h2 mt-3">Cinco pessoas.<br>Uma plataforma.</h2>
+      <div class="grid-2 items-end mb-12">
+        <div>
+          <span class="tag tag--outline">Equipe</span>
+          <h2 class="display h2 mt-3">Cinco pessoas.<br>Uma plataforma.</h2>
+        </div>
+        <p class="text-16 leading-copy text-ink-soft">Somos estudantes do 1º ano de Engenharia de Software da FIAP, campus semi-presencial do Rio de Janeiro. Todos contribuíram em todas as etapas: pesquisa, design, código e testes.</p>
       </div>
       <div class="g g-5 gap-4" data-team></div>
     </div>
   </section>
 
   <!-- PARCERIA -->
-  <section class="on-dark relative bg-bg text-ink overflow-hidden">
+  <section class="on-dark relative bg-bg text-ink overflow-hidden" data-spotlight>
     <div class="pele-bg bg-right absolute inset-0 opacity-45 grayscale-[30%]"></div>
     <div class="parceria__scrim"></div>
+    <div class="spotlight" aria-hidden="true"></div>
     <div class="wrap g g-main relative py-24 px-8 gap-12 items-center">
       <div>
         <span class="tag tag--accent">Parceria</span>
         <h2 class="display text-fluid-lg leading-display-loose mt-3 text-ink">Em parceria com a<br><span class="gold">Pelé Academia</span>.</h2>
-        <p class="text-16 leading-copy-lg mt-6 text-ink/80 max-w-copy-md">A Pelé Academia oferece a crianças e jovens acesso à educação, lazer e cidadania por meio do futebol. Essa parceria conecta a tecnologia da plataforma à experiência de quem já transforma vidas no campo.</p>
-        <p class="text-16 leading-copy-lg mt-4 text-ink/80 max-w-copy-md">Juntos, ampliamos o alcance das peneiras e construímos uma jornada mais acolhedora para atletas e responsáveis.</p>
+        <p class="text-16 leading-copy-lg mt-6 text-ink/80 max-w-copy-md">A Pelé Academia oferece a crianças e jovens acesso à educação, lazer e cidadania por meio do futebol. O Peneiras On leva essa missão para o digital: inscrição gratuita, alocação automática na peneira mais próxima e avaliação transparente, para que o talento apareça venha de onde vier.</p>
       </div>
       <div class="glass">
         <div class="glass-stat__label">Em números</div>
@@ -153,44 +112,27 @@
 
     // stats
     document.querySelector('[data-stats]').innerHTML = [
-      statHTML('Fundado em','2026',{sub:'FIAP · 1º Ano'}),
-      statHTML('Equipe','5',{sub:'engenheiros'}),
+      statHTML('Fundado em','2026',{sub:'FIAP · 1º ano'}),
+      statHTML('Equipe','5',{sub:'estudantes'}),
       statHTML('Estados atingidos',MOCK.SEASON.states,{delta:'meta 2027: '+MOCK.SEASON.statesGoal}),
       statHTML('Inscritos · campanha','18.4k',{delta:'+412 hoje'}),
     ].join('');
 
-    // timeline
-    const tl = [
-      {d:'FEV · 2026',t:'Kickoff com a Pelé Academia',s:'Briefing inicial. Mapeamento do problema: peneiras manuais, alcance restrito, falta de inteligência operacional.'},
-      {d:'MAR · 2026',t:'Pesquisa de campo',s:'Entrevistas com olheiros, gestores e potenciais inscritos em três regiões: RJ, PE e AM.'},
-      {d:'ABR · 2026',t:'Design system + protótipo',s:'Sistema de design publicado. Primeiros protótipos navegáveis testados com usuários reais.'},
-      {d:'MAI · 2026',t:'Sprint 1 — MVP',s:'Inscrição, score de completude, alocação geográfica e painel do olheiro entregues.'},
-      {d:'JUN · 2026',t:'Primeira peneira piloto',s:'Caxias/RJ. 487 inscritos, 120 vagas, 102 presentes, 14 aprovados.'},
-      {d:'Q3 · 2026',t:'Expansão Nordeste',s:'Peneiras em Recife, Salvador e Fortaleza. Integração de SMS multi-operadora.'},
-      {d:'2027',t:'Cobertura nacional',s:'Meta de 27 estados, modelo de revenue share ativo, ML preditivo em produção.'},
-    ];
-    document.querySelector('[data-timeline]').innerHTML =
-      '<div class="g g-label">' +
-      tl.map((e,i)=>{
-        const last = i===tl.length-1;
-        return `<div class="py-6 pl-0 pr-4 font-mono text-11 text-ink-soft border-t border-t-line-soft uppercase tracking-label flex items-start gap-2"><span class="w-2 h-2 mt-1 ${last?'bg-accent':'bg-ink'}"></span>${e.d}</div>
-        <div class="py-6 px-0 border-t border-t-line-soft flex flex-col gap-1.5"><div class="font-display font-extrabold text-22 tracking-display uppercase">${e.t}</div><p class="text-14 leading-copy text-ink-soft max-w-copy m-0">${e.s}</p></div>`;
-      }).join('') + '</div>';
-
-    // team
+    // Equipe: todos contribuíram em tudo, então só nome e RM — e os cartões
+    // seguem a mesma altura e o mesmo alinhamento, sem função por pessoa.
     const team = [
-      {name:'Arthur Alen Amorelli Pereira',rm:'571897',role:'Tech Lead'},
-      {name:'João Thees Castro Santiago',rm:'572829',role:'Backend'},
-      {name:'Caio Viana de Faria',rm:'570634',role:'Frontend'},
-      {name:'Clara Diel Gama Secco',rm:'571679',role:'Design + DPO'},
-      {name:'Anna',rm:'—',role:'Produto'},
+      {name:'Arthur Alen Amorelli Pereira',rm:'571897'},
+      {name:'João Thees Castro Santiago',rm:'572829'},
+      {name:'Caio Viana de Faria',rm:'570634'},
+      {name:'Clara Diel Gama Secco',rm:'571679'},
+      {name:'Anna',rm:'—'},
     ];
     document.querySelector('[data-team]').innerHTML = team.map(p=>`
-      <div class="flex flex-col gap-3">
-        <div class="player-img h-55">foto</div>
-        <div>
-          <div class="font-display font-black text-14 uppercase tracking-display-sm leading-heading-sm">${p.name}</div>
-          <div class="flex justify-between mt-1"><span class="font-mono text-11 text-ink-soft">${p.role}</span><span class="font-mono text-11 text-ink-mute">RM ${p.rm}</span></div>
+      <div class="card card--hover flex flex-col gap-4 p-5 h-full">
+        <div class="player-img aspect-[4/5]">foto</div>
+        <div class="mt-auto">
+          <div class="font-display font-black text-14 uppercase tracking-display-sm leading-heading-sm min-h-9">${p.name}</div>
+          <div class="font-mono text-11 text-ink-mute mt-2 pt-2 border-t border-line-soft">RM ${p.rm}</div>
         </div>
       </div>`).join('');
 
@@ -208,7 +150,7 @@
         <span class="font-mono text-11 uppercase tracking-widest text-ink-mute">${c.l}</span>
         <span class="text-14 font-semibold">${c.v}</span>
       </div>`).join('') +
-      `<div class="btn-row mt-4 flex gap-2"><a href="index.html" class="btn btn--primary">Voltar à home</a><a href="cadastro.html" class="btn btn--ghost">Quero me inscrever →</a></div>`;
+      `<div class="btn-row btn-row--even gap-2 mt-6"><a href="index.html" class="btn btn--primary">Voltar à home</a><a href="cadastro.html" class="btn btn--ghost">Quero me inscrever →</a></div>`;
   </script>
 </body>
 </html>

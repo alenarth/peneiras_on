@@ -282,7 +282,7 @@
   .plan--featured .gold, .on-dark .gold { @apply text-gold; }                              /* 7,3:1 sobre --bg */
 
   /* --- tipografia --- */
-  .kicker { @apply font-mono text-11 uppercase tracking-kicker-lg text-ink-mute; }
+  .kicker { @apply font-mono text-11 leading-relaxed uppercase tracking-kicker-lg text-ink-mute; }
   .mono { @apply font-mono text-11 uppercase tracking-label; }
   .display { @apply font-display font-black tracking-display-lg uppercase leading-display m-0; }
   /* Título do hero da landing ~25% menor que o original (140px): em caixa alta
@@ -294,6 +294,9 @@
   .h-panel { @apply text-44 max-md:text-[clamp(30px,9vw,44px)]; }
   .lead { @apply text-18 leading-normal text-ink-soft; }
   .mark { @apply bg-accent text-accent-ink px-[0.06em]; }
+  /* Manifesto: o mesmo display preto, só que respirando — linha mais alta,
+     letras e palavras mais soltas e blocos separados por ideia. */
+  .manifesto__text { @apply font-display font-black text-fluid-p leading-[1.28] tracking-[0.005em] [word-spacing:0.06em] max-w-wide normal-case m-0; }
   .mark-gold { @apply bg-gold-soft text-gold-deep px-[0.06em]; }
 
   /* --- wordmark (logo SVG, assets/brand/logo-horizontal.svg) ---
@@ -334,6 +337,11 @@
   .btn--on-dark { @apply bg-transparent text-ink border-ink/45; }
   .btn--on-dark:not(:disabled):hover { @apply bg-ink/10 text-ink border-ink; }
   .btn-row { @apply flex max-md:flex-wrap; }
+  /* Par de botões com a mesma largura: sem isto, "Quero me inscrever" e "Já sou
+     inscrito" saem de tamanhos diferentes só porque o texto é diferente. */
+  /* grid de colunas iguais: `1fr` respeita o min-content, então todas as
+     colunas ficam com a largura do maior botão — flex-1 deixava o maior maior. */
+  .btn-row--even { @apply grid grid-flow-col auto-cols-fr max-sm:grid-flow-row max-sm:auto-cols-auto; }
 
   /* --- tags --- */
   .tag { @apply inline-flex items-center gap-1.5 px-2 py-[3px] rounded-md font-mono text-10 uppercase tracking-label font-semibold bg-bg-alt text-ink border border-line-soft; }
@@ -353,7 +361,7 @@
 
   /* --- section label --- */
   .section-label { @apply flex items-baseline gap-3 border-b border-line pb-2 mb-4 max-md:flex-wrap; }
-  .section-label__title { @apply font-display font-extrabold uppercase tracking-btn text-13; }
+  .section-label__title { @apply font-display font-extrabold uppercase tracking-btn text-18 max-md:text-16; }
   .section-label__action { @apply ml-auto; }
 
   /* --- progress --- */
@@ -385,7 +393,7 @@
   .login-form > * { @apply motion-safe:animate-rise; }
   .login-form > :nth-child(2) { animation-delay: 80ms; } .login-form > :nth-child(3) { animation-delay: 120ms; }
   .login-form > :nth-child(4) { animation-delay: 160ms; } .login-form > :nth-child(5) { animation-delay: 220ms; }
-  .stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink-mute; }
+  .stat__label { @apply font-mono text-10 leading-relaxed uppercase tracking-kicker text-ink-mute; }
   .stat__value { @apply font-display font-black tracking-display-lg text-36 leading-display; }
   .stat__value--big { @apply text-56; }
   .stat__delta { @apply font-mono text-11 text-success; }
@@ -453,7 +461,7 @@
   /* Link que sai da página leva um marcador discreto; âncora da mesma página, não. */
   .site-nav a[data-kind="page"]::after { content: "↗" / ""; @apply text-9 ml-1 opacity-60; }
   .nav-toggle { @apply hidden max-md:inline-flex size-10 ml-auto items-center justify-center bg-transparent text-ink border border-line rounded cursor-pointer text-16 leading-none transition-[transform,background-color,color] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:border-ink; }
-  .site-header__actions { @apply ml-auto flex items-center gap-3 max-md:ml-3; }
+  .site-header__actions { @apply ml-auto flex items-center gap-5 max-md:ml-3 max-md:gap-3; }
   .site-header__crumb { @apply ml-2 font-mono text-11 uppercase tracking-kicker text-ink-mute; }
 
   /* --- menu "Entrar" (abre só por clique) --- */
@@ -486,10 +494,11 @@
   .foot-col__links a { @apply text-13 transition-[color,translate] duration-150 hover:text-accent hover:translate-x-1; }
   .site-footer__desc { @apply mt-4 text-ink/65 text-13 max-w-desc leading-copy; }
   .social { @apply flex gap-2 mt-5; }
-  .social a, .social span { @apply inline-flex items-center justify-center size-9 rounded-md border border-ink/25 font-mono text-11 font-semibold transition-[background-color,color,transform] duration-150; }
-  .social span:hover { @apply -translate-y-px; }
-  .social span { @apply opacity-50 cursor-default; }
-  .social a:hover { @apply bg-accent text-accent-ink; }
+  .social a, .social span { @apply inline-flex items-center justify-center size-9 rounded-md border border-ink/25 transition-[background-color,color,transform,border-color] duration-150; }
+  .social svg { @apply size-4.5; }
+  .social span:hover { @apply -translate-y-px border-ink/45; }
+  .social span { @apply opacity-60 cursor-default; }
+  .social a:hover { @apply bg-accent text-accent-ink border-accent -translate-y-px; }
   .site-footer__bottom { @apply border-t border-ink/15; }
   .site-footer--compact { @apply border-t border-line; }
   .site-footer--compact .site-footer__bottom { @apply border-t-0; }
@@ -533,7 +542,7 @@
   .faq summary > span { @apply inline-block transition-transform duration-200 ease-out; }
   .faq details[open] summary > span { @apply rotate-45; }
   .faq summary::-webkit-details-marker { @apply hidden; }
-  .faq p { @apply mt-3 text-ink-soft text-14 leading-copy motion-safe:animate-rise; }
+  .faq p { @apply mt-3.5 text-ink-soft text-15 leading-copy-lg max-w-copy motion-safe:animate-rise; }
 
   /* --- hero da landing --- */
   .hero { @apply relative border-b border-line bg-bg text-ink overflow-hidden; }
@@ -546,20 +555,38 @@
      layers durante a troca, um no resto do tempo. O escurecimento das artes
      novas está nas próprias imagens (hero-gol/hero-app), não em filter — filtro
      sobre 1440×800 px em cima de backdrop-blur derrubava o frame rate. */
-  .hero__slide { @apply absolute inset-0 opacity-0 invisible will-change-[opacity]; transition: opacity .6s ease, visibility 0s linear .6s; }
-  .hero__slide.is-active { @apply opacity-100 visible; transition: opacity .6s ease, visibility 0s; }
+  .hero__slide { @apply absolute inset-0 opacity-0 invisible will-change-[opacity]; transition: opacity 1.1s ease-in-out, visibility 0s linear 1.1s; }
+  .hero__slide.is-active { @apply opacity-100 visible; transition: opacity 1.1s ease-in-out, visibility 0s; }
   .hero__slide--flip { @apply -scale-x-100; }
+  /* Panorâmica lenta: enquanto o slide está visível a imagem caminha para o
+     lado (e aproxima de leve). Sem isso a troca parecia um corte seco. O
+     --flip espelha a arte do Pelé, então a panorâmica dele vai ao contrário. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__slide.is-active { animation: hero-pan 14s ease-out both; }
+    .hero__slide--flip.is-active { animation-name: hero-pan-flip; }
+  }
+  @keyframes hero-pan { from { background-position: 44% center; background-size: 112%; } to { background-position: 56% center; background-size: 120%; } }
+  @keyframes hero-pan-flip { from { background-position: 56% center; background-size: 112%; } to { background-position: 44% center; background-size: 120%; } }
   .hero__dots { @apply flex gap-2; }
   .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
   .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
+  /* Luz do cursor (ui.js marca [data-spotlight] e escreve --mx/--my): um halo
+     quente segue o mouse sobre a foto e some quando o ponteiro sai. Só
+     decoração — pointer-events:none e fora de prefers-reduced-motion. */
+  .spotlight { @apply absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 mix-blend-soft-light; background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(249,115,22,.55), rgba(249,115,22,.16) 45%, transparent 70%); }
+  [data-spotlight]:hover .spotlight { @apply opacity-100; }
+  @media (prefers-reduced-motion: reduce) { .spotlight { @apply hidden; } }
   /* Altura mínima independente do tamanho do título: a foto precisa de espaço
-     acima do texto para aparecer. items-end deixa esse espaço no topo. */
-  .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-24 pb-14 min-h-[640px] max-md:grid-cols-[1fr] max-md:px-5 max-md:min-h-0 max-md:pt-16; }
-  .glass { @apply border border-ink/25 p-6 rounded-xl bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
-  .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink/60; }
-  .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg; }
-  .glass-stat__delta { @apply font-mono text-11 text-accent; }
+     acima do texto para aparecer. items-end deixa esse espaço no topo.
+     A coluna dos cards tem largura fixa e fica encostada à direita: sobra uma
+     faixa de foto no meio, entre o título e os cards. */
+  .hero__inner { @apply relative grid grid-cols-[1fr_minmax(0,420px)] gap-x-20 gap-y-12 items-end justify-items-end px-0 pt-24 pb-14 min-h-[680px] max-lg:gap-x-12 max-md:grid-cols-[1fr] max-md:justify-items-stretch max-md:px-5 max-md:min-h-0 max-md:pt-16; }
+  .hero__inner > * { @apply w-full; }
+  .glass { @apply border border-ink/25 p-7 rounded-xl bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
+  .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker leading-relaxed text-ink/60; }
+  .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg mt-1.5 mb-1; }
+  .glass-stat__delta { @apply font-mono text-11 leading-relaxed text-accent; }
 
   /* --- planos --- */
   .plans { @apply grid grid-cols-[repeat(3,1fr)] gap-4 max-md:grid-cols-[1fr]; }
@@ -568,12 +595,15 @@
   .plan__ribbon { @apply absolute top-0 left-0 right-0 flex justify-between items-center rounded-t-[10px] bg-gold text-gold-ink px-3.5 py-1.5 font-mono text-10 font-bold uppercase tracking-kicker-lg; }
   .plan__price { @apply font-display font-black text-48 leading-display-xtight tracking-display-lg; }
   .plan__features { @apply m-0 p-0 list-none flex flex-col gap-2.5; }
-  .plan__features li { @apply grid grid-cols-[16px_1fr] gap-2.5 text-13 leading-normal pt-2 border-t border-line-soft first:border-t-0; }
+  .plan__features li { @apply grid grid-cols-[16px_1fr] gap-2.5 text-13 leading-copy py-1.5 border-t border-line-soft first:border-t-0; }
   .plan__check { @apply text-accent-text font-display font-black; }
   .plan--featured .plan__check { @apply text-gold; }
 
-  /* --- skip link --- */
-  .skip-link { @apply absolute left-2 -top-16 z-[1000] bg-bg text-ink px-4 py-2.5 font-display font-extrabold text-13 uppercase tracking-btn no-underline transition-[top] duration-150 focus:top-2; }
+  /* --- skip link ---
+     Exigência de acessibilidade (WCAG 2.4.1): fica fora da tela e só aparece
+     quando recebe foco pelo Tab, com a mesma cara de um botão do site. */
+  .skip-link { @apply fixed left-1/2 -translate-x-1/2 -top-20 z-[1000] inline-flex items-center gap-2 h-11 px-5 rounded bg-accent text-accent-ink border border-accent shadow-menu font-display font-extrabold text-13 uppercase tracking-btn no-underline transition-[top] duration-200 focus:top-4 focus-visible:outline-none; }
+  .skip-link::after { content: "↓"; @apply text-14; }
 
   /* --- área do atleta (atleta.html) --- */
   .atleta-header { @apply sticky top-0 z-20 bg-bg/85 backdrop-blur-lg border-b border-line; }
@@ -590,6 +620,10 @@
   .login-form { @apply relative flex flex-col justify-center w-full px-14 py-16 bg-bg/78 backdrop-blur-xl border-l border-ink/10 max-md:px-6 max-md:py-10 max-md:border-l-0; }
   .login-form > * { @apply w-full max-w-form mx-auto; }
   .role-tabs { @apply flex border border-line rounded-lg overflow-hidden mb-8 bg-card/60; }
+  /* Aviso que só aparece quando a pessoa chega pelo botão de uma peneira */
+  .event-note { @apply flex gap-3 items-start -mt-2 mb-6 mx-0 p-3.5 rounded-lg bg-accent-soft border border-accent/40 text-13 leading-copy motion-safe:animate-rise; }
+  .event-note__icon { @apply text-accent-text font-display font-black leading-none mt-0.5; }
+  .event-note a { @apply text-accent-text font-semibold underline underline-offset-2; }
   .role-tab { @apply flex flex-1 items-center justify-center h-11 cursor-pointer bg-transparent text-ink border-0 font-display font-extrabold text-12 uppercase tracking-tab no-underline transition-[background-color,color,transform] duration-120 hover:bg-bg-alt hover:text-ink; }
   .role-tab.is-active { @apply bg-bg-alt text-ink; }
 
@@ -661,7 +695,7 @@
   .br-map__tip strong { @apply font-display font-extrabold text-13 uppercase; }
   .br-map__tip span { @apply text-ink-soft; }
   .br-map__tip em { @apply not-italic font-mono text-10 uppercase tracking-label text-accent-text mt-1; }
-  .map-panel { @apply min-h-60; }
+  .map-panel { @apply min-h-60 p-7; }
   @media (prefers-reduced-motion: no-preference) {
     .br-map:not(.is-in) .br-map__state { opacity: 0; transform: translateY(10px); }
     .br-map.is-in .br-map__state { animation: map-in .5s cubic-bezier(.22,.8,.3,1) both; animation-delay: calc(var(--i, 0) * 22ms); }

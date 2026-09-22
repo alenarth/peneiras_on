@@ -53,7 +53,7 @@ npm run build:site   # build + monta dist/ (páginas + assets) — é o que a Ve
 | Arquivo | Descrição | Parâmetros de URL |
 |---|---|---|
 | `index.html` | Landing pública (hero, planos, FAQ) | — |
-| `sobre.html` | Institucional (missão, equipe, parceria) | — |
+| `sobre.html` | Institucional (parceria Pelé Academia + FIAP, equipe, contato) | — |
 | `peneiras.html` | Calendário público da temporada: mapa interativo do Brasil (número de peneiras abertas por estado; clique filtra a lista), filtros por status e estado, CTA para login | `?uf=<UF>` (chega com o estado já escolhido no mapa e na lista) |
 | `feed.html` | Feed de destaques: confirmação de tags de atributo, votos, seguir, filtros por posição e estado | — |
 | `cadastro.html` | Criar perfil — wizard público de 5 passos | `?evento=<id>` (contexto vindo de `login.html`; id inválido cai no cadastro normal) |
@@ -119,7 +119,7 @@ sem runtime além do navegador. Os módulos são carregados por `<script>` na or
 | `atleta.html?tela=perfil` | Bloco "Comunidade": as mesmas tags confirmáveis e o botão seguir do feed, reaproveitando `Feed.attrTagsHTML`, `Feed.followButtonHTML` e `Feed.bind` | `feed.js` + `atleta.js` |
 | `atleta.html` | Status (contagem regressiva), perfil (radar tático), minhas peneiras (filtros, inscrição) | `atleta.js`, `radar.js` |
 | `cadastro.html` | Wizard de 5 passos, score de completude ao vivo; **validação** por passo (nome, idade 07–19, CPF com 11 dígitos, cidade, posição/pé, responsável e termo para menores) com erro no blur ou na tentativa de avançar e foco no primeiro campo inválido; toast na conclusão | `cadastro.js` + `validation.js` |
-| `login.html` | Perfis por `?tipo=`; **validação** (jogador: CPF ou e-mail; olheiro/academia: e-mail; senha obrigatória) bloqueando o envio até corrigir; contexto `?evento=` | `login.js` + `validation.js` |
+| `login.html` | Perfis por `?tipo=`; **validação** (jogador: CPF ou e-mail; olheiro/academia: e-mail; senha obrigatória) bloqueando o envio até corrigir; com `?evento=` (quem veio do botão de uma peneira) explica que a inscrição exige conta e oferece o cadastro | `login.js` + `validation.js` |
 | `recuperar.html` | 4 passos; **validação** de CPF/e-mail, código de 6 dígitos e confirmação de senha coincidente; toast ao enviar código e ao salvar | `recuperar.js` + `validation.js` |
 | `peneiras.html` | Calendário com filtros por status/estado, destaque com contagem regressiva | `peneiras.js` |
 | `olheiro.html` | Lista com busca/filtros (anúncio com debounce), favoritar (toast), check-in, avaliação (nota, decisão, toast) | `olheiro.js`, `radar.js` |

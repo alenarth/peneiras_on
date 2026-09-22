@@ -251,7 +251,7 @@ function renderCadastro() {
           ${progressHTML(sc, 100, { sm: true })}
           <div class="font-mono text-10 text-ink-mute mt-2">Você pode completar o perfil depois, pela sua área. Cada campo adicional sobe o score.</div>
         </div>
-        <div class="btn-row flex gap-2 flex-wrap mt-8">
+        <div class="btn-row btn-row--even gap-2 mt-8 max-w-form">
           <a href="${loginHref}" class="btn btn--accent btn--lg">Entrar para acompanhar →</a>
           <a href="peneiras.html" class="btn btn--ghost btn--lg">Ver outras peneiras</a>
         </div>

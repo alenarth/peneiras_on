@@ -55,7 +55,7 @@ function renderStatus() {
             <div><div class="kicker text-ink/55">Sua vaga</div><div class="display text-22 mt-1">#047/120</div></div>
           </div>
           <div class="mt-6 text-14 opacity-85">${nextEvent.city}/${nextEvent.state} · local exato e horário chegam por SMS na convocação</div>
-          <div class="btn-row mt-5 flex gap-2">
+          <div class="btn-row btn-row--even gap-2 mt-5 max-w-form">
             <button class="btn btn--accent">Adicionar ao calendário</button>
             <button class="btn btn--ghost btn--on-dark">Ver instruções</button>
           </div>

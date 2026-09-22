@@ -29,11 +29,12 @@
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div data-simple-header></div>
 
-  <div class="login-grid">
+  <div class="login-grid" data-spotlight>
     <!-- A foto e o scrim cobrem a grade inteira: o formulário é um painel de
          vidro sobre ela (bg translúcido + backdrop-blur), não uma coluna opaca. -->
     <div class="login-grid__bg pele-bg" aria-hidden="true"></div>
     <div class="login-grid__scrim" aria-hidden="true"></div>
+    <div class="spotlight" aria-hidden="true"></div>
     <!-- Lado: branding -->
     <aside class="login-side" aria-hidden="true">
       <div class="relative">
@@ -56,8 +57,8 @@
       </div>
 
       <div class="kicker uppercase" data-form-kicker></div>
-      <h2 class="display h3 mt-1.5 mb-6 mx-0">Bem-vindo<br>de volta.</h2>
-      <p class="mono -mt-2 mb-6 mx-0 py-3 px-3.5 bg-accent-soft border border-line-soft text-12 normal-case tracking-normal" data-event-context hidden></p>
+      <h2 class="display h3 mt-1.5 mb-6 mx-0">Bem-vindo de volta.</h2>
+      <p class="event-note" data-event-context hidden></p>
 
       <form class="flex flex-col gap-4" data-login-form>
         <label class="field">

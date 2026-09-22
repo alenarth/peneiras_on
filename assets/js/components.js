@@ -37,6 +37,20 @@ function wordmarkHTML(opts = {}) {
   </a>`;
 }
 
+/* ---------- Redes sociais ----------
+   Ícones desenhados aqui (SVG inline, currentColor): sem perfis reais ainda,
+   são marcas não interativas, fora da ordem de tabulação — o nome vai no
+   title e no aria-label para quem usa leitor de tela. */
+const SOCIAL_ICONS = [
+  ['Instagram', '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/>'],
+  ['YouTube', '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9.2 15.2 12 10 14.8Z" fill="currentColor" stroke="none"/>'],
+  ['TikTok', '<path d="M14 3v11.2a3.4 3.4 0 1 1-3-3.38"/><path d="M14 3c.4 2.6 2 4.2 4.6 4.5"/>'],
+  ['LinkedIn', '<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7.6 10.4v6.2M7.6 7.6v.1M11.6 16.6v-6.2M11.6 12.9c0-1.4 1-2.5 2.4-2.5s2.4 1.1 2.4 2.5v3.7"/>'],
+  ['WhatsApp', '<path d="M4.2 19.8 5.5 16a7.6 7.6 0 1 1 2.9 2.7Z"/><path d="M9.2 9.1c.5 2.2 2.1 3.8 4.3 4.4l1-1.2 1.7.9-.3 1.5c-2.9.5-6.4-2.6-6.6-6l1.4-.4Z" fill="currentColor" stroke="none"/>'],
+].map(([name, body]) =>
+  `<span title="${name} · em breve" aria-label="${name} (em breve)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg></span>`
+).join('');
+
 /* ---------- Site header (nav pública) ---------- */
 function mountSiteHeader(active) {
   const host = document.querySelector('[data-site-header]');
@@ -259,9 +273,9 @@ function mountSiteFooter(opts = {}) {
             <div class="kicker accent">Pronto para entrar em campo?</div>
             <h3 class="display text-fluid-md mt-3">Inscreva-se em<br>menos de 4 minutos.</h3>
           </div>
-          <div class="flex gap-3 flex-wrap justify-end">
+          <div class="btn-row btn-row--even gap-3 justify-end max-w-form ml-auto">
             <a href="cadastro.html" class="btn btn--accent btn--lg">Quero me inscrever →</a>
-            <a href="login.html?tipo=jogador" class="btn btn--ghost btn--lg btn--on-dark">Já sou inscrito · Entrar</a>
+            <a href="login.html?tipo=jogador" class="btn btn--ghost btn--lg btn--on-dark">Já sou inscrito</a>
           </div>
         </div>
       </div>
@@ -271,13 +285,7 @@ function mountSiteFooter(opts = {}) {
           ${wordmarkHTML()}
           <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo, independentemente de onde estiver.</p>
           <!-- Sem perfis reais ainda: marcas não interativas, fora da ordem de tabulação -->
-          <div class="social" aria-label="Redes sociais (em breve)">
-            <span title="Instagram · em breve">IG</span>
-            <span title="YouTube · em breve">YT</span>
-            <span title="TikTok · em breve">TT</span>
-            <span title="LinkedIn · em breve">IN</span>
-            <span title="WhatsApp · em breve">WA</span>
-          </div>
+          <div class="social" aria-label="Redes sociais (em breve)">${SOCIAL_ICONS}</div>
         </div>
         <div>
           <div class="foot-col__title">Plataforma</div>

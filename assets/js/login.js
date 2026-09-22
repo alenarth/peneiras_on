@@ -33,10 +33,16 @@ const cfg = ROLES[role];
 
 // ?evento=<id> vindo de peneiras.html: só contexto no formulário (o protótipo
 // não tem sessão). Id inválido ou ausente cai no login normal.
+/* ?evento=<id> vindo do card de uma peneira (landing, calendário ou mapa): a
+   inscrição exige conta, então o caminho passa por aqui. Só nesse caso a tela
+   explica o porquê e oferece o cadastro — quem abre o login direto não vê nada
+   disso. Id inválido ou ausente cai no login normal. */
 const evento = MOCK.EVENTS.find(e => e.id === params.get('evento'));
 const ctx = document.querySelector('[data-event-context]');
 if (evento && role === 'jogador' && ctx) {
-  ctx.textContent = `Entre para se inscrever em ${evento.name} · ${fmtDotDate(evento.date, 'full')}`;
+  ctx.innerHTML = `<span class="event-note__icon" aria-hidden="true">◆</span>
+    <span><strong>Para se inscrever em ${esc(eventShortName(evento))} (${fmtDotDate(evento.date, 'full')}) você precisa de uma conta.</strong>
+    Entre abaixo ou <a href="cadastro.html?evento=${esc(evento.id)}">crie a sua em 4 minutos</a> — a inscrição é gratuita.</span>`;
   ctx.hidden = false;
 }
 

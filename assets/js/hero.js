@@ -2,10 +2,11 @@
    PENEIRAS ON — hero.js
    Carrossel de fundo do hero da landing (index.html).
    · slides: [data-slide] dentro de [data-hero-slides] — imagens decorativas,
-     trocadas por crossfade (CSS: .hero__slide / .is-active)
+     trocadas por crossfade longo, com panorâmica lenta enquanto visíveis
+     (CSS: .hero__slide / .is-active / @keyframes hero-pan)
    · indicadores: gerados em [data-hero-dots], um botão por slide; são o único
      controle e servem também ao teclado (Tab + Enter/Espaço, ← →)
-   · avanço automático a cada INTERVAL ms (2,4 s por padrão); pausa com o mouse sobre o hero, com
+   · avanço automático a cada INTERVAL ms (5,5 s por padrão); pausa com o mouse sobre o hero, com
      foco em algum controle e com a aba oculta — retoma ao sair
    · prefers-reduced-motion: sem avanço automático nem crossfade (CSS); os
      indicadores continuam funcionando
@@ -17,7 +18,7 @@ function mountHeroSlider(root, opts = {}) {
   const dotsHost = root.querySelector('[data-hero-dots]');
   if (slides.length < 2 || !dotsHost) return;
 
-  const INTERVAL = opts.interval || 2400;
+  const INTERVAL = opts.interval || 5500;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let current = Math.max(0, slides.findIndex(s => s.classList.contains('is-active')));
   let timer = null;

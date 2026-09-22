@@ -76,28 +76,31 @@ function renderMapPanel() {
     const open = Object.values(mapa.counts).reduce((a, x) => a + x.open, 0);
     panel.innerHTML = `
       <div class="kicker">Escolha um estado</div>
-      <div class="display text-28 mt-2">Toque num estado<br>do mapa.</div>
-      <p class="text-13 leading-copy text-ink-soft mt-3 mb-0">${open ? `Há ${open} peneira${open === 1 ? '' : 's'} com inscrição aberta agora. Estados em cinza já tiveram peneira nesta temporada; os apagados recebem em breve.` : 'Nenhuma inscrição aberta neste momento. Novas peneiras abrem onde a demanda aparece.'}</p>`;
+      <div class="display text-28 leading-heading-sm mt-3">Toque num estado<br>do mapa.</div>
+      <p class="text-14 leading-copy-lg text-ink-soft mt-4 mb-0">${open ? `Há ${open} peneira${open === 1 ? '' : 's'} com inscrição aberta agora. Estados em cinza já tiveram peneira nesta temporada; os apagados recebem em breve.` : 'Nenhuma inscrição aberta neste momento. Novas peneiras abrem onde a demanda aparece.'}</p>`;
     return;
   }
   const list = filterEvents(MOCK.EVENTS, { state: uf });
+  // a peneira aberta mais próxima do estado é o destino do botão de inscrição
+  const next = list.filter(e => eventStatus(e) !== 'encerrada').sort((a, b) => a.date.localeCompare(b.date))[0];
   panel.innerHTML = `
     <div class="flex items-baseline justify-between gap-3">
       <div class="kicker">${esc(mapa.stateName(uf))}</div>
       ${tagHTML(c.open ? `${c.open} aberta${c.open === 1 ? '' : 's'}` : 'só encerradas', c.open ? 'accent' : 'outline')}
     </div>
-    <div class="display text-28 mt-2">${uf} · ${c.total} peneira${c.total === 1 ? '' : 's'}</div>
-    <div class="flex flex-col mt-4 border-t border-line-soft">
+    <div class="display text-28 leading-heading-sm mt-3">${uf} · ${c.total} peneira${c.total === 1 ? '' : 's'}</div>
+    <div class="flex flex-col mt-5 border-t border-line-soft">
       ${list.map(e => { const st = eventStatus(e); return `
-        <div class="flex items-center justify-between gap-3 py-2.5 border-b border-line-soft text-13">
+        <div class="flex items-center justify-between gap-3 py-3 border-b border-line-soft text-13 leading-copy">
           <span><span class="font-semibold">${esc(e.city)}</span> <span class="font-mono text-11 text-ink-mute">· ${fmtDotDate(e.date)}</span></span>
           ${tagHTML(st, EVENT_STATUS_TONE[st] || 'outline')}
         </div>`; }).join('')}
     </div>
-    <div class="flex gap-2 mt-4 flex-wrap">
-      <a href="#calendario" class="btn btn--primary btn--sm" data-map-go>Ver na lista ↓</a>
-      <button type="button" class="btn btn--ghost btn--sm" data-map-clear>Limpar</button>
-    </div>`;
+    <div class="btn-row btn-row--even gap-2 mt-5">
+      ${next ? `<a href="login.html?tipo=jogador&evento=${esc(next.id)}" class="btn btn--accent btn--sm">Quero me inscrever →</a>` : ''}
+      <a href="#calendario" class="btn btn--ghost btn--sm" data-map-go>Ver na lista ↓</a>
+    </div>
+    <button type="button" class="btn btn--ghost btn--sm btn--full mt-2" data-map-clear>Limpar seleção</button>`;
   panel.querySelector('[data-map-clear]').onclick = () => setState('all', true);
   panel.querySelector('[data-map-go]').onclick = e => {
     e.preventDefault();

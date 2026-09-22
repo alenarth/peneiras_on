@@ -165,8 +165,32 @@ const UI = (() => {
     els.forEach(el => io.observe(el));
   }
 
-  document.addEventListener('DOMContentLoaded', () => { liveRegion(); reveal(); countup(); });
-  return { qs, qsa, setPressed, debounce, reducedMotion, storage, announce, toast, reveal, countup };
+  /* ---------- luz do cursor ----------
+     Em [data-spotlight] com um .spotlight dentro, escreve a posição do mouse
+     em --mx/--my (o CSS desenha o halo). Uma escrita por quadro, via
+     requestAnimationFrame; nada roda sob prefers-reduced-motion nem no toque. */
+  function spotlight(root = document) {
+    if (reducedMotion() || !matchMedia('(hover: hover)').matches) return;
+    qsa('[data-spotlight]', root).forEach(host => {
+      if (host.dataset.spotlightOn) return;
+      host.dataset.spotlightOn = '1';
+      let frame = null, x = 0, y = 0;
+      host.addEventListener('pointermove', e => {
+        const r = host.getBoundingClientRect();
+        x = ((e.clientX - r.left) / r.width) * 100;
+        y = ((e.clientY - r.top) / r.height) * 100;
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = null;
+          host.style.setProperty('--mx', x.toFixed(1) + '%');
+          host.style.setProperty('--my', y.toFixed(1) + '%');
+        });
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { liveRegion(); reveal(); countup(); spotlight(); });
+  return { qs, qsa, setPressed, debounce, reducedMotion, storage, announce, toast, reveal, countup, spotlight };
 })();
 
 /* Atalhos globais — os módulos de tela chamam announce()/toast() direto. */
