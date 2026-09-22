@@ -33,7 +33,14 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero__bg pele-bg"></div>
+    <!-- Carrossel de fundo: imagens decorativas (aria-hidden), troca por crossfade a cada
+         7s; os indicadores são os únicos controles. hero.js cuida do avanço, da pausa
+         (hover, foco, aba oculta) e de prefers-reduced-motion. -->
+    <div class="hero__slides" data-hero-slides aria-hidden="true">
+      <div class="hero__slide hero__slide--flip pele-bg is-active" data-slide></div>
+      <div class="hero__slide hero-gol-bg" data-slide></div>
+      <div class="hero__slide hero-app-bg" data-slide></div>
+    </div>
     <div class="hero__scrim"></div>
     <div class="hero__top-fade"></div>
     <div class="wrap hero__inner">
@@ -79,6 +86,10 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="wrap relative flex justify-end pb-4">
+      <div class="hero__dots" role="group" aria-label="Imagem de fundo" data-hero-dots></div>
     </div>
 
     <!-- Marquee -->
@@ -247,9 +258,11 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/ui.js"></script>
   <script src="assets/js/components.js"></script>
+  <script src="assets/js/hero.js"></script>
   <script>
     mountSiteHeader('index.html');
     mountSiteFooter();
+    mountHeroSlider(document.querySelector('.hero'));
 
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;

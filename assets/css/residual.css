@@ -5,14 +5,26 @@
 .radar-axis-label { font-family: var(--font-mono); font-size: 10px; fill: var(--color-ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
 .radar-axis-value { font-family: var(--font-display); font-size: 12px; font-weight: 900; fill: var(--color-ink); }
 
-/* 2. Imagem de fundo do Pelé — WebP (100 KB) com fallback JPEG (156 KB).
-   Navegador sem suporte a image-set() ou a WebP fica no JPEG da 1a linha. */
+/* 2. Imagens de fundo — WebP com fallback JPEG (Pelé 100/156 KB; gol 123/197 KB;
+   app 104/179 KB). Navegador sem suporte a image-set() ou a WebP fica no JPEG da
+   1a linha. As três alimentam o carrossel do hero da landing; a do Pelé também
+   aparece em login, manifesto e parceria. */
+.pele-bg, .hero-gol-bg, .hero-app-bg { background-size: cover; background-position: center; }
 .pele-bg {
   background-image: url("../pele-hero.jpg");
   background-image: image-set(url("../pele-hero.webp") type("image/webp"),
                               url("../pele-hero.jpg") type("image/jpeg"));
-  background-size: cover;
-  background-position: center;
+}
+.hero-gol-bg {
+  background-image: url("../hero-gol.jpg");
+  background-image: image-set(url("../hero-gol.webp") type("image/webp"),
+                              url("../hero-gol.jpg") type("image/jpeg"));
+}
+.hero-app-bg {
+  background-image: url("../hero-app.jpg");
+  background-image: image-set(url("../hero-app.webp") type("image/webp"),
+                              url("../hero-app.jpg") type("image/jpeg"));
+  background-position: 65% center; /* o atleta com o celular fica à direita, atrás dos cards de vidro */
 }
 
 /* 3. Scrims e gradientes decorativos */

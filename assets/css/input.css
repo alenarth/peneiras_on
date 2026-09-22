@@ -494,7 +494,17 @@
 
   /* --- hero da landing --- */
   .hero { @apply relative border-b border-line bg-bg text-ink overflow-hidden; }
-  .hero__bg { @apply absolute inset-0 -scale-x-100; }
+  /* Carrossel de fundo: todos os slides empilhados; só o ativo fica visível.
+     O crossfade é a única transição — sem deslizar, o texto por cima não pode
+     "andar". A imagem do Pelé continua espelhada (--flip) para o rosto cair à
+     direita, longe do título. */
+  .hero__slides { @apply absolute inset-0 overflow-hidden; }
+  .hero__slide { @apply absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out; }
+  .hero__slide.is-active { @apply opacity-100; }
+  .hero__slide--flip { @apply -scale-x-100; }
+  .hero__dots { @apply flex gap-2; }
+  .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
+  .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
   .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-20 pb-14 max-md:grid-cols-[1fr] max-md:px-5; }
   .glass { @apply border border-ink/25 p-6 bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
@@ -595,7 +605,7 @@
      animada, sem giro do chevron. */
   @media (prefers-reduced-motion: reduce) {
     .btn:not(:disabled):hover, .btn:not(:disabled):active, .nav-toggle:hover, .wordmark:hover { @apply translate-y-0; }
-    .btn, .nav-toggle, .wordmark, .site-header { @apply transition-none; }
+    .btn, .nav-toggle, .wordmark, .site-header, .hero__slide, .hero__dot { @apply transition-none; }
     .entrar__chevron, .entrar.is-open .entrar__chevron { @apply transition-none rotate-0; }
   }
 }

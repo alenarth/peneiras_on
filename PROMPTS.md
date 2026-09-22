@@ -111,6 +111,14 @@ Três regras foram mantidas em todos os prompts:
 
 **Restrições dadas:** nenhum commit automático; nome "Peneiras On" mantido nos textos (o hífen é tratamento visual da marca); design system da Sprint 1 preservado em tokens, tipografia e componentes — só a paleta mudou.
 
+### 10. Carrossel de imagens no hero da landing
+
+**Objetivo:** usar as duas novas artes (atleta comemorando sob o Pelé; atleta mostrando o app na comunidade) ao lado do banner existente, em slideshow.
+
+**Pedido:** adicionar as imagens à página principal no mesmo padrão do banner atual, como carrossel.
+
+**Resultado verificado:** as artes (PNG de ~2 MB cada) foram exportadas em WebP + JPEG progressivo no mesmo tamanho e peso do `pele-hero` (104–123 KB em WebP) e entram como `.hero-gol-bg` / `.hero-app-bg` no `residual.css`, junto do `.pele-bg`. O hero passou a ter três `.hero__slide` empilhados com crossfade de 1 s (nada desliza: o título por cima não pode se mover) e indicadores gerados por `assets/js/hero.js` — avanço a cada 7 s, pausa com o mouse sobre o hero, com foco nos indicadores ou com a aba oculta, setas ← → entre os pontos e, sob `prefers-reduced-motion`, sem avanço automático nem transição. Os slides são decorativos (`aria-hidden`); os indicadores são os únicos controles. Verificado em 1440 px e 390 px, com o avanço automático conferido após 7,8 s.
+
 ---
 
 ## Observações sobre a autoria

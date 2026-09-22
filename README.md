@@ -80,7 +80,8 @@ assets/
     logo-horizontal.svg          → lockup do header, rodapé e painéis (via wordmarkHTML())
     logo-mark.svg / logo-wordmark.svg → símbolo e wordmark isolados
     favicon.svg, icon-192/512.png, apple-touch-icon.png, og-image.png
-  pele-hero.webp / .jpg          → imagem de fundo (WebP + fallback JPEG)
+  pele-hero.webp / .jpg,
+  hero-gol.*, hero-app.*         → imagens de fundo do carrossel do hero (WebP + fallback JPEG)
   css/input.css                  → entrada do Tailwind: @theme (tokens) + base + componentes (@apply)
   css/residual.css               → CSS autoral residual, justificado bloco a bloco (ver abaixo)
   css/tailwind.css               → SAÍDA compilada (gerada pelo build, fora do git)
@@ -89,6 +90,8 @@ assets/
     ui.js                        → camada de interface genérica: toasts, announce() (aria-live),
                                    helpers de DOM e localStorage defensivo — carregado antes dos demais
     components.js                → header, footer, dropdown, helpers de markup (tagHTML, statHTML…)
+    hero.js                      → carrossel de fundo do hero da landing (crossfade, indicadores,
+                                   pausa em hover/foco/aba oculta, respeita prefers-reduced-motion)
     feed.js                      → feed: cards, tags de atributo, votos, seguir, filtros, persistência
     validation.js                → regras de validação e renderização de erro dos formulários
     radar.js                     → radar tático (SVG) + classificador de posição
