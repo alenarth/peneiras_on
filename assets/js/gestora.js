@@ -113,35 +113,20 @@ function renderDashboard() {
     </div>`;
 }
 
-/* ---------------- MAPA ---------------- */
+/* ---------------- MAPA DE CALOR ----------------
+   Choropleth sobre a malha real dos estados (mapa-calor.js), no lugar das
+   bolhas posicionadas em % sobre um contorno decorativo: a cor de cada estado
+   é a intensidade da demanda, e a legenda explica faixa a faixa. */
 function renderMapa() {
-  const active = ['SP','RJ','PE','PR','AM'];
-  const FILTERS = [['all','Tudo'],['demanda','Demanda'],['cobertura','Cobertura'],['gap','Demanda reprimida']];
-  let selected = null, filter = 'all';
+  const FILTERS = [['all','Tudo'],['demanda','Demanda alta'],['cobertura','Com peneira'],['gap','Demanda reprimida']];
+  let selected = null, filter = 'all', mapa = null;
 
-  /* As bolhas têm raio em px sobre posição em %: num mapa estreito elas se
-     sobrepunham (a 360px, SP sumia atrás de RJ). --dot-scale encolhe raio,
-     deslocamento e rótulo na mesma proporção; 752px é a largura do desenho
-     no desktop, onde o fator é 1. */
-  const MAP_REF_WIDTH = 752;
-  const setDotScale = el => el.style.setProperty('--dot-scale', Math.min(1, el.clientWidth / MAP_REF_WIDTH).toFixed(3));
-  const dotScaler = 'ResizeObserver' in window ? new ResizeObserver(entries => entries.forEach(en => setDotScale(en.target))) : null;
-
-  /* Cada filtro destaca um recorte diferente atenuando o resto.
-     Antes só 'gap' tinha efeito — 'demanda' e 'cobertura' eram botões inertes. */
-  function dotOpacity(r) {
-    const covered = active.includes(r.state);
-    if (filter === 'demanda') return r.demand > 0.65 ? 0.85 : 0.15;
-    if (filter === 'cobertura') return covered ? 0.85 : 0.15;
-    if (filter === 'gap') return covered ? 0.15 : 0.85;
-    return 0.85;
-  }
   function filterHint() {
     return {
       all: 'Todas as regiões monitoradas.',
       demanda: 'Destaque: regiões com demanda acima de 65%.',
-      cobertura: 'Destaque: regiões com peneira ativa na temporada.',
-      gap: 'Destaque: demanda alta ainda sem peneira ativa.',
+      cobertura: 'Destaque: regiões com peneira aberta na temporada.',
+      gap: 'Destaque: demanda alta ainda sem peneira aberta.',
     }[filter];
   }
 
@@ -149,73 +134,104 @@ function renderMapa() {
     screenEl.innerHTML = `
       <div class="page-head">
         <div><div class="kicker uppercase">Inteligência geográfica · RF-29</div><h1 class="display h2 my-1.5 mx-0">Mapa de calor</h1></div>
-        <div class="page-head__actions flex gap-2">
+        <div class="page-head__actions flex gap-2 flex-wrap">
           ${FILTERS.map(f=>`<button class="map-filter ${filter===f[0]?'is-active':''}" data-f="${f[0]}" aria-pressed="${filter===f[0]}">${f[1]}</button>`).join('')}
         </div>
       </div>
-      <div class="g g-panel-md pad gap-6 h-[calc(100%_-_116px)]">
-        <div class="card card--flush relative overflow-hidden min-h-160" data-map>
-          <div class="map-grid"></div>
-          <svg viewBox="0 0 800 700" class="absolute inset-0 w-full h-full">
-            <defs><pattern id="dot" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="0.7" fill="var(--color-ink-soft)" opacity="0.3"/></pattern></defs>
-            <path d="M 230 80 L 360 70 L 480 90 L 560 130 L 620 200 L 660 280 L 680 360 L 660 440 L 600 500 L 540 560 L 460 590 L 380 600 L 310 580 L 250 540 L 200 480 L 170 400 L 160 320 L 170 240 L 195 160 Z" fill="url(#dot)" stroke="var(--color-line)" stroke-width="1.5"/>
-          </svg>
-          ${MOCK.REGIONS.map(r=>{
-            const radius=14+r.value/40;
-            const color=r.demand>0.85?'bg-danger':r.demand>0.65?'bg-accent':'bg-ink';
-            const op=dotOpacity(r);
-            const sel=selected&&selected.id===r.id;
-            const fs=Math.min(11,radius*0.5).toFixed(0);
-            return `<button class="map-dot absolute rounded-full cursor-pointer flex items-center justify-center font-display font-black ${color} ${r.demand>0.65?'text-accent-ink':'text-bg'}" data-id="${r.id}" style="left:calc(${r.x*100}% - ${radius}px * var(--dot-scale,1));top:calc(${r.y*100}% - ${radius}px * var(--dot-scale,1));width:calc(${radius*2}px * var(--dot-scale,1));height:calc(${radius*2}px * var(--dot-scale,1));opacity:${op};border:${sel?'3px solid var(--color-ink)':'none'};font-size:max(8px, calc(${fs}px * var(--dot-scale,1)))">${r.state}</button>`;
-          }).join('')}
-          <div class="absolute bottom-4 left-4 bg-card border border-line p-3">
-            <div class="kicker uppercase mb-2">Intensidade</div>
-            ${[['bg-danger','Demanda crítica · >85%'],['bg-accent','Demanda forte · 65–85%'],['bg-ink','Demanda média · <65%']].map(i=>`<div class="flex items-center gap-2 mt-1.5"><div class="w-3 h-3 rounded-full ${i[0]}"></div><span class="font-mono text-10">${i[1]}</span></div>`).join('')}
-          </div>
-          <div class="absolute top-4 right-4 font-mono text-10 text-ink-mute uppercase tracking-widest">BR · TEMPORADA 2026 · LIVE</div>
+      <div class="g g-panel-md pad gap-6 items-start">
+        <div class="flex flex-col gap-4">
+          <div class="card p-6" data-map></div>
+          <div class="font-mono text-11 text-ink-soft" data-hint>${filterHint()}</div>
         </div>
-
         <div class="flex flex-col gap-4">
           <div data-panel></div>
           <div class="card p-5">
             <div class="section-label"><span class="section-label__title">Top demandas reprimidas</span></div>
-            ${MOCK.REGIONS.filter(r=>!active.includes(r.state)).sort((a,b)=>b.demand-a.demand).slice(0,5).map((r,i)=>`<div class="g g-row-rank items-center gap-2.5 py-2.5 px-0 ${i?'border-t border-line-soft':''}"><span class="mono text-mute">${String(i+1).padStart(2,'0')}</span><span class="text-13 font-semibold">${r.label} <span class="font-mono text-10 text-ink-soft">(${r.state})</span></span>${tagHTML(Math.round(r.demand*100), r.demand>0.7?'danger':'outline')}</div>`).join('')}
+            ${topGaps()}
           </div>
         </div>
       </div>`;
 
-    renderPanel();
-    const map = screenEl.querySelector('[data-map]');
-    setDotScale(map);
-    if (dotScaler) dotScaler.observe(map);
-    screenEl.querySelectorAll('.map-dot').forEach(d=>d.onclick=()=>{
-      selected=MOCK.REGIONS.find(r=>r.id===d.dataset.id);
-      render();
-      announce(`${selected.label}: ${Math.round(selected.demand*100)}% de demanda.`);
+    const host = screenEl.querySelector('[data-map]');
+    mapa = MapaCalor.mount(host, {
+      filter,
+      selectedId: selected && selected.id,
+      onSelect: r => {
+        // clicar de novo no mesmo estado limpa a seleção
+        selected = selected && selected.id === r.id ? null : r;
+        render();
+        if (selected) announce(`${selected.label}: demanda ${Math.round(selected.demand*100)}%, ${MapaCalor.bandOf(selected.demand).label.toLowerCase()}.`);
+      },
     });
+    host.insertAdjacentHTML('beforeend', MapaCalor.legendHTML(mapa.covered));
+
+    renderPanel();
     screenEl.querySelectorAll('.map-filter').forEach(f=>f.onclick=()=>{
       filter=f.dataset.f;
       render();
       announce(filterHint());
     });
   }
+
+  /* Demanda alta sem peneira aberta: a lista que justifica a próxima peneira. */
+  function topGaps() {
+    const covered = MapaCalor.coveredStates(MOCK.EVENTS);
+    const gaps = MOCK.REGIONS.filter(r=>!covered.has(r.state)).sort((a,b)=>b.demand-a.demand).slice(0,5);
+    if (!gaps.length) return `<p class="text-13 text-ink-soft m-0">Todas as regiões monitoradas já têm peneira aberta.</p>`;
+    return gaps.map((r,i)=>{
+      const band = MapaCalor.bandOf(r.demand);
+      return `<button type="button" class="g g-row-rank items-center gap-2.5 w-full py-3 px-0 text-left cursor-pointer bg-transparent border-0 ${i?'border-t border-line-soft':''} transition-colors duration-150 hover:text-accent-text" data-gap="${esc(r.id)}">
+        <span class="mono text-mute">${String(i+1).padStart(2,'0')}</span>
+        <span class="text-13 font-semibold">${esc(r.label)} <span class="font-mono text-10 text-ink-soft">(${r.state})</span></span>
+        <span class="inline-flex items-center gap-1.5 font-mono text-11"><span class="size-2.5 rounded-sm" style="background:${band.color}"></span>${Math.round(r.demand*100)}%</span>
+      </button>`;
+    }).join('');
+  }
+
   function renderPanel() {
     const p = screenEl.querySelector('[data-panel]');
-    if (!selected) { p.innerHTML = `<div class="card p-5"><div class="mono text-mute uppercase">Clique em uma região</div><p class="mt-2 text-ink-soft text-13">Veja detalhes de demanda, inscritos, peneiras ativas e sugestão automática de ação.</p></div>`; return; }
-    p.innerHTML = `<div class="card p-5">
-      ${tagHTML(selected.state,'accent')}
-      <div class="display text-28 mt-2 tracking-display">${selected.label}</div>
-      <div class="g g-2 gap-4 mt-5">
-        ${statHTML('Inscritos', fmtNum(selected.value))}
-        ${statHTML('Demanda', Math.round(selected.demand*100)+'%')}
-      </div>
-      <div class="mt-5 p-4 bg-bg-alt">
-        <div class="kicker uppercase">Sugestão do sistema</div>
-        <p class="text-13 mt-2 leading-normal">${selected.demand>0.8?'Demanda crítica. Abrir nova peneira nos próximos 30 dias para evitar perda de talentos.':'Demanda em monitoramento. Manter campanha digital ativa.'}</p>
-      </div>
-      <a class="btn btn--primary btn--full mt-4" href="gestora.html?tela=eventos">+ Criar peneira em ${selected.state}</a>
-    </div>`;
+    if (!selected) {
+      p.innerHTML = `<div class="card p-6">
+        <div class="kicker">Escolha um estado</div>
+        <div class="display text-28 leading-heading-sm mt-3">Clique num estado<br>do mapa.</div>
+        <p class="mt-4 mb-0 text-14 leading-copy-lg text-ink-soft">A cor mostra a intensidade da demanda; o ponto claro marca quem já tem peneira aberta. Ao escolher, você vê inscritos, demanda e a sugestão do sistema.</p>
+      </div>`;
+    } else {
+      const band = MapaCalor.bandOf(selected.demand);
+      const hasEvent = mapa.covered.has(selected.state);
+      p.innerHTML = `<div class="card p-6">
+        <div class="flex items-baseline justify-between gap-3">
+          ${tagHTML(selected.state,'accent')}
+          <span class="inline-flex items-center gap-2 font-mono text-11 uppercase tracking-label"><span class="size-3 rounded-sm" style="background:${band.color}"></span>Demanda ${band.label.toLowerCase()}</span>
+        </div>
+        <div class="display text-28 leading-heading-sm mt-3 tracking-display">${esc(selected.label)}</div>
+        <div class="g g-2 gap-4 mt-5">
+          ${statHTML('Inscritos', fmtNum(selected.value))}
+          ${statHTML('Demanda', Math.round(selected.demand*100)+'%', { sub: hasEvent ? 'com peneira aberta' : 'sem peneira aberta' })}
+        </div>
+        <div class="mt-5 p-4 rounded-lg bg-bg-alt border-l-4" style="border-color:${band.color}">
+          <div class="kicker uppercase">Sugestão do sistema</div>
+          <p class="text-13 mt-2 leading-copy m-0">${
+            selected.demand > 0.85 && !hasEvent ? 'Demanda crítica e sem peneira aberta. Abrir nova peneira nos próximos 30 dias para evitar perda de talentos.'
+            : selected.demand > 0.65 && !hasEvent ? 'Demanda alta sem peneira aberta. Avaliar abertura ainda nesta temporada.'
+            : hasEvent ? 'Peneira aberta atende a demanda atual. Manter a campanha até o encerramento das inscrições.'
+            : 'Demanda em monitoramento. Manter campanha digital ativa.'}</p>
+        </div>
+        <div class="btn-row btn-row--even gap-2 mt-5">
+          <a class="btn btn--primary btn--sm" href="gestora.html?tela=eventos">+ Criar peneira</a>
+          <button type="button" class="btn btn--ghost btn--sm" data-clear-sel>Limpar</button>
+        </div>
+      </div>`;
+      p.querySelector('[data-clear-sel]').onclick = () => { selected = null; render(); };
+    }
+    // a lista de demanda reprimida seleciona o estado no mapa
+    screenEl.querySelectorAll('[data-gap]').forEach(b => b.onclick = () => {
+      selected = MOCK.REGIONS.find(r => r.id === b.dataset.gap);
+      render();
+      announce(`${selected.label} selecionado no mapa.`);
+    });
   }
+
   render();
 }
 

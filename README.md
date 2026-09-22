@@ -96,6 +96,8 @@ assets/
     brazil-map.js                → malha SVG dos 27 estados (@svg-maps/brazil, MIT)
     mapa.js                      → mapa interativo de peneiras.html: cor e selo por estado a partir de
                                    MOCK.EVENTS, tooltip, teclado, seleção sincronizada com o filtro
+    mapa-calor.js                → mapa de calor da gestora: mesma malha, pintada pela faixa de demanda
+                                   (baixa/média/alta/crítica) com legenda, cobertura e filtros
     feed.js                      → feed: cards, tags de atributo, votos, seguir, filtros, persistência
     validation.js                → regras de validação e renderização de erro dos formulários
     radar.js                     → radar tático (SVG) + classificador de posição
@@ -170,7 +172,7 @@ Tudo o que não faz sentido como utilitária, com o motivo de cada bloco:
 1. **Radar de atributos** (`.radar-*`) — SVG desenhado por `radar.js`; usa `fill`/`stroke` e
    tipografia própria dentro do `<svg>`, sem utilitária equivalente.
 2. **Imagem de fundo do Pelé** (`.pele-bg`) — `image-set()` com WebP e fallback JPEG.
-3. **Scrims e gradientes decorativos** (`.hero__scrim`, `.login-side__scrim`, `.manifesto__scrim`,
+3. **Scrims e gradientes decorativos** (`.hero__scrim`, `.login-grid__scrim`, `.manifesto__scrim`,
    `.parceria__scrim`, `.glow-*`, `.map-grid`, `.qr-pattern`, `.player-img`) — gradientes de
    várias paradas; como valor arbitrário virariam classes de 100+ caracteres, ilegíveis.
 4. **Marquee da landing** — `@keyframes` próprio (o Tailwind só traz spin/ping/pulse/bounce).

@@ -746,6 +746,53 @@
   @keyframes map-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   @keyframes badge-pulse { 0% { transform: scale(1); opacity: .8; } 70% { transform: scale(1.9); opacity: 0; } 100% { transform: scale(1.9); opacity: 0; } }
 
+  /* --- mapa de calor (gestora.html?tela=mapa, mapa-calor.js) ---
+     Choropleth sobre a mesma malha do mapa público. A cor vem da faixa de
+     demanda (--fill) e a opacidade do valor dentro da faixa (--fill-a), então
+     a leitura por cor continua valendo mesmo com o degradê. */
+  .heat-map { @apply relative w-full; }
+  .heat-map__svg { @apply block w-full h-auto overflow-visible max-h-[62vh] mx-auto; }
+  .heat-map__state {
+    fill: color-mix(in oklab, var(--color-ink) 7%, transparent);
+    stroke: var(--color-bg); stroke-width: 1.2; stroke-linejoin: round;
+    transform-box: fill-box; transform-origin: center;
+    transition: fill .25s ease, opacity .25s ease, transform .25s cubic-bezier(.22,.8,.3,1), filter .25s ease;
+  }
+  .heat-map__state[role="button"] { fill: color-mix(in oklab, var(--fill) calc(var(--fill-a) * 100%), var(--color-card)); cursor: pointer; }
+  .heat-map__state.is-dim { @apply opacity-25; }
+  .heat-map__state.is-empty { @apply opacity-60; }
+  /* cobertura é outra dimensão: entra como contorno claro, não como cor */
+  .heat-map__state.is-covered { stroke: var(--color-ink); stroke-width: 1.8; }
+  .heat-map__state[role="button"]:hover, .heat-map__state[role="button"]:focus-visible { @apply opacity-100; transform: translateY(-3px) scale(1.03); filter: drop-shadow(0 8px 14px rgba(0,0,0,.5)); outline: none; }
+  .heat-map__state.is-selected { stroke: var(--color-ink); stroke-width: 2.5; filter: drop-shadow(0 0 14px color-mix(in oklab, var(--fill) 75%, transparent)); }
+  .heat-map__label { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: .06em; fill: var(--color-bg); pointer-events: none; }
+  .heat-map__covered-dot { fill: var(--color-ink); stroke: var(--color-bg); stroke-width: 1.2; pointer-events: none; }
+  .heat-map__tip { @apply absolute z-10 pointer-events-none flex flex-col gap-1 min-w-44 rounded-lg border border-line bg-card/92 backdrop-blur-lg px-3.5 py-2.5 text-12 leading-tight shadow-menu motion-safe:animate-pop-in; }
+  .heat-map__tip strong { @apply font-display font-extrabold text-13 uppercase; }
+  .heat-map__tip span { @apply text-ink-soft; }
+  .heat-map__tip-band { @apply flex items-center gap-2 text-ink!; }
+  .heat-map__tip-band i { @apply size-2.5 rounded-sm shrink-0; }
+  .heat-map__tip em { @apply not-italic font-mono text-10 uppercase tracking-label text-ink-mute mt-0.5; }
+  @media (prefers-reduced-motion: no-preference) {
+    .heat-map:not(.is-in) .heat-map__state { opacity: 0; }
+    .heat-map.is-in .heat-map__state { animation: map-in .5s cubic-bezier(.22,.8,.3,1) both; animation-delay: calc(var(--i, 0) * 20ms); }
+    .heat-map.is-in .heat-map__state.is-dim { animation-name: map-in-dim; }
+  }
+  @keyframes map-in-dim { from { opacity: 0; transform: translateY(10px); } to { opacity: .25; transform: none; } }
+
+  /* Legenda: é ela que torna a escala legível sem depender do tooltip. */
+  .heat-legend { @apply mt-6 pt-5 border-t border-line-soft flex flex-col gap-4; }
+  .heat-legend__title { @apply font-mono text-10 uppercase tracking-kicker text-ink-mute; }
+  .heat-legend__scale { @apply grid grid-cols-[repeat(4,minmax(0,1fr))] gap-px rounded-md overflow-hidden max-sm:grid-cols-[repeat(2,minmax(0,1fr))]; }
+  .heat-legend__band { @apply flex flex-col gap-1 bg-bg-alt px-3 py-2.5; }
+  .heat-legend__swatch { @apply block h-1.5 w-full rounded-full; }
+  .heat-legend__swatch--empty { @apply h-2.5 w-2.5 rounded-sm bg-ink/10 border border-line; }
+  .heat-legend__label { @apply font-display font-extrabold text-12 uppercase tracking-btn; }
+  .heat-legend__hint { @apply font-mono text-10 text-ink-mute; }
+  .heat-legend__foot { @apply flex flex-wrap gap-x-6 gap-y-2; }
+  .heat-legend__note { @apply inline-flex items-center gap-2 font-mono text-10 uppercase tracking-label text-ink-mute; }
+  .heat-legend__dot { @apply size-2.5 rounded-full bg-ink border-2 border-bg; }
+
   /* --- toasts (ui.js) — pilha fixa, região polite; erro leva role=alert --- */
   .toast-stack { @apply fixed bottom-4 right-4 z-60 flex flex-col gap-2 w-[min(360px,calc(100vw-32px))] pointer-events-none; }
   .toast { @apply pointer-events-auto flex items-start gap-3 p-3.5 rounded-lg border border-line border-l-4 shadow-menu text-13 leading-normal backdrop-blur-lg; }

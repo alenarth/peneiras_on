@@ -60,14 +60,10 @@
 .marquee:hover .marquee__track { animation-play-state: paused; }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-/* 5. Mapa de calor e funil — moldura estática; posições e clip-path vêm do JS */
-.map-grid {
-  position: absolute; inset: 0; opacity: 0.5;
-  background-image: linear-gradient(var(--color-line-soft) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--color-line-soft) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-.map-dot { position: absolute; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; }
+/* 5. Funil — a barra tem clip-path calculado no JS.
+   A moldura do mapa antigo (.map-grid) e as bolhas posicionadas em %
+   (.map-dot) saíram com o choropleth: o mapa de calor agora é a malha real
+   dos estados (mapa-calor.js), pintada por faixa de demanda. */
 .funnel-bar { position: absolute; top: 0; left: 50%; height: 100%; transform: translateX(-50%); }
 
 /* 6. Cadastro — alturas medidas pelo JS (--header-h, --cad-head-h) alimentam
