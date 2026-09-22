@@ -1,0 +1,17 @@
+PENEIRAS ON — Challenge Pelé Academia
+FIAP · Engenharia de Software · 1º ano · Semi-presencial · Rio de Janeiro
+Sprints 3 e 4 · 2º semestre de 2026
+
+INTEGRANTES
+
+Arthur Alen Amorelli Pereira — RM 571897
+[NOME COMPLETO DO INTEGRANTE 2] — RM [RM]
+[NOME COMPLETO DO INTEGRANTE 3] — RM [RM]
+[NOME COMPLETO DO INTEGRANTE 4] — RM [RM]
+[NOME COMPLETO DO INTEGRANTE 5] — RM [RM]
+
+PROJETO
+
+Nome: Peneiras On
+Repositório: https://github.com/alenarth/peneiras_on
+Deploy: https://peneirason.vercel.app

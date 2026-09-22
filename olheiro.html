@@ -8,19 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <style>
-    .sel {
-      height:40px; padding:0 28px 0 12px; background:var(--card); color:var(--ink);
-      border:1px solid var(--ink); border-radius:var(--radius); font-family:var(--font-mono); font-size:11px;
-      text-transform:uppercase; letter-spacing:.08em; cursor:pointer; appearance:none;
-      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><polyline points='1,1 5,5 9,1' fill='none' stroke='%230E0E0F' stroke-width='1.5'/></svg>");
-      background-repeat:no-repeat; background-position:right 10px center;
-    }
-    .ftoggle { height:40px; padding:0 14px; background:var(--card); color:var(--ink); border:1px solid var(--ink); border-radius:var(--radius); font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; cursor:pointer; }
-    .ftoggle:hover:not(.is-active) { background:var(--bg-alt); }
-    .ftoggle.is-active { background:var(--ink); color:var(--bg); }
-  </style>
+  <link rel="stylesheet" href="assets/css/tailwind.css">
 </head>
 <body>
 
@@ -31,28 +19,29 @@
       <div class="aside__brand">
         <a href="index.html" class="wordmark wordmark--on-dark"><span class="wordmark__diamond"></span><span class="wordmark__text">Peneiras<span class="dot">·</span>On</span></a>
         <div class="aside__badge aside__badge--accent">
-          <div class="kicker" style="color:var(--accent-ink);opacity:.7">Acesso</div>
-          <div class="display" style="font-size:14px">Olheiro</div>
-          <div style="font-family:var(--font-mono);font-size:10px;margin-top:4px">Carlos Mendes · ID 0042</div>
+          <div class="kicker text-accent-ink opacity-70">Acesso</div>
+          <div class="display text-14">Olheiro</div>
+          <div class="font-mono text-10 mt-1">Carlos Mendes · ID 0042</div>
         </div>
       </div>
       <nav class="aside__nav">
         <div class="aside__group">Operação</div>
-        <a class="nav-item" href="olheiro.html?tela=lista" data-nav="lista"><span style="font-size:14px">☰</span><span style="flex:1">Lista de inscritos</span><span class="nav-item__count">487</span></a>
-        <a class="nav-item" href="olheiro.html?tela=checkin" data-nav="checkin"><span style="font-size:14px">◉</span><span style="flex:1">Check-in da peneira</span><span class="nav-item__count">120</span></a>
-        <a class="nav-item" href="olheiro.html?tela=avaliacao" data-nav="avaliacao"><span style="font-size:14px">✦</span><span style="flex:1">Avaliação no campo</span><span class="nav-item__count">32</span></a>
+        <a class="nav-item" href="olheiro.html?tela=lista" data-nav="lista"><span class="text-14">☰</span><span class="flex-1">Lista de inscritos</span><span class="nav-item__count">487</span></a>
+        <a class="nav-item" href="olheiro.html?tela=checkin" data-nav="checkin"><span class="text-14">◉</span><span class="flex-1">Check-in da peneira</span><span class="nav-item__count">120</span></a>
+        <a class="nav-item" href="olheiro.html?tela=avaliacao" data-nav="avaliacao"><span class="text-14">✦</span><span class="flex-1">Avaliação no campo</span><span class="nav-item__count">32</span></a>
       </nav>
       <div class="aside__foot">
-        <div class="kicker" style="opacity:.55">Peneira ativa</div>
-        <div class="display" style="font-size:16px;margin-top:4px">Rio · Caxias</div>
-        <div style="font-family:var(--font-mono);font-size:10px;opacity:.65;margin-top:2px">15·JUN·2026</div>
-        <div style="margin-top:10px"><div class="progress progress--xs"><div class="progress__fill" style="width:81%"></div></div></div>
+        <div class="kicker opacity-55">Peneira ativa</div>
+        <div class="display text-16 mt-1">Rio · Caxias</div>
+        <div class="font-mono text-10 opacity-65 mt-0.5">15·JUN·2026</div>
+        <div class="mt-2.5"><div class="progress progress--xs"><div class="progress__fill w-[81%]"></div></div></div>
       </div>
     </aside>
     <main id="conteudo" tabindex="-1" class="app__main" data-screen></main>
   </div>
 
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/ui.js"></script>
   <script src="assets/js/components.js"></script>
   <script src="assets/js/radar.js"></script>
   <script src="assets/js/olheiro.js"></script>

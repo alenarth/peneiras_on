@@ -8,41 +8,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <style>
-    .atleta-header { position:sticky; top:0; z-index:20; background:var(--bg); border-bottom:1px solid var(--line); }
-    .atleta-tabs { display:flex; gap:4px; margin-left:24px; }
-    .atleta-tab { height:38px; padding:0 16px; cursor:pointer; background:transparent; color:var(--ink); border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.06em; text-decoration:none; }
-    .atleta-tab.is-active { background:var(--ink); color:var(--bg); border-color:var(--ink); }
-    .atleta-main { max-width:1280px; margin:0 auto; padding:32px; }
-    .cad-footer { position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line); padding:16px 32px; z-index:20; }
-    @media (max-width:900px) {
-      .atleta-main { padding:20px; }
-      .atleta-tabs { margin-left:0; order:10; flex-basis:100%; overflow-x:auto; }
-      .cad-footer { padding:12px 20px; }
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/tailwind.css">
 </head>
 <body>
 
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
   <header class="atleta-header">
-    <div class="container site-header__inner" style="max-width:1280px">
+    <div class="wrap site-header__inner max-w-page">
       <a href="index.html" class="wordmark"><span class="wordmark__diamond"></span><span class="wordmark__text">Peneiras<span class="dot">·</span>On</span></a>
       <span class="site-header__crumb">/ Minha conta</span>
-      <nav class="atleta-tabs" data-tabs>
-        <a class="atleta-tab" href="atleta.html?tela=status" data-tab="status"><span style="font-size:14px">◐</span> Status</a>
-        <a class="atleta-tab" href="atleta.html?tela=perfil" data-tab="perfil"><span style="font-size:14px">✦</span> Perfil</a>
-        <a class="atleta-tab" href="atleta.html?tela=peneiras" data-tab="peneiras"><span style="font-size:14px">◆</span> Peneiras</a>
+      <nav class="atleta-tabs">
+        <a class="atleta-tab" href="atleta.html?tela=status" data-tab="status"><span class="text-14">◐</span> Status</a>
+        <a class="atleta-tab" href="atleta.html?tela=perfil" data-tab="perfil"><span class="text-14">✦</span> Perfil</a>
+        <a class="atleta-tab" href="atleta.html?tela=peneiras" data-tab="peneiras"><span class="text-14">◆</span> Peneiras</a>
       </nav>
       <div class="site-header__actions">
         <span class="tag tag--gold">Plano Premium</span>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="avatar avatar--gold" style="width:36px;height:36px;font-size:13px">LO</span>
-          <div style="display:flex;flex-direction:column;line-height:1.1">
-            <span style="font-family:var(--font-display);font-weight:800;font-size:13px;text-transform:uppercase">Lucas Oliveira</span>
-            <span style="font-family:var(--font-mono);font-size:10px;color:var(--ink-soft)">15 anos · Caxias/RJ</span>
+        <div class="flex items-center gap-2.5">
+          <span class="avatar avatar--gold w-9 h-9 text-13">LO</span>
+          <div class="flex flex-col leading-heading-sm">
+            <span class="font-display font-extrabold text-13 uppercase">Lucas Oliveira</span>
+            <span class="font-mono text-10 text-ink-soft">15 anos · Caxias/RJ</span>
           </div>
         </div>
       </div>
@@ -52,8 +39,10 @@
   <main id="conteudo" tabindex="-1" data-screen></main>
 
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/ui.js"></script>
   <script src="assets/js/components.js"></script>
   <script src="assets/js/radar.js"></script>
+  <script src="assets/js/feed.js"></script>
   <script src="assets/js/atleta.js"></script>
 </body>
 </html>

@@ -3,36 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recuperar senha — Peneiras On</title>
+  <title>Criar perfil — Peneiras On</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/css/tailwind.css">
 </head>
-<body>
+<body data-page="cadastro.html">
 
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <div data-simple-header></div>
 
-  <main id="conteudo" tabindex="-1" class="wrap wrap--tight py-16 px-8">
-    <div class="step-bars" data-bars></div>
-    <div class="kicker uppercase" data-step-label></div>
-    <div data-step-content></div>
-
-    <div class="mt-12 pt-6 border-t border-t-line-soft flex items-center gap-2.5">
-      <span class="w-7 h-7 inline-flex items-center justify-center border border-ink font-display font-black text-14">?</span>
-      <div>
-        <div class="kicker uppercase">Não está recebendo o código?</div>
-        <div class="text-13 mt-0.5">Fale com a gente: <strong>contato@exemplo.com</strong></div>
-      </div>
-    </div>
-  </main>
+  <main id="conteudo" tabindex="-1" data-screen></main>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/ui.js"></script>
   <script src="assets/js/components.js"></script>
   <script src="assets/js/validation.js"></script>
-  <script src="assets/js/recuperar.js"></script>
+  <script src="assets/js/cadastro.js"></script>
 </body>
 </html>

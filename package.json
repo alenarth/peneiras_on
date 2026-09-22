@@ -1,0 +1,15 @@
+{
+  "name": "peneiras-on",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Peneiras On — front-end (HTML + Tailwind CSS v4 + JS vanilla)",
+  "scripts": {
+    "dev": "tailwindcss -i ./assets/css/input.css -o ./assets/css/tailwind.css --watch",
+    "build": "tailwindcss -i ./assets/css/input.css -o ./assets/css/tailwind.css --minify",
+    "build:site": "npm run build && node scripts/build-dist.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

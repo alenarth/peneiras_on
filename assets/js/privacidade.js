@@ -13,7 +13,7 @@ document.querySelector('[data-meta]').innerHTML = [
   ['Vigência','A partir da publicação'],
   ['Idioma','pt-BR'],
   ['Encarregado (DPO)','dpo@exemplo.com'],
-].map(([l,v]) => `<div><div class="kicker" style="text-transform:uppercase">${l}</div><div style="font-family:var(--font-display);font-weight:800;font-size:16px;margin-top:4px">${v}</div></div>`).join('');
+].map(([l,v]) => `<div><div class="kicker uppercase">${l}</div><div class="font-display font-extrabold text-16 mt-1">${v}</div></div>`).join('');
 
 const TOC = [
   ['principios','01','Princípios'],['dados','02','Dados que coletamos'],['finalidades','03','Para que usamos'],
@@ -23,7 +23,7 @@ const TOC = [
 ];
 const tocNav = document.querySelector('[data-toc]');
 tocNav.innerHTML = TOC.map(([id,n,t]) =>
-  `<button class="toc-btn" type="button" data-target="${id}"><span class="mono text-mute">${n}</span><span style="font-size:13px">${t}</span></button>`).join('');
+  `<button class="toc-btn" type="button" data-target="${id}"><span class="mono text-mute">${n}</span><span class="text-13">${t}</span></button>`).join('');
 
 /* Navegação do sumário: addEventListener (como o resto do projeto) e scroll
    suave só quando o usuário não pediu movimento reduzido. */
@@ -44,7 +44,7 @@ function dataTable(rows) {
 function block(id,num,title,inner) {
   return `<section id="${id}" class="priv-block" tabindex="-1">
     <div class="priv-block__head"><span class="mono text-mute">${num}</span><h2>${title}</h2></div>
-    <div style="display:flex;flex-direction:column;gap:16px">${inner}</div>
+    <div class="flex flex-col gap-4">${inner}</div>
   </section>`;
 }
 function bullets(items){ return `<ul class="priv-bullets">${items.map(i=>`<li><span class="b">▸</span><span>${i}</span></li>`).join('')}</ul>`; }
@@ -57,12 +57,12 @@ const rightsList = (()=>{
     ['VII','Compartilhamento','Saber com quem compartilhamos.'],['VIII','Revogação','Cancelar o consentimento dado anteriormente.'],
     ['IX','Revisão humana','Pedir revisão de decisões automatizadas (ex.: score, ranking).'],
   ];
-  return `<div class="rights">${r.map(([n,t,d])=>`<div class="rights__item"><span class="rights__n">${n}</span><div><div style="font-family:var(--font-display);font-weight:800;font-size:13px;text-transform:uppercase">${t}</div><div style="font-size:13px;line-height:1.5;color:var(--ink-soft);margin-top:2px">${d}</div></div></div>`).join('')}</div>`;
+  return `<div class="rights">${r.map(([n,t,d])=>`<div class="rights__item"><span class="rights__n">${n}</span><div><div class="font-display font-extrabold text-13 uppercase">${t}</div><div class="text-13 leading-normal text-ink-soft mt-0.5">${d}</div></div></div>`).join('')}</div>`;
 })();
 
-const contact = `<div style="background:var(--bg-alt);border:1px solid var(--line-soft);padding:24px;margin-top:8px"><div class="g g-2" style="gap:24px">` +
+const contact = `<div class="bg-bg-alt border border-line-soft p-6 mt-2"><div class="g g-2 gap-6">` +
   [['Nome','Nome do Encarregado'],['Cargo','DPO — Peneiras On'],['E-mail','dpo@exemplo.com'],['Telefone','(00) 0000-0000'],['Endereço','Rua Exemplo, 000 — Cidade/UF — 00000-000'],['Horário','Seg–Sex · 09h às 18h (BRT)']]
-  .map(([l,v])=>`<div><div class="kicker" style="text-transform:uppercase">${l}</div><div style="font-size:14px;margin-top:4px;font-weight:600">${v}</div></div>`).join('') + `</div></div>`;
+  .map(([l,v])=>`<div><div class="kicker uppercase">${l}</div><div class="text-14 mt-1 font-semibold">${v}</div></div>`).join('') + `</div></div>`;
 
 document.querySelector('[data-body]').innerHTML = [
   block('principios','01','Princípios que guiam esta política',
@@ -156,11 +156,11 @@ document.querySelector('[data-body]').innerHTML = [
   block('contato','11','Encarregado de Proteção de Dados (DPO)',
     `<p class="priv-p">O Encarregado recebe suas solicitações, reclamações e comunica a ANPD em caso de incidente.</p>` +
     contact +
-    `<p class="priv-p" style="margin-top:32px">Você também pode reclamar diretamente à <strong>Autoridade Nacional de Proteção de Dados (ANPD)</strong>:</p>` +
+    `<p class="priv-p mt-8">Você também pode reclamar diretamente à <strong>Autoridade Nacional de Proteção de Dados (ANPD)</strong>:</p>` +
     bullets(['Site: <strong>gov.br/anpd</strong>','Endereço: SCN, Quadra 06, Conjunto A, Bloco B — Brasília/DF'])),
 
-  `<div style="border-top:1px solid var(--line);padding-top:24px;margin-top:16px;display:flex;gap:24px;align-items:baseline;justify-content:space-between;flex-wrap:wrap">
-    <span class="mono text-mute" style="text-transform:none">Documento em conformidade com LGPD (Lei 13.709/2018) e ECA (Lei 8.069/1990).</span>
+  `<div class="border-t border-t-line pt-6 mt-4 flex gap-6 items-baseline justify-between flex-wrap">
+    <span class="mono text-mute normal-case">Documento em conformidade com LGPD (Lei 13.709/2018) e ECA (Lei 8.069/1990).</span>
     <a href="index.html" class="btn btn--primary btn--sm">← Voltar à home</a>
   </div>`,
 ].join('');

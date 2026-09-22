@@ -12,8 +12,8 @@ function buildRadarSVG(attrs, opts = {}) {
   const size = opts.size || 320;
   const maxValue = 20;
   const showLabels = opts.showLabels !== false;
-  const fill = opts.fill || 'var(--accent)';
-  const stroke = 'var(--ink)';
+  const fill = opts.fill || 'var(--color-accent)';
+  const stroke = 'var(--color-ink)';
   const rings = 4;
   const keys = Object.keys(attrs);
   const N = keys.length;
@@ -40,12 +40,12 @@ function buildRadarSVG(attrs, opts = {}) {
       const a = (Math.PI*2*i)/N - Math.PI/2;
       return `${cx+Math.cos(a)*rr},${cy+Math.sin(a)*rr}`;
     }).join(' ');
-    s += `<polygon points="${pts}" fill="none" stroke="var(--line-soft)" stroke-width="1"/>`;
+    s += `<polygon points="${pts}" fill="none" stroke="var(--color-line-soft)" stroke-width="1"/>`;
   }
   // eixos
   keys.forEach((_, i) => {
     const [x,y] = polar(i, maxValue);
-    s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line-soft)" stroke-width="1"/>`;
+    s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--color-line-soft)" stroke-width="1"/>`;
   });
   // comparação (perfil base)
   if (cmp) s += `<polygon points="${poly(cmp)}" fill="none" stroke="${stroke}" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.55"/>`;
@@ -85,31 +85,31 @@ function buildPositionRadar(attrs, opts = {}) {
   let verdict = '';
   if (opts.showVerdict !== false) {
     const runners = ranked.slice(1,4).map(r => `
-      <div class="g g-row-bar" style="gap:8px;align-items:center">
-        <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);text-transform:uppercase">${r.pos}</span>
-        <div style="height:4px;background:var(--bg-alt);position:relative">
-          <div style="position:absolute;inset:0;width:${(r.score*100).toFixed(0)}%;background:${MOCK.POS_COLORS[r.pos]}"></div>
+      <div class="g g-row-bar gap-2 items-center">
+        <span class="font-mono text-11 text-ink-soft uppercase">${r.pos}</span>
+        <div class="h-1 bg-bg-alt relative">
+          <div class="absolute inset-0" style="width:${(r.score*100).toFixed(0)}%;background:${MOCK.POS_COLORS[r.pos]}"></div>
         </div>
-        <span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);text-align:right">${(r.score*100).toFixed(0)}%</span>
+        <span class="font-mono text-11 text-ink-soft text-right">${(r.score*100).toFixed(0)}%</span>
       </div>`).join('');
 
     verdict = `
-      <div style="border-top:1px solid var(--line);padding-top:14px;margin-top:16px">
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">
+      <div class="border-t border-t-line pt-3.5 mt-4">
+        <div class="flex items-baseline gap-2 mb-2.5">
           <span class="kicker">perfil tático sugerido</span>
-          <span class="kicker" style="margin-left:auto">cosine match</span>
+          <span class="kicker ml-auto">cosine match</span>
         </div>
-        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:12px">
-          <span style="width:12px;height:12px;background:${color};border:1px solid var(--ink)"></span>
-          <span class="display" style="font-size:32px">${top.pos}</span>
-          <span style="margin-left:auto;font-family:var(--font-display);font-weight:800;font-size:22px">${(top.score*100).toFixed(0)}%</span>
+        <div class="flex items-baseline gap-3 mb-3">
+          <span class="w-3 h-3 border border-ink" style="background:${color}"></span>
+          <span class="display text-32">${top.pos}</span>
+          <span class="ml-auto font-display font-extrabold text-22">${(top.score*100).toFixed(0)}%</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px">${runners}</div>
+        <div class="flex flex-col gap-1.5">${runners}</div>
       </div>`;
   }
 
-  return `<div style="display:flex;flex-direction:column;gap:16px">
-    <div style="display:flex;justify-content:center">${radar}</div>
+  return `<div class="flex flex-col gap-4">
+    <div class="flex justify-center">${radar}</div>
     ${verdict}
   </div>`;
 }

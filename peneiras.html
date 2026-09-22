@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Peneiras — Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/css/tailwind.css">
+</head>
+<body data-page="peneiras.html">
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-site-header></div>
+
+  <main id="conteudo" tabindex="-1">
+
+  <!-- CABEÇALHO -->
+  <section class="section">
+    <div class="wrap g g-hero pt-20 pb-14 px-8 gap-14 items-end">
+      <div>
+        <span class="tag tag--outline">Calendário</span>
+        <h1 class="display text-fluid-hero leading-display-tight tracking-tighter mt-4 mb-0 mx-0">
+          Peneiras<br>na <span class="mark inline-block leading-display-loose">temporada</span><br>2026.
+        </h1>
+      </div>
+      <div>
+        <p class="lead">Escolha a peneira mais perto de você, veja quantas vagas ainda existem e garanta a sua. A inscrição é sempre gratuita — em todas as peneiras, em todos os planos.</p>
+        <div class="font-mono text-13 text-ink-soft mt-6 pt-6 border-t border-t-line-soft uppercase tracking-label" data-season-line></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESTAQUE: PRÓXIMA PENEIRA -->
+  <section class="section" id="proxima">
+    <div class="wrap section__pad">
+      <div class="section-label"><span class="section-label__title">Próxima peneira</span><span class="section-label__action" data-countdown-state></span></div>
+      <div class="g g-main gap-6 items-stretch" data-highlight></div>
+    </div>
+  </section>
+
+  <!-- CALENDÁRIO COMPLETO -->
+  <section class="section" id="calendario">
+    <div class="wrap section__pad">
+      <div class="grid-2 items-end mb-8">
+        <div>
+          <span class="tag tag--outline">Temporada 2026</span>
+          <h2 class="display h2 mt-3">Todas as<br>peneiras.</h2>
+        </div>
+        <p class="text-16 leading-copy text-ink-soft">Filtre por status ou por estado. Quem se inscreve é alocado automaticamente na peneira mais próxima com vaga — e novas peneiras abrem onde a demanda aparece.</p>
+      </div>
+
+      <div class="flex gap-2 mb-6 pb-4 border-b border-b-line flex-wrap items-center" role="group" aria-label="Filtrar peneiras">
+        <div class="flex gap-2 flex-wrap" data-status-filters></div>
+        <label for="uf" class="mono text-soft ml-2">Estado</label>
+        <select id="uf" class="select w-auto min-w-37.5 h-8 py-0 pl-3 pr-8 text-13" data-state-filter></select>
+        <span class="ml-auto font-mono text-11 text-ink-soft" data-count></span>
+      </div>
+
+      <div class="g g-3 gap-5" data-rows></div>
+    </div>
+  </section>
+
+  <!-- CONVERSÃO -->
+  <!-- superfície clara de propósito: o rodapé logo abaixo já traz o CTA escuro -->
+  <section class="section bg-bg-alt">
+    <div class="wrap section__pad g g-main gap-12 items-end">
+      <div>
+        <div class="kicker accent">Sem conta ainda?</div>
+        <h2 class="display text-fluid-md leading-display mt-3">Crie seu perfil gratuito<br>e apareça para o olheiro.</h2>
+        <p class="text-16 leading-copy text-ink-soft max-w-tight mt-5">Perfil completo sobe seu score no ranking. Vídeos, fotos e histórico contam pontos — e você acompanha inscrição, convocação e resultado pela sua área.</p>
+      </div>
+      <div class="flex gap-3 flex-wrap justify-end">
+        <a href="cadastro.html" class="btn btn--accent btn--lg">Criar perfil gratuito →</a>
+        <a href="login.html?tipo=jogador" class="btn btn--ghost btn--lg">Já tenho conta · Entrar</a>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <div data-site-footer></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/peneiras.js"></script>
+</body>
+</html>
