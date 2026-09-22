@@ -214,7 +214,7 @@ function renderCadastro() {
             ${statHTML('Passos concluídos', '5/5', { sub: STEPS.length + ' etapas' })}
           </div>
           ${progressHTML(sc, 100, { sm: true })}
-          <div class="font-mono text-10 text-ink-mute mt-2">Você pode completar o perfil depois, pela sua área — cada campo adicional sobe o score.</div>
+          <div class="font-mono text-10 text-ink-mute mt-2">Você pode completar o perfil depois, pela sua área. Cada campo adicional sobe o score.</div>
         </div>
         <div class="btn-row flex gap-2 flex-wrap mt-8">
           <a href="${loginHref}" class="btn btn--accent btn--lg">Entrar para acompanhar →</a>
