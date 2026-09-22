@@ -173,7 +173,7 @@ function renderStep3() {
   // validation.js: força mínima (8+, maiúscula, número) e confirmação igual
   const v3 = Validation.bind(null, [
     { el: pwd, validate: v => Validation.rules.strongPassword(v) },
-    { el: pwd2, validate: v => Validation.rules.match(v, pwd.value, 'As senhas não conferem — digite a mesma senha nos dois campos.'), dependsOn: pwd },
+    { el: pwd2, validate: v => Validation.rules.match(v, pwd.value, 'As senhas não conferem. Digite a mesma senha nos dois campos.'), dependsOn: pwd },
   ]);
 
   function update() {
@@ -207,7 +207,7 @@ function renderStep4() {
   contentEl.innerHTML = `
     <div class="flex items-center justify-center w-20 h-20 mt-4 bg-accent text-accent-ink font-display font-black text-48">✓</div>
     <h1 class="display h3 text-44 mt-6 mb-4 mx-0">Senha<br>atualizada.</h1>
-    <p class="text-15 leading-copy text-ink-soft mb-8">Sua senha foi alterada com sucesso. Por segurança, todas as outras sessões foram encerradas — você precisará entrar de novo em qualquer outro dispositivo.</p>
+    <p class="text-15 leading-copy text-ink-soft mb-8">Sua senha foi alterada com sucesso. Por segurança, todas as outras sessões foram encerradas. Você precisará entrar de novo em qualquer outro dispositivo.</p>
     <div class="flex flex-col gap-3">
       <a href="login.html?tipo=jogador" class="btn btn--primary btn--lg btn--full">Entrar agora →</a>
       <a href="index.html" class="btn btn--ghost btn--full">Voltar à home</a>
