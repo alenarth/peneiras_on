@@ -138,7 +138,7 @@ const UI = (() => {
   /* ---------- números que contam ----------
      [data-countup] anima o texto do elemento de 0 até o número que ele já
      mostra, preservando pontos e sufixos ("18.420", "12k+", "92%"). Dispara
-     quando o elemento entra na tela. */
+     quando o elemento entra na tela; 1,8 s para dar tempo de acompanhar. */
   function countup(root = document) {
     const els = qsa('[data-countup]', root);
     if (!els.length) return;
@@ -149,7 +149,7 @@ const UI = (() => {
       const target = parseInt(numTxt.replace(/\./g, ''), 10);
       if (!Number.isFinite(target) || reducedMotion()) return;
       const grouped = numTxt.includes('.');
-      const t0 = performance.now(), dur = 900;
+      const t0 = performance.now(), dur = 1800;
       const ease = t => 1 - Math.pow(1 - t, 3);
       (function tick(now) {
         const t = Math.min(1, (now - t0) / dur);

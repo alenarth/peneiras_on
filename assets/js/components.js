@@ -32,7 +32,7 @@ function fmtDotDate(iso, year) {
    de tela. A variante `sm` é o tamanho da barra lateral dos painéis. */
 function wordmarkHTML(opts = {}) {
   const size = opts.size === 'sm' ? ' wordmark--sm' : '';
-  return `<a href="index.html" class="wordmark${size}" aria-label="Peneiras On — página inicial">
+  return `<a href="index.html" class="wordmark${size}" aria-label="Peneiras On · página inicial">
     <img class="wordmark__logo" src="assets/brand/logo-horizontal.svg" alt="Peneiras-On" width="1459" height="180" decoding="async">
   </a>`;
 }
@@ -222,7 +222,7 @@ function mountSimpleHeader(crumb, backHref, backLabel, opts = {}) {
         ${wordmarkHTML()}
         <span class="site-header__crumb">/ ${crumb}</span>
         <div class="site-header__actions">
-          <a href="${backHref || 'index.html'}" class="bg-transparent border-0 cursor-pointer font-mono text-11 uppercase tracking-label text-ink-soft no-underline">← ${backLabel || 'Voltar à home'}</a>
+          <a href="${backHref || 'index.html'}" class="site-header__back">← ${backLabel || 'Voltar à home'}</a>
           ${opts.cta === false ? '' : '<a href="cadastro.html" class="btn btn--accent btn--sm">Quero me inscrever →</a>'}
         </div>
       </div>
@@ -270,7 +270,7 @@ function mountSiteFooter(opts = {}) {
       <div class="site-footer__cta">
         <div class="wrap site-footer__cta-inner">
           <div>
-            <div class="kicker accent">Pronto para entrar em campo?</div>
+            <div class="section-kicker accent">Pronto para entrar em campo?</div>
             <h3 class="display text-fluid-md mt-3">Inscreva-se em<br>menos de 4 minutos.</h3>
           </div>
           <div class="btn-row btn-row--even gap-3 justify-end max-w-form ml-auto">
@@ -481,9 +481,10 @@ function eventCardHTML(e, mode, opts = {}) {
   </article>`;
 }
 
-/* "Peneira Rio — Caxias" → "Rio · Caxias" (rótulo curto, usado em kickers e cards) */
+/* "Peneira Rio · Caxias" → "Rio · Caxias" (rótulo curto, usado em kickers e cards).
+   Aceita tanto o separador atual (·) quanto o travessão dos dados antigos. */
 function eventShortName(e) {
-  return e.name.replace(/^Peneira\s+/, '').replace(/\s+—\s+/g, ' · ');
+  return e.name.replace(/^Peneira\s+/, '').replace(/\s+[—·]\s+/g, ' · ');
 }
 
 /* Estado vazio da grade — ocupa a linha inteira em vez de deixar o grid em branco. */

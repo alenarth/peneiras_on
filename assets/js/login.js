@@ -42,7 +42,7 @@ const ctx = document.querySelector('[data-event-context]');
 if (evento && role === 'jogador' && ctx) {
   ctx.innerHTML = `<span class="event-note__icon" aria-hidden="true">◆</span>
     <span><strong>Para se inscrever em ${esc(eventShortName(evento))} (${fmtDotDate(evento.date, 'full')}) você precisa de uma conta.</strong>
-    Entre abaixo ou <a href="cadastro.html?evento=${esc(evento.id)}">crie a sua em 4 minutos</a> — a inscrição é gratuita.</span>`;
+    Entre abaixo ou <a href="cadastro.html?evento=${esc(evento.id)}">crie a sua em 4 minutos</a>. A inscrição é gratuita.</span>`;
   ctx.hidden = false;
 }
 

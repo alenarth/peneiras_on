@@ -18,20 +18,20 @@ const ATHLETES = [
 ];
 
 const EVENTS = [
-  { id:'e-01', name:'Peneira Rio — Caxias', city:'Duque de Caxias', state:'RJ', date:'2026-06-15', capacity:120, registered:487, called:120, present:102, approved:14, status:'aberta', age:'13-17' },
-  { id:'e-02', name:'Peneira Nordeste — Recife', city:'Recife', state:'PE', date:'2026-06-22', capacity:150, registered:612, called:150, present:0, approved:0, status:'aberta', age:'13-17' },
-  { id:'e-03', name:'Peneira Norte — Manaus', city:'Manaus', state:'AM', date:'2026-07-05', capacity:100, registered:218, called:0, present:0, approved:0, status:'inscrições', age:'13-17' },
-  { id:'e-04', name:'Peneira SP — Capital', city:'São Paulo', state:'SP', date:'2026-05-08', capacity:180, registered:1124, called:180, present:165, approved:22, status:'encerrada', age:'13-17' },
-  { id:'e-05', name:'Peneira Sul — Curitiba', city:'Curitiba', state:'PR', date:'2026-05-22', capacity:120, registered:543, called:120, present:108, approved:16, status:'encerrada', age:'13-17' },
+  { id:'e-01', name:'Peneira Rio · Caxias', city:'Duque de Caxias', state:'RJ', date:'2026-06-15', capacity:120, registered:487, called:120, present:102, approved:14, status:'aberta', age:'13-17' },
+  { id:'e-02', name:'Peneira Nordeste · Recife', city:'Recife', state:'PE', date:'2026-06-22', capacity:150, registered:612, called:150, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-03', name:'Peneira Norte · Manaus', city:'Manaus', state:'AM', date:'2026-07-05', capacity:100, registered:218, called:0, present:0, approved:0, status:'inscrições', age:'13-17' },
+  { id:'e-04', name:'Peneira SP · Capital', city:'São Paulo', state:'SP', date:'2026-05-08', capacity:180, registered:1124, called:180, present:165, approved:22, status:'encerrada', age:'13-17' },
+  { id:'e-05', name:'Peneira Sul · Curitiba', city:'Curitiba', state:'PR', date:'2026-05-22', capacity:120, registered:543, called:120, present:108, approved:16, status:'encerrada', age:'13-17' },
   // 2º semestre: as cinco acima já passaram no calendário real; sem estas, o
   // mapa e a "próxima peneira" ficariam vazios. Datas e status alimentam
   // SEASON, o mapa (mapa.js), o calendário e a contagem regressiva.
-  { id:'e-06', name:'Peneira Rio — Niterói', city:'Niterói', state:'RJ', date:'2026-10-10', capacity:120, registered:311, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
-  { id:'e-07', name:'Peneira Nordeste — Salvador', city:'Salvador', state:'BA', date:'2026-10-17', capacity:150, registered:428, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
-  { id:'e-08', name:'Peneira Minas — BH', city:'Belo Horizonte', state:'MG', date:'2026-10-24', capacity:120, registered:296, called:0, present:0, approved:0, status:'inscrições', age:'12-16' },
-  { id:'e-09', name:'Peneira Nordeste — Fortaleza', city:'Fortaleza', state:'CE', date:'2026-11-07', capacity:120, registered:187, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
-  { id:'e-10', name:'Peneira Centro-Oeste — Brasília', city:'Brasília', state:'DF', date:'2026-11-21', capacity:100, registered:142, called:0, present:0, approved:0, status:'inscrições', age:'13-17' },
-  { id:'e-11', name:'Peneira Sul — Porto Alegre', city:'Porto Alegre', state:'RS', date:'2026-12-05', capacity:120, registered:98, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-06', name:'Peneira Rio · Niterói', city:'Niterói', state:'RJ', date:'2026-10-10', capacity:120, registered:311, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-07', name:'Peneira Nordeste · Salvador', city:'Salvador', state:'BA', date:'2026-10-17', capacity:150, registered:428, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-08', name:'Peneira Minas · BH', city:'Belo Horizonte', state:'MG', date:'2026-10-24', capacity:120, registered:296, called:0, present:0, approved:0, status:'inscrições', age:'12-16' },
+  { id:'e-09', name:'Peneira Nordeste · Fortaleza', city:'Fortaleza', state:'CE', date:'2026-11-07', capacity:120, registered:187, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
+  { id:'e-10', name:'Peneira Centro-Oeste · Brasília', city:'Brasília', state:'DF', date:'2026-11-21', capacity:100, registered:142, called:0, present:0, approved:0, status:'inscrições', age:'13-17' },
+  { id:'e-11', name:'Peneira Sul · Porto Alegre', city:'Porto Alegre', state:'RS', date:'2026-12-05', capacity:120, registered:98, called:0, present:0, approved:0, status:'aberta', age:'13-17' },
 ];
 
 const REGIONS = [

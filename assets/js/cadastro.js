@@ -66,7 +66,8 @@ function renderCadastro() {
 
   /* Bloco do score — montado uma vez por passo; a cada tecla só a largura da
      barra, o número e o rótulo mudam (paintScore), sem recriar elementos: é o
-     que deixa a barra deslizar em vez de pular. */
+     que deixa a barra deslizar em vez de pular. Um segundo de percurso: rápido
+     o bastante para acompanhar a digitação, lento o bastante para se ver. */
   function scoreBlockHTML() {
     return `${progressHTML(0,100,{label:'Score de completude',sublabel:'0%'})}
           <div class="font-mono text-10 text-ink-mute flex justify-between">
@@ -87,7 +88,7 @@ function renderCadastro() {
     void fill.offsetWidth;                       // força o layout antes de trocar o destino
     fill.style.width = sc + '%';
     // número: conta do valor anterior até o novo, acompanhando a barra
-    const from = shownScore, to = sc, t0 = performance.now(), dur = 600;
+    const from = shownScore, to = sc, t0 = performance.now(), dur = 1000;
     const ease = t => 1 - Math.pow(1 - t, 3);
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     (function tick(now) {

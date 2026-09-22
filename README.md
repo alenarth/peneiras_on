@@ -185,7 +185,10 @@ minificado 86 KB (13,4 KB gzip) — o Tailwind emite cada componente já expandi
 - **Navegação** por links reais (`<a href>`) e parâmetros de URL — recarrega como site tradicional.
 - **Responsivo** com os breakpoints do tema, `md` = 900px e `sm` = 560px, usados como
   `max-md:`/`max-sm:` nas classes de componente e no markup; as grades `.g-*` colapsam nesses
-  pontos (`.g-3` → 2 colunas ≤900px → 1 coluna ≤560px).
+  pontos (`.g-3` → 2 colunas ≤900px → 1 coluna ≤560px). As grades de N colunas usam
+  `minmax(0,1fr)` (com `1fr` puro o mínimo é o conteúdo e o grid estoura em larguras justas), e
+  o header público assume a forma compacta até 1120px — entre 900 e 1120px a nav completa não
+  cabia ao lado do logo e do CTA. Varrido em 360/560/900/1024/1440px, sem rolagem horizontal.
 - Fontes: Archivo (display), Inter (corpo), JetBrains Mono (rótulos) via Google Fonts.
 
 ## Identidade visual e paleta

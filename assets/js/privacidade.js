@@ -17,9 +17,9 @@ document.querySelector('[data-meta]').innerHTML = [
 
 const TOC = [
   ['principios','01','Princípios'],['dados','02','Dados que coletamos'],['finalidades','03','Para que usamos'],
-  ['base-legal','04','Base legal'],['menores','05','Menores de idade — ECA'],['compartilhamento','06','Compartilhamento'],
+  ['base-legal','04','Base legal'],['menores','05','Menores de idade · ECA'],['compartilhamento','06','Compartilhamento'],
   ['retencao','07','Retenção e exclusão'],['direitos','08','Seus direitos (LGPD)'],['seguranca','09','Segurança'],
-  ['cookies','10','Cookies'],['contato','11','Contato — Encarregado (DPO)'],
+  ['cookies','10','Cookies'],['contato','11','Contato · Encarregado (DPO)'],
 ];
 const tocNav = document.querySelector('[data-toc]');
 tocNav.innerHTML = TOC.map(([id,n,t]) =>
@@ -61,7 +61,7 @@ const rightsList = (()=>{
 })();
 
 const contact = `<div class="bg-bg-alt border border-line-soft p-6 mt-2"><div class="g g-2 gap-6">` +
-  [['Nome','Nome do Encarregado'],['Cargo','DPO — Peneiras On'],['E-mail','dpo@exemplo.com'],['Telefone','(00) 0000-0000'],['Endereço','Rua Exemplo, 000 — Cidade/UF — 00000-000'],['Horário','Seg–Sex · 09h às 18h (BRT)']]
+  [['Nome','Nome do Encarregado'],['Cargo','DPO · Peneiras On'],['E-mail','dpo@exemplo.com'],['Telefone','(00) 0000-0000'],['Endereço','Rua Exemplo, 000 — Cidade/UF — 00000-000'],['Horário','Seg–Sex · 09h às 18h (BRT)']]
   .map(([l,v])=>`<div><div class="kicker uppercase">${l}</div><div class="text-14 mt-1 font-semibold">${v}</div></div>`).join('') + `</div></div>`;
 
 document.querySelector('[data-body]').innerHTML = [
@@ -98,7 +98,7 @@ document.querySelector('[data-body]').innerHTML = [
       {cat:'Obrigação legal',items:'Atender ECA, Marco Civil da Internet e ordens judiciais.',why:'Art. 7º, II'},
     ])),
 
-  block('menores','05','Menores de idade — proteção reforçada (ECA + LGPD Art. 14)',
+  block('menores','05','Menores de idade · proteção reforçada (ECA + LGPD Art. 14)',
     `<p class="priv-p">Atendemos atletas de <strong>07 a 19 anos</strong>. Para qualquer pessoa menor de 18, aplicamos camada extra de proteção:</p>` +
     bullets([
       '<strong>Termo do responsável legal</strong> obrigatório na inscrição, guardado com data/hora e IP.',
@@ -157,7 +157,7 @@ document.querySelector('[data-body]').innerHTML = [
     `<p class="priv-p">O Encarregado recebe suas solicitações, reclamações e comunica a ANPD em caso de incidente.</p>` +
     contact +
     `<p class="priv-p mt-8">Você também pode reclamar diretamente à <strong>Autoridade Nacional de Proteção de Dados (ANPD)</strong>:</p>` +
-    bullets(['Site: <strong>gov.br/anpd</strong>','Endereço: SCN, Quadra 06, Conjunto A, Bloco B — Brasília/DF'])),
+    bullets(['Site: <strong>gov.br/anpd</strong>','Endereço: SCN, Quadra 06, Conjunto A, Bloco B · Brasília/DF'])),
 
   `<div class="border-t border-t-line pt-6 mt-4 flex gap-6 items-baseline justify-between flex-wrap">
     <span class="mono text-mute normal-case">Documento em conformidade com LGPD (Lei 13.709/2018) e ECA (Lei 8.069/1990).</span>

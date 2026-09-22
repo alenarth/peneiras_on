@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Peneiras On — Onde o talento encontra o jogo</title>
+  <title>Peneiras On · Onde o talento encontra o jogo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
   <link rel="manifest" href="site.webmanifest">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Peneiras On">
-  <meta property="og:title" content="Peneiras On — Onde o talento encontra o jogo">
+  <meta property="og:title" content="Peneiras On · Onde o talento encontra o jogo">
   <meta property="og:description" content="Peneiras On é a plataforma que descentraliza a captação de talentos no futebol brasileiro: inscrição gratuita, alocação automática na peneira mais próxima e avaliação por olheiros credenciados.">
   <meta property="og:image" content="https://peneirason.vercel.app/assets/brand/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -34,7 +34,7 @@
   <!-- HERO -->
   <section class="hero" data-spotlight>
     <!-- Carrossel de fundo: imagens decorativas (aria-hidden), troca por crossfade a cada
-         5,5 s, enquanto a imagem caminha lentamente para o lado; os
+         3,8 s, enquanto a imagem caminha lentamente para o lado; os
          indicadores são os únicos controles. hero.js cuida do avanço, da pausa
          (hover, foco, aba oculta) e de prefers-reduced-motion. -->
     <div class="hero__slides" data-hero-slides aria-hidden="true">
@@ -109,7 +109,7 @@
     <div class="wrap section__pad">
       <div class="grid-2 items-end mb-12">
         <div>
-          <span class="tag tag--outline">Como funciona</span>
+          <span class="tag tag--outline tag--section">Como funciona</span>
           <h2 class="display h2 mt-3">Três passos.<br>Um campo aberto.</h2>
         </div>
         <p class="text-16 leading-copy text-ink-soft">Sem boca a boca. Sem conexão. Sem precisar conhecer quem está no clube. O sistema organiza tudo: inscrição, alocação geográfica e ranking pelo olheiro.</p>
@@ -143,10 +143,7 @@
     <div class="manifesto__scrim"></div>
     <div class="spotlight" aria-hidden="true"></div>
     <div class="wrap relative py-24 px-8">
-      <div class="flex items-center gap-3 mb-6">
-        <span class="w-6 h-px bg-accent"></span>
-        <span class="kicker accent">MANIFESTO</span>
-      </div>
+      <span class="section-kicker accent">Manifesto</span>
       <p class="manifesto__text">
         O Brasil é o país do futebol,<br class="max-md:hidden"> mas não para todo mundo.
         Milhares de crianças com talento real<br class="max-md:hidden"> nunca serão vistas por um olheiro.
@@ -165,7 +162,7 @@
     <div class="wrap section__pad">
       <div class="grid-2 items-end mb-12">
         <div>
-          <span class="tag tag--outline">Planos</span>
+          <span class="tag tag--outline tag--section">Planos</span>
           <h2 class="display h2 mt-3">Inscrição<br>sempre gratuita.<br><span class="accent">Visibilidade</span> opcional.</h2>
         </div>
         <p class="text-16 leading-copy text-ink-soft">Você nunca paga para se inscrever em uma peneira. Isso é inegociável. O modelo premium oferece visibilidade adicional, e quem não pode pagar entra automaticamente na trilha de inclusão social. <strong>Sem barreira de entrada.</strong></p>
@@ -249,7 +246,7 @@
   <section id="faq" class="section border-t border-t-line">
     <div class="wrap g g-faq py-16 px-8 gap-16 items-start">
       <div>
-        <span class="tag tag--outline">FAQ</span>
+        <span class="tag tag--outline tag--section">FAQ</span>
         <h3 class="display text-56 mt-3">Dúvidas que todo mundo tem.</h3>
       </div>
       <div class="faq">
@@ -272,7 +269,7 @@
   <script>
     mountSiteHeader('index.html');
     mountSiteFooter();
-    mountHeroSlider(document.querySelector('.hero'), { interval: 5500 });
+    mountHeroSlider(document.querySelector('.hero'), { interval: 3800 });
 
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;

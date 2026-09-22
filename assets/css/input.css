@@ -155,7 +155,7 @@
   --animate-toast-in: toast-in 180ms ease-out;
   --animate-pop-in: pop-in 160ms cubic-bezier(.2,.9,.3,1.2);
   --animate-pop: pop 260ms cubic-bezier(.2,.9,.3,1.4);
-  --animate-grow: grow .9s cubic-bezier(.22,.8,.3,1);
+  --animate-grow: grow 1.6s cubic-bezier(.22,.8,.3,1);
   --animate-rise: rise .6s cubic-bezier(.22,.8,.3,1) both;
   --animate-fade-in: fade-in .5s ease-out both;
   @keyframes toast-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
@@ -231,20 +231,20 @@
   .wrap--tight { @apply max-w-tight; }
   .section { @apply border-b border-line; }
   .section__pad { @apply py-20; }
-  .grid-2 { @apply grid grid-cols-[repeat(2,1fr)] gap-6 max-md:grid-cols-[1fr]; }
-  .grid-3 { @apply grid grid-cols-[repeat(3,1fr)] gap-6 max-md:grid-cols-[1fr]; }
-  .grid-4 { @apply grid grid-cols-[repeat(4,1fr)] gap-6 max-md:grid-cols-[1fr]; }
+  .grid-2 { @apply grid grid-cols-[repeat(2,minmax(0,1fr))] gap-6 max-md:grid-cols-[1fr]; }
+  .grid-3 { @apply grid grid-cols-[repeat(3,minmax(0,1fr))] gap-6 max-md:grid-cols-[1fr]; }
+  .grid-4 { @apply grid grid-cols-[repeat(4,minmax(0,1fr))] gap-6 max-md:grid-cols-[1fr]; }
   .pad { @apply p-8 max-md:p-5; }
   .table-scroll { @apply overflow-x-auto; }
 
   /* --- grades utilitárias (Etapa 1): estilo inline não colapsa em media query --- */
   .g { @apply grid; }
-  .g-2 { @apply grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
-  .g-3 { @apply grid-cols-[repeat(3,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
-  .g-4 { @apply grid-cols-[repeat(4,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
-  .g-5 { @apply grid-cols-[repeat(5,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  .g-2 { @apply grid-cols-[repeat(2,minmax(0,1fr))] max-sm:grid-cols-[1fr]; }
+  .g-3 { @apply grid-cols-[repeat(3,minmax(0,1fr))] max-md:grid-cols-[repeat(2,minmax(0,1fr))] max-sm:grid-cols-[1fr]; }
+  .g-4 { @apply grid-cols-[repeat(4,minmax(0,1fr))] max-md:grid-cols-[repeat(2,minmax(0,1fr))] max-sm:grid-cols-[1fr]; }
+  .g-5 { @apply grid-cols-[repeat(5,minmax(0,1fr))] max-md:grid-cols-[repeat(2,minmax(0,1fr))] max-sm:grid-cols-[1fr]; }
   /* contagem regressiva: 4 células em 1 coluna viravam uma torre; 2×2 cabe */
-  [data-countdown].g-4 { @apply max-sm:grid-cols-[repeat(2,1fr)]; }
+  [data-countdown].g-4 { @apply max-sm:grid-cols-[repeat(2,minmax(0,1fr))]; }
   .g-main      { @apply grid-cols-[1.4fr_1fr] max-md:grid-cols-[1fr]; }
   .g-main-wide { @apply grid-cols-[1.6fr_1fr] max-md:grid-cols-[1fr]; }
   .g-hero      { @apply grid-cols-[1.3fr_1fr] max-md:grid-cols-[1fr]; }
@@ -283,6 +283,12 @@
 
   /* --- tipografia --- */
   .kicker { @apply font-mono text-11 leading-relaxed uppercase tracking-kicker-lg text-ink-mute; }
+  /* Rótulo que abre uma seção: maior que o kicker comum e sem o tracinho que
+     vinha antes dele. Ganha um sublinhado que cresce quando o mouse passa
+     pela seção, para acompanhar o resto do site. */
+  .section-kicker { @apply relative inline-block font-mono text-13 font-semibold uppercase tracking-kicker-lg mb-5 pb-1.5 max-md:text-12; }
+  .section-kicker::after { content: ""; @apply absolute left-0 bottom-0 h-px w-full bg-current origin-left scale-x-0 opacity-60 transition-transform duration-300 ease-out; }
+  section:hover .section-kicker::after, .site-footer__cta:hover .section-kicker::after { @apply scale-x-100; }
   .mono { @apply font-mono text-11 uppercase tracking-label; }
   .display { @apply font-display font-black tracking-display-lg uppercase leading-display m-0; }
   /* Título do hero da landing ~25% menor que o original (140px): em caixa alta
@@ -349,6 +355,10 @@
   .tag--gold { @apply bg-gold-soft text-gold-deep border-gold/50; }
   .tag--ink { @apply bg-ink text-bg border-ink; }
   .tag--outline { @apply bg-transparent text-ink border-ink; }
+  /* Tag que abre uma seção: um degrau maior que a tag comum e, quando o mouse
+     entra na seção, ela acende no laranja da marca. */
+  .tag--section { @apply text-12 px-3 py-1.5 tracking-kicker transition-[background-color,color,border-color,transform] duration-200; }
+  section:hover .tag--section, .wrap:hover > div > .tag--section { @apply bg-accent text-accent-ink border-accent; }
   .tag--outline-on-dark { @apply bg-transparent text-ink border-ink/60; }
   .tag--danger { @apply bg-transparent text-danger border-danger; }
   .tag--success { @apply bg-transparent text-success border-success; }
@@ -369,7 +379,7 @@
   /* Entra crescendo de 0 até a largura inline; a variante --live (score do
      cadastro) troca a animação por transição, porque o valor muda a cada tecla. */
   .progress__fill { @apply h-full rounded-full bg-accent motion-safe:animate-grow; }
-  .progress__fill--live { @apply animate-none transition-[width] duration-600 ease-[cubic-bezier(.22,.8,.3,1)]; }
+  .progress__fill--live { @apply animate-none transition-[width] duration-1000 ease-[cubic-bezier(.22,.8,.3,1)]; }
   .progress__fill--ink { @apply bg-ink/45; }
   .progress--sm { @apply h-1; }
   .progress--xs { @apply h-[3px]; }
@@ -440,7 +450,7 @@
   .map-filter { @apply h-9; }
   .ftoggle:hover:not(.is-active), .map-filter:hover:not(.is-active) { @apply bg-bg-alt; }
   .ftoggle.is-active, .map-filter.is-active { @apply bg-ink text-bg border-ink; }
-  .filter-bar { @apply px-8 py-4 border-b border-line flex gap-2.5 items-center flex-wrap bg-bg-alt max-md:grid max-md:grid-cols-[repeat(2,1fr)] max-md:px-5 max-md:py-3; }
+  .filter-bar { @apply px-8 py-4 border-b border-line flex gap-2.5 items-center flex-wrap bg-bg-alt max-md:grid max-md:grid-cols-[repeat(2,minmax(0,1fr))] max-md:px-5 max-md:py-3; }
   .filter-bar > :first-child, .filter-bar > :last-child { @apply max-md:col-span-full; }
   .filter-bar .input, .filter-bar .sel, .filter-bar .ftoggle { @apply max-md:w-full!; }
 
@@ -462,7 +472,23 @@
   .site-nav a[data-kind="page"]::after { content: "↗" / ""; @apply text-9 ml-1 opacity-60; }
   .nav-toggle { @apply hidden max-md:inline-flex size-10 ml-auto items-center justify-center bg-transparent text-ink border border-line rounded cursor-pointer text-16 leading-none transition-[transform,background-color,color] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:border-ink; }
   .site-header__actions { @apply ml-auto flex items-center gap-5 max-md:ml-3 max-md:gap-3; }
-  .site-header__crumb { @apply ml-2 font-mono text-11 uppercase tracking-kicker text-ink-mute; }
+  .site-header__crumb { @apply ml-2 font-mono text-11 uppercase tracking-kicker text-ink-mute max-md:hidden; }
+
+  /* Faixa de tablet (900–1120px): logo + 6 links + "Entrar" + CTA somam ~1060px
+     e estouravam a janela, porque o menu só colapsava abaixo de 900px. Aqui o
+     header assume a mesma forma compacta do celular — as regras `max-md:` do
+     bloco acima valem a partir de 900px, então esta media query as estende. */
+  @media (min-width: 900px) and (max-width: 1120px) {
+    .site-header__inner { @apply flex-wrap; }
+    .site-nav { @apply hidden order-10 basis-full flex-col gap-0 ml-0 mt-3 border-t border-line; }
+    .site-nav.is-open { @apply flex; }
+    .site-nav a { @apply px-0.5 py-3.5 border-b border-line-soft; }
+    .site-nav a::before { @apply hidden; }
+    .nav-toggle { @apply inline-flex; }
+    .site-header__actions { @apply ml-auto; }
+    .entrar__menu { @apply right-0 left-auto; }
+  }
+  .site-header__back { @apply inline-flex items-center h-9 px-2 -mx-2 rounded bg-transparent border-0 cursor-pointer font-mono text-11 uppercase tracking-label text-ink-soft no-underline transition-colors duration-150 hover:text-ink; }
 
   /* --- menu "Entrar" (abre só por clique) --- */
   .entrar { @apply relative; }
@@ -491,7 +517,7 @@
   .site-footer__cols { @apply grid grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-8 px-0 pt-14 pb-8 max-md:grid-cols-[1fr] max-md:px-5; }
   .foot-col__title { @apply font-mono text-10 uppercase tracking-kicker text-ink/55 mb-3.5 pb-2.5 border-b border-ink/15; }
   .foot-col__links { @apply flex flex-col gap-2.5; }
-  .foot-col__links a { @apply text-13 transition-[color,translate] duration-150 hover:text-accent hover:translate-x-1; }
+  .foot-col__links a { @apply text-13 transition-[color,translate] duration-150 hover:text-accent hover:translate-x-1 max-md:py-1.5; }
   .site-footer__desc { @apply mt-4 text-ink/65 text-13 max-w-desc leading-copy; }
   .social { @apply flex gap-2 mt-5; }
   .social a, .social span { @apply inline-flex items-center justify-center size-9 rounded-md border border-ink/25 transition-[background-color,color,transform,border-color] duration-150; }
@@ -502,7 +528,8 @@
   .site-footer__bottom { @apply border-t border-ink/15; }
   .site-footer--compact { @apply border-t border-line; }
   .site-footer--compact .site-footer__bottom { @apply border-t-0; }
-  .site-footer__bottom-inner { @apply flex justify-between items-center flex-wrap gap-3 px-0 py-5 font-mono text-11 text-ink/55 max-md:px-5; }
+  .site-footer__bottom-inner { @apply flex justify-between items-center flex-wrap gap-3 px-0 py-5 font-mono text-11 leading-relaxed text-ink/55 max-md:px-5 max-md:flex-col max-md:items-start max-md:gap-2; }
+  .site-footer__bottom-inner a { @apply inline-block max-md:py-1; }
 
   /* --- tabela --- */
   .table { @apply w-full border-collapse font-body text-13; }
@@ -532,9 +559,13 @@
   .page-head__actions { @apply max-md:flex-wrap; }
   .kpi-strip { @apply grid border-b border-line; }
   .kpi-strip > div { @apply px-6 py-5 border-r border-line-soft last:border-r-0 max-md:border-r-0 max-md:border-b max-md:border-line-soft; }
-  .kpi-strip--3 { @apply grid-cols-[repeat(3,1fr)] max-sm:grid-cols-[1fr]; }
-  .kpi-strip--4 { @apply grid-cols-[repeat(4,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
-  .kpi-strip--5 { @apply grid-cols-[repeat(5,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
+  /* 3 colunas seguem lado a lado no celular (é uma faixa de números curtos):
+     padding e corpo menores para o rótulo não quebrar em três linhas. */
+  .kpi-strip--3 > div { @apply max-md:px-3 max-md:py-4 max-md:border-b-0 max-md:border-r max-md:last:border-r-0; }
+  .kpi-strip--3 .stat__value { @apply max-md:text-26; }
+  .kpi-strip--3 { @apply grid-cols-[repeat(3,minmax(0,1fr))]; }
+  .kpi-strip--4 { @apply grid-cols-[repeat(4,minmax(0,1fr))] max-md:grid-cols-[repeat(2,minmax(0,1fr))] max-sm:grid-cols-[1fr]; }
+  .kpi-strip--5 { @apply grid-cols-[repeat(5,minmax(0,1fr))] max-md:grid-cols-[repeat(2,minmax(0,1fr))] max-sm:grid-cols-[1fr]; }
 
   /* --- FAQ (details) --- */
   .faq details { @apply border-t border-line-soft py-5 transition-[padding] duration-200; }
@@ -555,18 +586,19 @@
      layers durante a troca, um no resto do tempo. O escurecimento das artes
      novas está nas próprias imagens (hero-gol/hero-app), não em filter — filtro
      sobre 1440×800 px em cima de backdrop-blur derrubava o frame rate. */
-  .hero__slide { @apply absolute inset-0 opacity-0 invisible will-change-[opacity]; transition: opacity 1.1s ease-in-out, visibility 0s linear 1.1s; }
-  .hero__slide.is-active { @apply opacity-100 visible; transition: opacity 1.1s ease-in-out, visibility 0s; }
+  .hero__slide { @apply absolute inset-0 opacity-0 invisible bg-no-repeat will-change-[opacity,transform]; transition: opacity .75s ease-in-out, visibility 0s linear .75s; }
+  .hero__slide.is-active { @apply opacity-100 visible; transition: opacity .75s ease-in-out, visibility 0s; }
   .hero__slide--flip { @apply -scale-x-100; }
   /* Panorâmica lenta: enquanto o slide está visível a imagem caminha para o
-     lado (e aproxima de leve). Sem isso a troca parecia um corte seco. O
-     --flip espelha a arte do Pelé, então a panorâmica dele vai ao contrário. */
+     lado e aproxima de leve. A animação é de `transform` (composta na GPU) e
+     NÃO de background-size: mexer no background-size solta o `cover` e, num
+     hero alto de celular, a imagem encolhia e se repetia em faixas.
+     O --flip espelha via `scale`, que o navegador aplica antes de `transform`,
+     então a panorâmica da arte do Pelé inverte o sentido sozinha. */
   @media (prefers-reduced-motion: no-preference) {
-    .hero__slide.is-active { animation: hero-pan 14s ease-out both; }
-    .hero__slide--flip.is-active { animation-name: hero-pan-flip; }
+    .hero__slide.is-active { animation: hero-pan 12s ease-out both; }
   }
-  @keyframes hero-pan { from { background-position: 44% center; background-size: 112%; } to { background-position: 56% center; background-size: 120%; } }
-  @keyframes hero-pan-flip { from { background-position: 56% center; background-size: 112%; } to { background-position: 44% center; background-size: 120%; } }
+  @keyframes hero-pan { from { transform: scale(1.05) translateX(-1.4%); } to { transform: scale(1.12) translateX(1.4%); } }
   .hero__dots { @apply flex gap-2; }
   .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
   .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
@@ -583,13 +615,17 @@
      faixa de foto no meio, entre o título e os cards. */
   .hero__inner { @apply relative grid grid-cols-[1fr_minmax(0,420px)] gap-x-20 gap-y-12 items-end justify-items-end px-0 pt-24 pb-14 min-h-[680px] max-lg:gap-x-12 max-md:grid-cols-[1fr] max-md:justify-items-stretch max-md:px-5 max-md:min-h-0 max-md:pt-16; }
   .hero__inner > * { @apply w-full; }
-  .glass { @apply border border-ink/25 p-7 rounded-xl bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
+  .glass { @apply border border-ink/25 p-7 rounded-xl bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink max-md:p-5; }
+  /* No celular os quatro números do hero ficam 2×2: em coluna única o hero
+     virava uma torre de 1.500 px. */
+  .hero .glass.g-2 { @apply max-sm:grid-cols-[repeat(2,minmax(0,1fr))] max-sm:gap-x-4 max-sm:gap-y-5; }
   .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker leading-relaxed text-ink/60; }
   .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg mt-1.5 mb-1; }
   .glass-stat__delta { @apply font-mono text-11 leading-relaxed text-accent; }
 
   /* --- planos --- */
-  .plans { @apply grid grid-cols-[repeat(3,1fr)] gap-4 max-md:grid-cols-[1fr]; }
+  /* 3 → 2 → 1 coluna: em ~900px três planos lado a lado não cabem */
+  .plans { @apply grid grid-cols-[repeat(3,minmax(0,1fr))] gap-4 max-lg:grid-cols-[repeat(2,minmax(0,1fr))] max-md:grid-cols-[1fr]; }
   .plan { @apply relative flex flex-col gap-4 p-7 min-h-130 rounded-xl bg-card text-ink border border-line transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-menu hover:border-ink/40; }
   .plan--featured { @apply bg-bg text-ink border-2 border-gold pt-12 hover:border-gold; }
   .plan__ribbon { @apply absolute top-0 left-0 right-0 flex justify-between items-center rounded-t-[10px] bg-gold text-gold-ink px-3.5 py-1.5 font-mono text-10 font-bold uppercase tracking-kicker-lg; }
@@ -617,8 +653,10 @@
   .login-grid__bg { @apply absolute inset-0 opacity-60 grayscale-[20%]; }
   .login-side { @apply relative flex flex-col justify-between text-ink px-14 py-16 max-md:hidden; }
   /* Painel de vidro: 78% de --bg + desfoque; a foto atravessa de leve. */
-  .login-form { @apply relative flex flex-col justify-center w-full px-14 py-16 bg-bg/78 backdrop-blur-xl border-l border-ink/10 max-md:px-6 max-md:py-10 max-md:border-l-0; }
-  .login-form > * { @apply w-full max-w-form mx-auto; }
+  .login-form { @apply relative flex flex-col justify-center items-center w-full px-14 py-16 bg-bg/78 backdrop-blur-xl border-l border-ink/10 max-md:px-6 max-md:py-10 max-md:border-l-0; }
+  /* Uma única coluna de 520px, centralizada: tudo (abas, título, aviso,
+     campos, rodapé) nasce alinhado à esquerda dessa coluna. */
+  .login-form > * { @apply w-full max-w-form; }
   .role-tabs { @apply flex border border-line rounded-lg overflow-hidden mb-8 bg-card/60; }
   /* Aviso que só aparece quando a pessoa chega pelo botão de uma peneira */
   .event-note { @apply flex gap-3 items-start -mt-2 mb-6 mx-0 p-3.5 rounded-lg bg-accent-soft border border-accent/40 text-13 leading-copy motion-safe:animate-rise; }
@@ -665,7 +703,7 @@
   .rights { @apply grid grid-cols-[1fr_1fr] border border-line rounded-xl overflow-hidden max-md:grid-cols-[1fr]; }
   .rights__item { @apply grid grid-cols-[40px_1fr] gap-3 items-baseline p-3.5 odd:border-r odd:border-line-soft [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-line-soft max-md:odd:border-r-0 max-md:[&:nth-child(n+2)]:border-t max-md:[&:nth-child(n+2)]:border-line-soft; }
   .rights__n { @apply font-mono text-11 text-accent-text font-bold; }
-  .toc-btn { @apply grid grid-cols-[32px_1fr] gap-2 items-baseline w-full px-0 py-2.5 cursor-pointer bg-transparent border-0 border-t border-line-soft text-left text-ink; }
+  .toc-btn { @apply grid grid-cols-[32px_1fr] gap-2 items-baseline w-full px-0 py-2.5 cursor-pointer bg-transparent border-0 border-t border-line-soft text-left text-ink transition-colors duration-150 hover:text-accent-text max-md:py-3.5; }
 
   /* --- mapa interativo (peneiras.html, mapa.js) ---
      Cor por estado: laranja com intensidade --heat (0,55–1) onde há inscrição
@@ -695,7 +733,7 @@
   .br-map__tip strong { @apply font-display font-extrabold text-13 uppercase; }
   .br-map__tip span { @apply text-ink-soft; }
   .br-map__tip em { @apply not-italic font-mono text-10 uppercase tracking-label text-accent-text mt-1; }
-  .map-panel { @apply min-h-60 p-7; }
+  .map-panel { @apply min-h-60 p-7 max-md:p-5 max-md:min-h-0; }
   @media (prefers-reduced-motion: no-preference) {
     .br-map:not(.is-in) .br-map__state { opacity: 0; transform: translateY(10px); }
     .br-map.is-in .br-map__state { animation: map-in .5s cubic-bezier(.22,.8,.3,1) both; animation-delay: calc(var(--i, 0) * 22ms); }
