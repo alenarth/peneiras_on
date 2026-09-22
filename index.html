@@ -34,12 +34,12 @@
   <!-- HERO -->
   <section class="hero">
     <!-- Carrossel de fundo: imagens decorativas (aria-hidden), troca por crossfade a cada
-         7s; os indicadores são os únicos controles. hero.js cuida do avanço, da pausa
+         3,2 s; os indicadores são os únicos controles. hero.js cuida do avanço, da pausa
          (hover, foco, aba oculta) e de prefers-reduced-motion. -->
     <div class="hero__slides" data-hero-slides aria-hidden="true">
       <div class="hero__slide hero__slide--flip pele-bg is-active" data-slide></div>
-      <div class="hero__slide hero__slide--dim hero-gol-bg" data-slide></div>
-      <div class="hero__slide hero__slide--dim hero-app-bg" data-slide></div>
+      <div class="hero__slide hero-gol-bg" data-slide></div>
+      <div class="hero__slide hero-app-bg" data-slide></div>
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__top-fade"></div>
@@ -61,10 +61,10 @@
 
       <div class="flex flex-col gap-6">
         <div class="glass g g-2 gap-6">
-          <div><div class="glass-stat__label">Inscritos ativos</div><div class="glass-stat__value">18.420</div><div class="glass-stat__delta">+412 hoje</div></div>
+          <div><div class="glass-stat__label">Inscritos ativos</div><div class="glass-stat__value" data-countup>18.420</div><div class="glass-stat__delta">+412 hoje</div></div>
           <div><div class="glass-stat__label">Peneiras 2026</div><div class="glass-stat__value" data-season-events></div><a class="glass-stat__label underline underline-offset-3" href="peneiras.html" data-season-states></a></div>
-          <div><div class="glass-stat__label">Cidades atingidas</div><div class="glass-stat__value">127</div><div class="glass-stat__delta">+24 vs 2025</div></div>
-          <div><div class="glass-stat__label">Aprovados</div><div class="glass-stat__value">187</div><div class="glass-stat__label">seguem em formação</div></div>
+          <div><div class="glass-stat__label">Cidades atingidas</div><div class="glass-stat__value" data-countup>127</div><div class="glass-stat__delta">+24 vs 2025</div></div>
+          <div><div class="glass-stat__label">Aprovados</div><div class="glass-stat__value" data-countup>187</div><div class="glass-stat__label">seguem em formação</div></div>
         </div>
         <div class="glass p-0 border-accent">
           <div class="py-5 px-6 flex items-baseline justify-between border-b border-b-ink/20">
@@ -262,7 +262,7 @@
   <script>
     mountSiteHeader('index.html');
     mountSiteFooter();
-    mountHeroSlider(document.querySelector('.hero'), { interval: 4500 });
+    mountHeroSlider(document.querySelector('.hero'), { interval: 3200 });
 
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;

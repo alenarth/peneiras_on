@@ -30,10 +30,12 @@
   <div data-simple-header></div>
 
   <div class="login-grid">
+    <!-- A foto e o scrim cobrem a grade inteira: o formulário é um painel de
+         vidro sobre ela (bg translúcido + backdrop-blur), não uma coluna opaca. -->
+    <div class="login-grid__bg pele-bg" aria-hidden="true"></div>
+    <div class="login-grid__scrim" aria-hidden="true"></div>
     <!-- Lado: branding -->
     <aside class="login-side" aria-hidden="true">
-      <div class="login-side__bg pele-bg"></div>
-      <div class="login-side__scrim"></div>
       <div class="relative">
         <div class="flex items-center gap-3">
           <span class="w-6 h-px bg-accent"></span>

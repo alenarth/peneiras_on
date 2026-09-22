@@ -109,8 +109,64 @@ const UI = (() => {
     return { close, el };
   }
 
-  document.addEventListener('DOMContentLoaded', liveRegion);
-  return { qs, qsa, setPressed, debounce, reducedMotion, storage, announce, toast };
+  /* ---------- revelação por rolagem ----------
+     Marca com [data-reveal] os blocos de conteúdo das páginas públicas (filhos
+     diretos dos .wrap de cada seção, cards, planos, artigos) e liga a classe
+     html.js-reveal — só então o CSS os esconde. Um IntersectionObserver adiciona
+     .is-in quando 12% do bloco entra na tela; --i escalona irmãos. Dispensado
+     sob prefers-reduced-motion e sem IntersectionObserver. */
+  const REVEAL_SEL = 'main section > .wrap > *, main section > .wrap > .g > *, .plan, .card, article.card, .faq details, .site-footer__cols > *';
+  function reveal(root = document) {
+    if (reducedMotion() || !('IntersectionObserver' in window)) return;
+    const els = qsa(REVEAL_SEL, root).filter(el => !el.closest('.hero') && !el.hasAttribute('data-reveal'));
+    if (!els.length) return;
+    document.documentElement.classList.add('js-reveal');
+    const io = reveal._io || (reveal._io = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }));
+    els.forEach(el => {
+      el.setAttribute('data-reveal', '');
+      // irmãos que revelam juntos entram em cascata; quem já está na tela ganha atraso menor
+      const sib = [...el.parentElement.children].filter(c => c.hasAttribute('data-reveal'));
+      el.style.setProperty('--i', String(Math.min(sib.indexOf(el), 6)));
+      const r = el.getBoundingClientRect();
+      if (r.top < innerHeight && r.bottom > 0) requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
+      else io.observe(el);
+    });
+  }
+
+  /* ---------- números que contam ----------
+     [data-countup] anima o texto do elemento de 0 até o número que ele já
+     mostra, preservando pontos e sufixos ("18.420", "12k+", "92%"). Dispara
+     quando o elemento entra na tela. */
+  function countup(root = document) {
+    const els = qsa('[data-countup]', root);
+    if (!els.length) return;
+    const run = el => {
+      const raw = el.textContent.trim();
+      const m = raw.match(/^([^\d]*)([\d.]+)(.*)$/); if (!m) return;
+      const [, pre, numTxt, post] = m;
+      const target = parseInt(numTxt.replace(/\./g, ''), 10);
+      if (!Number.isFinite(target) || reducedMotion()) return;
+      const grouped = numTxt.includes('.');
+      const t0 = performance.now(), dur = 900;
+      const ease = t => 1 - Math.pow(1 - t, 3);
+      (function tick(now) {
+        const t = Math.min(1, (now - t0) / dur);
+        const v = Math.round(target * ease(t));
+        el.textContent = pre + (grouped ? v.toLocaleString('pt-BR') : String(v)) + post;
+        if (t < 1) requestAnimationFrame(tick);
+      })(t0);
+    };
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { run(en.target); io.unobserve(en.target); } });
+    }, { threshold: 0.5 });
+    els.forEach(el => io.observe(el));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { liveRegion(); reveal(); countup(); });
+  return { qs, qsa, setPressed, debounce, reducedMotion, storage, announce, toast, reveal, countup };
 })();
 
 /* Atalhos globais — os módulos de tela chamam announce()/toast() direto. */

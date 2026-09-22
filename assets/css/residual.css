@@ -5,10 +5,11 @@
 .radar-axis-label { font-family: var(--font-mono); font-size: 10px; fill: var(--color-ink-soft); text-transform: uppercase; letter-spacing: 0.06em; }
 .radar-axis-value { font-family: var(--font-display); font-size: 12px; font-weight: 900; fill: var(--color-ink); }
 
-/* 2. Imagens de fundo — WebP com fallback JPEG (Pelé 100/156 KB; gol 123/197 KB;
-   app 104/179 KB). Navegador sem suporte a image-set() ou a WebP fica no JPEG da
+/* 2. Imagens de fundo — WebP com fallback JPEG (Pelé 100/156 KB; gol 58/110 KB;
+   app 50/101 KB). Navegador sem suporte a image-set() ou a WebP fica no JPEG da
    1a linha. As três alimentam o carrossel do hero da landing; a do Pelé também
-   aparece em login, manifesto e parceria. */
+   aparece em login, manifesto e parceria. Gol e app já vêm escurecidas e
+   dessaturadas do export (brilho 0,55 · saturação 0,75), a 1440 px de largura. */
 .pele-bg, .hero-gol-bg, .hero-app-bg { background-size: cover; background-position: center; }
 .pele-bg {
   background-image: url("../pele-hero.jpg");
@@ -30,7 +31,7 @@
 /* 3. Scrims e gradientes decorativos */
 .hero__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,15,18,0.94) 0%, rgba(13,15,18,0.78) 28%, rgba(13,15,18,0.36) 55%, rgba(13,15,18,0.16) 100%); }
 .hero__top-fade { background: linear-gradient(180deg, rgba(13,15,18,0.65), transparent); }
-.login-side__scrim { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(13,15,18,0.94), rgba(13,15,18,0.72) 60%, rgba(13,15,18,0.5)); }
+.login-grid__scrim { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(17,20,23,0.94) 0%, rgba(17,20,23,0.72) 50%, rgba(17,20,23,0.45) 100%); }
 .manifesto__scrim { position: absolute; inset: 0; background: linear-gradient(270deg, rgba(13,15,18,0.96) 0%, rgba(13,15,18,0.76) 35%, rgba(13,15,18,0.28) 80%); }
 .parceria__scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,15,18,0.96), rgba(13,15,18,0.76) 50%, rgba(13,15,18,0.22)); }
 .glow-accent { background: radial-gradient(circle at top right, rgba(249,115,22,0.30), transparent 70%); }
@@ -40,6 +41,7 @@
 .player-img {
   background: repeating-linear-gradient(135deg, var(--color-bg-alt) 0 12px, var(--color-line-soft) 12px 13px);
   border: 1px solid var(--color-line);
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   color: var(--color-ink-soft);
   font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
@@ -55,6 +57,7 @@
   animation: marquee 40s linear infinite;
 }
 .marquee__track span { color: inherit; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* 5. Mapa de calor e funil — moldura estática; posições e clip-path vêm do JS */

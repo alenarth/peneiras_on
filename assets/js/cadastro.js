@@ -64,14 +64,40 @@ function renderCadastro() {
     return isNaN(a)?null:a;
   }
 
-  /* Bloco do score — redesenhado a cada tecla, não só a cada troca de passo. */
+  /* Bloco do score — montado uma vez por passo; a cada tecla só a largura da
+     barra, o número e o rótulo mudam (paintScore), sem recriar elementos: é o
+     que deixa a barra deslizar em vez de pular. */
   function scoreBlockHTML() {
-    const sc = score();
-    return `${progressHTML(sc,100,{label:'Score de completude',sublabel:sc+'%'})}
+    return `${progressHTML(0,100,{label:'Score de completude',sublabel:'0%'})}
           <div class="font-mono text-10 text-ink-mute flex justify-between">
             <span>0 → 100% · cada campo adicional sobe seu score</span>
-            <span class="${sc>=60?'text-success':'text-ink-mute'}">${sc>=80?'◆ alto':sc>=60?'◐ bom':'○ inicial'}</span>
+            <span data-score-tier></span>
           </div>`;
+  }
+  let shownScore = 0;   // último valor exibido — ponto de partida da animação
+  function paintScore() {
+    const sc = score();
+    const host = screenEl.querySelector('[data-score]'); if (!host) return;
+    const fill = host.querySelector('.progress__fill');
+    const num = host.querySelector('.progress-head .font-display');
+    const tier = host.querySelector('[data-score-tier]');
+    fill.classList.add('progress__fill--live');
+    // barra: parte de onde estava (mesmo depois de trocar de passo) e desliza até o novo valor
+    fill.style.width = shownScore + '%';
+    void fill.offsetWidth;                       // força o layout antes de trocar o destino
+    fill.style.width = sc + '%';
+    // número: conta do valor anterior até o novo, acompanhando a barra
+    const from = shownScore, to = sc, t0 = performance.now(), dur = 600;
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    (function tick(now) {
+      const t = reduced ? 1 : Math.min(1, (now - t0) / dur);
+      num.textContent = Math.round(from + (to - from) * ease(t)) + '%';
+      if (t < 1) requestAnimationFrame(tick);
+    })(t0);
+    tier.className = sc >= 60 ? 'text-success' : 'text-ink-mute';
+    tier.textContent = sc >= 80 ? '◆ alto' : sc >= 60 ? '◐ bom' : '○ inicial';
+    shownScore = sc;
   }
 
   function render() {
@@ -106,6 +132,7 @@ function renderCadastro() {
       </div>`;
 
     bindFields();
+    paintScore();
     if (measure) measure.observe(screenEl.querySelector('[data-cad-head]'));
     const back=screenEl.querySelector('#back'), next=screenEl.querySelector('#next'), finish=screenEl.querySelector('#finish');
     if(back) back.onclick=()=>{ step--; render(); };
@@ -174,9 +201,17 @@ function renderCadastro() {
     }
   }
 
+  /* <label> só quando o controle é um campo de texto/select. Com um grupo de
+     botões dentro, o navegador associa o rótulo ao PRIMEIRO botão: passar o
+     mouse em "Esquerdo" acendia o :hover de "Direito", e um clique na área vazia
+     do rótulo disparava o primeiro botão. Grupos viram <div role="group">. */
   function field(label, control, hint, error, optional) {
     const ctrl = error ? control.replace(/<(input|select|textarea)\b/, '<$1 aria-invalid="true"') : control;
-    return `<label class="field"><div class="field__label"><span>${label}</span>${optional?'<span class="field__optional">opcional</span>':''}</div>${ctrl}${hint?`<span class="field__hint">${hint}</span>`:''}${error?`<span class="field__error" role="alert">${error}</span>`:''}</label>`;
+    const single = /^\s*<(input|select|textarea)\b/.test(control);
+    const tag = single ? 'label' : 'div';
+    const id = 'lbl-' + label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const attrs = single ? '' : ` role="group" aria-labelledby="${id}"`;
+    return `<${tag} class="field"${attrs}><div class="field__label"><span id="${id}">${label}</span>${optional?'<span class="field__optional">opcional</span>':''}</div>${ctrl}${hint?`<span class="field__hint">${hint}</span>`:''}${error?`<span class="field__error" role="alert">${error}</span>`:''}</${tag}>`;
   }
 
   function bindFields() {
@@ -240,10 +275,7 @@ function renderCadastro() {
 
   /* Atualiza o que muda a cada tecla sem recriar os campos:
      estado dos botões e a barra de score. */
-  function updateLive() {
-    const sc=screenEl.querySelector('[data-score]');
-    if(sc) sc.innerHTML=scoreBlockHTML();
-  }
+  function updateLive() { paintScore(); }
 
   render();
 }

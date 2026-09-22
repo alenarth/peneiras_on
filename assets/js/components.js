@@ -455,7 +455,7 @@ function eventCardHTML(e, mode, opts = {}) {
   else if (mode === 'atleta' && registered) cta = `<a href="atleta.html?tela=status" class="btn btn--ghost btn--sm btn--full">Ver comprovante</a>`;
   else if (mode === 'atleta') cta = `<button type="button" class="btn btn--primary btn--sm btn--full" data-register="${esc(e.id)}">Inscrever-se</button>`;
   else cta = `<a href="login.html?tipo=jogador&evento=${esc(e.id)}" class="btn btn--primary btn--sm btn--full">Quero participar</a>`;
-  return `<article class="card card--flush" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
+  return `<article class="card card--flush card--hover" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
     <div class="py-3.5 px-5 border-b border-b-line flex justify-between items-center gap-2 flex-wrap">
       <span class="flex gap-1.5 flex-wrap">${tagHTML('● ' + status, EVENT_STATUS_TONE[status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
       <span class="font-mono text-10 text-ink-mute">${e.age.replace('-', ' – ')} anos</span>

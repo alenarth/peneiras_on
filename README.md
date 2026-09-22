@@ -88,7 +88,8 @@ assets/
   js/
     data.js                      → dados mockados (atletas, eventos, regiões)
     ui.js                        → camada de interface genérica: toasts, announce() (aria-live),
-                                   helpers de DOM e localStorage defensivo — carregado antes dos demais
+                                   helpers de DOM, localStorage defensivo, revelação por rolagem
+                                   ([data-reveal]) e números que contam ([data-countup]) — carregado antes dos demais
     components.js                → header, footer, dropdown, helpers de markup (tagHTML, statHTML…)
     hero.js                      → carrossel de fundo do hero da landing (crossfade, indicadores,
                                    pausa em hover/foco/aba oculta, respeita prefers-reduced-motion)
@@ -193,7 +194,12 @@ cada página declara favicon (SVG + `.ico`), `apple-touch-icon`, manifesto, `the
 `description` e Open Graph (`og-image.png`, 1200×630). Nos painéis internos
 (`atleta`, `olheiro`, `gestora`) há `robots: noindex`.
 
-Tema escuro único (`color-scheme: dark`), com laranja como cor de marca:
+Tema escuro único (`color-scheme: dark`), com laranja como cor de marca. Cantos: 8px no que
+se clica e preenche (`--radius`), 12px em cards, vidro e menus, 6px em tags e avatares. Barras
+fixas (header, cabeçalho e rodapé do cadastro), menu "Entrar", toasts e o painel do login são
+translúcidos (`bg-*/85–92` + `backdrop-blur`). Movimento: entrada em cascata do hero e do login,
+revelação por rolagem, hover com elevação/escala em botões, cards, planos e tags, sublinhado
+animado na navegação e FAQ com "+" que gira — tudo desligado sob `prefers-reduced-motion`.
 
 - Fundo `#111417` (`--bg`) · superfície `#151A1F` · cards `#20252D` · linhas `#374151`
 - Texto `#F8FAFC` (`--ink`) · secundário `#CBD5E1` · auxiliar `#A3ADBA`

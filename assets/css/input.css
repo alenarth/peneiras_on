@@ -59,9 +59,9 @@
   --color-gold-hover: #F59E0B;   /* texto --gold-ink 9,6:1 */
   --color-danger-hover: #EF4444; /* texto --bg 5,9:1 */
 
-  /* Cantos: só o que se clica e o que se preenche. Cards, tags, tabelas,
-     avatares e menus continuam retos (rounded-none). */
-  --radius: 4px;
+  /* Cantos: 8px no que se clica e se preenche (rounded); cards, vidro e menus
+     em 12px (rounded-xl); tags e avatares em 6px (rounded-md). */
+  --radius: 8px;
 
   /* Breakpoints do projeto (max-width 900 e 560 no CSS antigo → max-md: e max-sm:) */
   --breakpoint-*: initial;
@@ -151,12 +151,19 @@
   /* Transições curtas do sistema */
   --default-transition-duration: 120ms;
 
-  /* Entrada do toast (só com motion-safe:) */
+  /* Animações (usadas só com motion-safe:) */
   --animate-toast-in: toast-in 180ms ease-out;
-  @keyframes toast-in {
-    from { opacity: 0; translate: 0 8px; }
-    to { opacity: 1; translate: 0 0; }
-  }
+  --animate-pop-in: pop-in 160ms cubic-bezier(.2,.9,.3,1.2);
+  --animate-pop: pop 260ms cubic-bezier(.2,.9,.3,1.4);
+  --animate-grow: grow .9s cubic-bezier(.22,.8,.3,1);
+  --animate-rise: rise .6s cubic-bezier(.22,.8,.3,1) both;
+  --animate-fade-in: fade-in .5s ease-out both;
+  @keyframes toast-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+  @keyframes pop-in { from { opacity: 0; translate: 0 -6px; scale: .98; } to { opacity: 1; translate: 0 0; scale: 1; } }
+  @keyframes pop { 0% { scale: 1; } 40% { scale: 1.12; } 100% { scale: 1; } }
+  @keyframes grow { from { width: 0; } }
+  @keyframes rise { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 }
 
 /* ---------- 2. BASE ---------- */
@@ -190,8 +197,10 @@
   ::-webkit-scrollbar-thumb { @apply bg-line-soft border-2 border-bg; }
   ::-webkit-scrollbar-thumb:hover { @apply bg-ink-mute; }
 
+  /* Entrada da página: fade curto do <main> (o header já está lá) */
+  main { @apply motion-safe:animate-fade-in; }
   @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.001ms !important; }
+    *, ::before, ::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   }
   /* Âncoras da própria página rolam suave — só para quem não pediu movimento reduzido */
   @media (prefers-reduced-motion: no-preference) {
@@ -298,15 +307,15 @@
     @apply inline-flex items-center justify-center gap-2 h-11 px-5
       font-display font-extrabold text-13 uppercase tracking-btn
       border border-ink rounded bg-ink text-bg cursor-pointer no-underline whitespace-nowrap
-      transition-[transform,box-shadow,background-color,color,border-color] duration-120
+      transition-[transform,box-shadow,background-color,color,border-color] duration-150 ease-out
       disabled:opacity-40 disabled:cursor-not-allowed;
   }
   /* Hierarquia: --accent (CTA laranja) > --primary (claro, texto escuro) >
      --ghost (superfície de card com borda). Hover: sobe 1px com sombra curta e
      troca para a cor de hover da variante. Sem filter: brightness() — escurecer o
      laranja derruba o contraste. Desabilitado não reage a nada. */
-  .btn:not(:disabled):hover { @apply -translate-y-px shadow-btn bg-ink-hover border-ink-hover; }
-  .btn:not(:disabled):active { @apply translate-y-px shadow-none; }
+  .btn:not(:disabled):hover { @apply -translate-y-px scale-[1.03] shadow-btn bg-ink-hover border-ink-hover; }
+  .btn:not(:disabled):active { @apply translate-y-px scale-[.98] shadow-none; }
   .btn--primary { @apply bg-ink text-bg border-ink; }
   .btn--primary:not(:disabled):hover { @apply bg-ink-hover border-ink-hover; }
   .btn--accent { @apply bg-accent text-accent-ink border-accent; }
@@ -326,7 +335,7 @@
   .btn-row { @apply flex max-md:flex-wrap; }
 
   /* --- tags --- */
-  .tag { @apply inline-flex items-center gap-1.5 px-2 py-[3px] font-mono text-10 uppercase tracking-label font-semibold bg-bg-alt text-ink border border-line-soft; }
+  .tag { @apply inline-flex items-center gap-1.5 px-2 py-[3px] rounded-md font-mono text-10 uppercase tracking-label font-semibold bg-bg-alt text-ink border border-line-soft; }
   .tag--accent { @apply bg-accent text-accent-ink border-accent; }
   .tag--gold { @apply bg-gold-soft text-gold-deep border-gold/50; }
   .tag--ink { @apply bg-ink text-bg border-ink; }
@@ -336,9 +345,10 @@
   .tag--success { @apply bg-transparent text-success border-success; }
 
   /* --- card --- */
-  .card { @apply bg-card text-ink border border-line p-6; }
-  .card--flush { @apply p-0; }
+  .card { @apply bg-card text-ink border border-line p-6 rounded-xl; }
+  .card--flush { @apply p-0 overflow-hidden; }
   .card--dark { @apply bg-bg text-ink border-line; }
+  .card--hover { @apply transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-menu hover:border-ink/40; }
 
   /* --- section label --- */
   .section-label { @apply flex items-baseline gap-3 border-b border-line pb-2 mb-4 max-md:flex-wrap; }
@@ -346,8 +356,11 @@
   .section-label__action { @apply ml-auto; }
 
   /* --- progress --- */
-  .progress { @apply relative h-2 bg-bg-alt border border-line-soft; }
-  .progress__fill { @apply h-full bg-accent transition-[width] duration-400 ease-[cubic-bezier(.2,.7,.2,1)]; }
+  .progress { @apply relative h-2 rounded-full overflow-hidden bg-bg-alt border border-line-soft; }
+  /* Entra crescendo de 0 até a largura inline; a variante --live (score do
+     cadastro) troca a animação por transição, porque o valor muda a cada tecla. */
+  .progress__fill { @apply h-full rounded-full bg-accent motion-safe:animate-grow; }
+  .progress__fill--live { @apply animate-none transition-[width] duration-600 ease-[cubic-bezier(.22,.8,.3,1)]; }
   .progress__fill--ink { @apply bg-ink/45; }
   .progress--sm { @apply h-1; }
   .progress--xs { @apply h-[3px]; }
@@ -355,6 +368,22 @@
 
   /* --- stat / kpi --- */
   .stat { @apply flex flex-col gap-1; }
+  /* Revelação por rolagem (ui.js marca [data-reveal] e liga html.js-reveal):
+     sem JS nada fica escondido. Atraso escalonado via --i. */
+  .js-reveal [data-reveal] { @apply opacity-0 translate-y-4 transition-[opacity,translate] duration-600 ease-[cubic-bezier(.22,.8,.3,1)]; transition-delay: calc(var(--i, 0) * 70ms); }
+  .js-reveal [data-reveal].is-in { @apply opacity-100 translate-y-0; }
+  /* Entrada do hero da landing: título, texto, botões e cards em cascata */
+  .hero__inner > * > * { @apply motion-safe:animate-rise; }
+  .hero__inner > :first-child > :nth-child(1) { animation-delay: 60ms; }
+  .hero__inner > :first-child > :nth-child(2) { animation-delay: 160ms; }
+  .hero__inner > :first-child > :nth-child(3) { animation-delay: 260ms; }
+  .hero__inner > :last-child > :nth-child(1) { animation-delay: 220ms; }
+  .hero__inner > :last-child > :nth-child(2) { animation-delay: 340ms; }
+  .login-side > * { @apply motion-safe:animate-rise; }
+  .login-side > :last-child { animation-delay: 160ms; }
+  .login-form > * { @apply motion-safe:animate-rise; }
+  .login-form > :nth-child(2) { animation-delay: 80ms; } .login-form > :nth-child(3) { animation-delay: 120ms; }
+  .login-form > :nth-child(4) { animation-delay: 160ms; } .login-form > :nth-child(5) { animation-delay: 220ms; }
   .stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink-mute; }
   .stat__value { @apply font-display font-black tracking-display-lg text-36 leading-display; }
   .stat__value--big { @apply text-56; }
@@ -362,7 +391,7 @@
   .stat__sub { @apply font-mono text-11 text-ink-mute; }
 
   /* --- avatar --- */
-  .avatar { @apply inline-flex items-center justify-center shrink-0 size-10 bg-bg text-ink font-display font-black text-14 tracking-display border border-line; }
+  .avatar { @apply inline-flex items-center justify-center shrink-0 size-10 rounded-md bg-bg text-ink font-display font-black text-14 tracking-display border border-line; }
   .avatar--gold { @apply bg-gold text-gold-ink; }
 
   /* --- formulário --- */
@@ -374,7 +403,7 @@
   /* Estado de erro: ícone + texto + borda + fundo. Nunca só cor. */
   .field__error { @apply flex items-center gap-1.5 text-11 text-danger font-semibold; }
   .field__error::before { content: "⚠"; @apply text-12 leading-none; }
-  .input, .select { @apply h-12 px-3.5 w-full bg-card text-ink border border-line rounded font-body text-15 outline-none; }
+  .input, .select { @apply h-12 px-3.5 w-full bg-card text-ink border border-line rounded font-body text-15 outline-none transition-[border-color,box-shadow,background-color] duration-150 hover:border-ink/45 focus-visible:border-ink/60; }
   .input:focus-visible, .select:focus-visible, .textarea:focus-visible { @apply outline-solid outline-3 outline-focus outline-offset-2; }
   /* <input type="date">: ao tabular para o segmento do mês/ano o Chromium deixa de
      casar :focus e :focus-visible no input; só :focus-within segue casando. */
@@ -384,10 +413,10 @@
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><polyline points='1,1 6,7 11,1' fill='none' stroke='%23F8FAFC' stroke-width='1.5'/></svg>");
     background-position: right 14px center;
   }
-  .textarea { @apply w-full min-h-[90px] p-3 bg-card text-ink border border-line rounded resize-y font-body text-13 leading-normal outline-none; }
+  .textarea { @apply w-full min-h-[90px] p-3 bg-card text-ink border border-line rounded resize-y font-body text-13 leading-normal outline-none transition-[border-color,box-shadow] duration-150 hover:border-ink/45 focus-visible:border-ink/60; }
   .input--error, .input[aria-invalid="true"], .select[aria-invalid="true"], .textarea[aria-invalid="true"] { @apply border-danger bg-danger-soft; }
-  .choice { @apply h-13 bg-card text-ink border border-line rounded cursor-pointer font-display font-extrabold text-13 uppercase tracking-btn hover:bg-bg-alt; }
-  .choice.is-active { @apply bg-ink text-bg border-ink; }
+  .choice { @apply h-13 bg-card text-ink border border-line rounded cursor-pointer font-display font-extrabold text-13 uppercase tracking-btn transition-[background-color,border-color,transform,color] duration-150 hover:bg-bg-alt hover:border-ink/45 hover:-translate-y-px active:translate-y-0 active:scale-[.98]; }
+  .choice.is-active { @apply bg-ink text-bg border-ink motion-safe:animate-pop; }
   .choice--accent.is-active { @apply bg-accent text-accent-ink; }
   /* selects compactos e toggles de filtro (olheiro/gestora) */
   .sel, .sel2 {
@@ -397,7 +426,7 @@
   }
   .sel { @apply h-10; }
   .sel2 { @apply h-9; }
-  .ftoggle, .map-filter { @apply px-3.5 bg-card text-ink border border-line rounded font-mono text-11 uppercase tracking-label cursor-pointer; }
+  .ftoggle, .map-filter { @apply px-3.5 bg-card text-ink border border-line rounded font-mono text-11 uppercase tracking-label cursor-pointer transition-[background-color,border-color,transform] duration-150 hover:-translate-y-px active:translate-y-0; }
   .ftoggle { @apply h-10; }
   .map-filter { @apply h-9; }
   .ftoggle:hover:not(.is-active), .map-filter:hover:not(.is-active) { @apply bg-bg-alt; }
@@ -410,13 +439,16 @@
   /* O wrapper que o JS preenche não pode ser uma caixa: sticky é limitado pelo pai */
   [data-site-header], [data-simple-header] { @apply contents; }
   .header-sentinel { @apply h-px -mb-px; }
-  .site-header { @apply sticky top-0 z-20 bg-bg border-b border-line transition-shadow duration-120; }
+  .site-header { @apply sticky top-0 z-20 bg-bg/85 backdrop-blur-lg border-b border-line transition-shadow duration-120; }
   .site-header.is-scrolled { @apply shadow-header; }
   .site-header__inner { @apply flex items-center gap-6 py-4 max-md:flex-wrap; }
   .site-nav { @apply flex gap-6 ml-8 max-md:hidden max-md:order-10 max-md:basis-full max-md:flex-col max-md:gap-0 max-md:ml-0 max-md:mt-3 max-md:border-t max-md:border-line; }
   .site-nav.is-open { @apply max-md:flex; }
-  .site-nav a { @apply font-mono text-11 uppercase tracking-label text-ink-soft no-underline cursor-pointer hover:text-ink max-md:px-0.5 max-md:py-3.5 max-md:border-b max-md:border-line-soft; }
+  .site-nav a { @apply relative font-mono text-11 uppercase tracking-label text-ink-soft no-underline cursor-pointer transition-colors duration-150 hover:text-ink max-md:px-0.5 max-md:py-3.5 max-md:border-b max-md:border-line-soft; }
+  .site-nav a::before { content: ""; @apply absolute left-0 -bottom-1 h-px w-full bg-accent origin-left scale-x-0 transition-transform duration-200 ease-out max-md:hidden; }
+  .site-nav a:hover::before, .site-nav a.is-active::before { @apply scale-x-100; }
   .site-nav a.is-active { @apply text-ink; }
+  .site-nav.is-open { @apply motion-safe:animate-pop-in; }
   /* Link que sai da página leva um marcador discreto; âncora da mesma página, não. */
   .site-nav a[data-kind="page"]::after { content: "↗" / ""; @apply text-9 ml-1 opacity-60; }
   .nav-toggle { @apply hidden max-md:inline-flex size-10 ml-auto items-center justify-center bg-transparent text-ink border border-line rounded cursor-pointer text-16 leading-none transition-[transform,background-color,color] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:border-ink; }
@@ -431,10 +463,10 @@
   .entrar.is-open .entrar__chevron { @apply rotate-180; }
   /* No celular o botão "Entrar" fica no canto esquerdo da segunda linha do
      header: ancorado à direita, o menu saía da tela. */
-  .entrar__menu { @apply hidden absolute right-0 top-[calc(100%+6px)] min-w-65 bg-card border border-line shadow-menu z-30 max-md:right-auto max-md:left-0; }
-  .entrar.is-open .entrar__menu { @apply block; }
+  .entrar__menu { @apply hidden absolute right-0 top-[calc(100%+6px)] min-w-65 rounded-xl overflow-hidden bg-card/92 backdrop-blur-lg border border-line shadow-menu z-30 max-md:right-auto max-md:left-0; }
+  .entrar.is-open .entrar__menu { @apply block motion-safe:animate-pop-in; }
   .entrar__head { @apply px-3.5 py-3 border-b border-line-soft bg-bg-alt font-mono text-10 uppercase tracking-kicker text-ink-mute; }
-  .entrar__item { @apply grid grid-cols-[32px_1fr_16px] gap-3 items-center w-full p-3.5 cursor-pointer border-0 border-t border-line-soft bg-transparent text-left text-ink no-underline first-of-type:border-t-0 hover:bg-accent hover:text-accent-ink; }
+  .entrar__item { @apply grid grid-cols-[32px_1fr_16px] gap-3 items-center w-full p-3.5 cursor-pointer border-0 border-t border-line-soft bg-transparent text-left text-ink no-underline transition-[background-color,color,padding] duration-150 first-of-type:border-t-0 hover:bg-accent hover:text-accent-ink hover:pl-4.5; }
   /* Item focado por teclado tem o mesmo peso do :hover; o anel fica por dentro do menu */
   .entrar__item:focus-visible { @apply bg-accent text-accent-ink -outline-offset-3; }
   .entrar__item-icon { @apply inline-flex items-center justify-center size-8 border border-current text-14; }
@@ -450,10 +482,11 @@
   .site-footer__cols { @apply grid grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-8 px-0 pt-14 pb-8 max-md:grid-cols-[1fr] max-md:px-5; }
   .foot-col__title { @apply font-mono text-10 uppercase tracking-kicker text-ink/55 mb-3.5 pb-2.5 border-b border-ink/15; }
   .foot-col__links { @apply flex flex-col gap-2.5; }
-  .foot-col__links a { @apply text-13 transition-colors duration-150 hover:text-accent; }
+  .foot-col__links a { @apply text-13 transition-[color,translate] duration-150 hover:text-accent hover:translate-x-1; }
   .site-footer__desc { @apply mt-4 text-ink/65 text-13 max-w-desc leading-copy; }
   .social { @apply flex gap-2 mt-5; }
-  .social a, .social span { @apply inline-flex items-center justify-center size-9 border border-ink/25 font-mono text-11 font-semibold transition-colors duration-150; }
+  .social a, .social span { @apply inline-flex items-center justify-center size-9 rounded-md border border-ink/25 font-mono text-11 font-semibold transition-[background-color,color,transform] duration-150; }
+  .social span:hover { @apply -translate-y-px; }
   .social span { @apply opacity-50 cursor-default; }
   .social a:hover { @apply bg-accent text-accent-ink; }
   .site-footer__bottom { @apply border-t border-ink/15; }
@@ -465,7 +498,7 @@
   .table { @apply w-full border-collapse font-body text-13; }
   .table th { @apply text-left px-4 py-3 font-mono text-10 uppercase tracking-widest text-ink-mute font-semibold border-b border-line; }
   .table td { @apply px-4 py-3 border-b border-line-soft; }
-  .table tbody tr { @apply cursor-pointer hover:bg-bg-alt; }
+  .table tbody tr { @apply cursor-pointer transition-colors duration-120 hover:bg-bg-alt; }
   .table tbody tr.is-fav { @apply bg-accent-soft; }
 
   /* --- app shell (olheiro / gestora) --- */
@@ -473,12 +506,12 @@
   .app__aside { @apply flex flex-col border-r border-line bg-bg text-ink max-md:flex-row max-md:flex-wrap max-md:items-center; }
   .app__main { @apply overflow-auto; }
   .aside__brand { @apply px-5 py-6 border-b border-line; }
-  .aside__badge { @apply mt-4 p-2.5; }
+  .aside__badge { @apply mt-4 p-2.5 rounded-lg; }
   .aside__badge--accent { @apply bg-accent text-accent-ink; }
   .aside__badge--gold { @apply bg-gold text-gold-ink; }
   .aside__nav { @apply py-4 flex-1 max-md:flex max-md:flex-wrap max-md:basis-full max-md:py-2; }
   .aside__group { @apply font-mono text-10 opacity-50 uppercase tracking-kicker px-5 pt-1 pb-2 max-md:hidden; }
-  .nav-item { @apply flex items-center gap-2.5 w-full px-5 py-2.5 border-0 border-l-[3px] border-transparent cursor-pointer bg-transparent text-ink font-body text-13 font-medium text-left no-underline hover:bg-bg-alt max-md:w-auto max-md:flex-[1_0_150px] max-md:border-l-0 max-md:border-b-[3px]; }
+  .nav-item { @apply flex items-center gap-2.5 w-full px-5 py-2.5 border-0 border-l-[3px] border-transparent cursor-pointer bg-transparent text-ink font-body text-13 font-medium text-left no-underline hover:bg-bg-alt hover:pl-6 transition-[padding,background-color] duration-150 max-md:w-auto max-md:flex-[1_0_150px] max-md:border-l-0 max-md:border-b-[3px]; }
   .nav-item.is-active { @apply bg-accent text-accent-ink border-l-accent-ink font-bold hover:bg-accent max-md:border-l-transparent max-md:border-b-accent-ink; }
   /* Item ainda não implementado: não é link, não entra no Tab, avisa "em breve" */
   .nav-item--soon { @apply opacity-50 cursor-default; }
@@ -493,10 +526,12 @@
   .kpi-strip--5 { @apply grid-cols-[repeat(5,1fr)] max-md:grid-cols-[repeat(2,1fr)] max-sm:grid-cols-[1fr]; }
 
   /* --- FAQ (details) --- */
-  .faq details { @apply border-t border-line-soft py-5; }
-  .faq summary { @apply flex justify-between items-center cursor-pointer list-none font-display font-extrabold text-20 uppercase tracking-display-sm; }
+  .faq details { @apply border-t border-line-soft py-5 transition-[padding] duration-200; }
+  .faq summary { @apply flex justify-between items-center cursor-pointer list-none font-display font-extrabold text-20 uppercase tracking-display-sm transition-colors duration-150 hover:text-accent-text; }
+  .faq summary > span { @apply inline-block transition-transform duration-200 ease-out; }
+  .faq details[open] summary > span { @apply rotate-45; }
   .faq summary::-webkit-details-marker { @apply hidden; }
-  .faq p { @apply mt-3 text-ink-soft text-14 leading-copy; }
+  .faq p { @apply mt-3 text-ink-soft text-14 leading-copy motion-safe:animate-rise; }
 
   /* --- hero da landing --- */
   .hero { @apply relative border-b border-line bg-bg text-ink overflow-hidden; }
@@ -505,12 +540,13 @@
      "andar". A imagem do Pelé continua espelhada (--flip) para o rosto cair à
      direita, longe do título. */
   .hero__slides { @apply absolute inset-0 overflow-hidden; }
-  .hero__slide { @apply absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out; }
-  .hero__slide.is-active { @apply opacity-100; }
+  /* Slide inativo sai do compositor (visibility) depois do fade: só dois
+     layers durante a troca, um no resto do tempo. O escurecimento das artes
+     novas está nas próprias imagens (hero-gol/hero-app), não em filter — filtro
+     sobre 1440×800 px em cima de backdrop-blur derrubava o frame rate. */
+  .hero__slide { @apply absolute inset-0 opacity-0 invisible will-change-[opacity]; transition: opacity .6s ease, visibility 0s linear .6s; }
+  .hero__slide.is-active { @apply opacity-100 visible; transition: opacity .6s ease, visibility 0s; }
   .hero__slide--flip { @apply -scale-x-100; }
-  /* As artes novas são quentes e cheias de luz: escurecidas e dessaturadas para
-     não disputar com o título e o laranja dos botões. */
-  .hero__slide--dim { @apply brightness-[.5] saturate-[.75]; }
   .hero__dots { @apply flex gap-2; }
   .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
   .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
@@ -518,16 +554,16 @@
   /* Altura mínima independente do tamanho do título: a foto precisa de espaço
      acima do texto para aparecer. items-end deixa esse espaço no topo. */
   .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-24 pb-14 min-h-[640px] max-md:grid-cols-[1fr] max-md:px-5 max-md:min-h-0 max-md:pt-16; }
-  .glass { @apply border border-ink/25 p-6 bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
+  .glass { @apply border border-ink/25 p-6 rounded-xl bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
   .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink/60; }
   .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg; }
   .glass-stat__delta { @apply font-mono text-11 text-accent; }
 
   /* --- planos --- */
-  .plans { @apply grid grid-cols-[repeat(3,1fr)] border border-line max-md:grid-cols-[1fr]; }
-  .plan { @apply relative flex flex-col gap-4 p-7 min-h-130 bg-card text-ink border-r border-line last:border-r-0; }
-  .plan--featured { @apply bg-bg text-ink border-t-4 border-b-4 border-t-gold border-b-gold border-l border-l-gold -mt-1 -mb-1; }
-  .plan__ribbon { @apply absolute -top-1 -left-px -right-px flex justify-between items-center bg-gold text-gold-ink px-3.5 py-1.5 font-mono text-10 font-bold uppercase tracking-kicker-lg; }
+  .plans { @apply grid grid-cols-[repeat(3,1fr)] gap-4 max-md:grid-cols-[1fr]; }
+  .plan { @apply relative flex flex-col gap-4 p-7 min-h-130 rounded-xl bg-card text-ink border border-line transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:shadow-menu hover:border-ink/40; }
+  .plan--featured { @apply bg-bg text-ink border-2 border-gold pt-12 hover:border-gold; }
+  .plan__ribbon { @apply absolute top-0 left-0 right-0 flex justify-between items-center rounded-t-[10px] bg-gold text-gold-ink px-3.5 py-1.5 font-mono text-10 font-bold uppercase tracking-kicker-lg; }
   .plan__price { @apply font-display font-black text-48 leading-display-xtight tracking-display-lg; }
   .plan__features { @apply m-0 p-0 list-none flex flex-col gap-2.5; }
   .plan__features li { @apply grid grid-cols-[16px_1fr] gap-2.5 text-13 leading-normal pt-2 border-t border-line-soft first:border-t-0; }
@@ -538,18 +574,20 @@
   .skip-link { @apply absolute left-2 -top-16 z-[1000] bg-bg text-ink px-4 py-2.5 font-display font-extrabold text-13 uppercase tracking-btn no-underline transition-[top] duration-150 focus:top-2; }
 
   /* --- área do atleta (atleta.html) --- */
-  .atleta-header { @apply sticky top-0 z-20 bg-bg border-b border-line; }
+  .atleta-header { @apply sticky top-0 z-20 bg-bg/85 backdrop-blur-lg border-b border-line; }
   .atleta-tabs { @apply flex gap-1 ml-6 max-md:ml-0 max-md:order-10 max-md:basis-full max-md:overflow-x-auto; }
-  .atleta-tab { @apply inline-flex items-center gap-2 h-9.5 px-4 cursor-pointer bg-transparent text-ink border border-transparent font-display font-extrabold text-12 uppercase tracking-tab no-underline transition-[background-color,color,border-color,transform] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:border-line; }
+  .atleta-tab { @apply inline-flex items-center gap-2 h-9.5 px-4 rounded-md cursor-pointer bg-transparent text-ink border border-transparent font-display font-extrabold text-12 uppercase tracking-tab no-underline transition-[background-color,color,border-color,transform] duration-120 hover:-translate-y-px hover:bg-bg-alt hover:border-line; }
   .atleta-tab.is-active { @apply bg-bg-alt text-ink border-line; }
   .atleta-main { @apply max-w-page mx-auto p-8 max-md:p-5; }
 
   /* --- login (login.html) --- */
-  .login-grid { @apply grid grid-cols-[1.2fr_1fr] min-h-[calc(100vh-65px)] max-md:grid-cols-[1fr]; }
-  .login-side { @apply relative flex flex-col justify-between bg-bg text-ink overflow-hidden px-14 py-16 max-md:hidden; }
-  .login-side__bg { @apply absolute inset-0 opacity-55 grayscale-[20%]; }
-  .login-form { @apply flex flex-col justify-center w-full max-w-form mx-auto px-14 py-16; }
-  .role-tabs { @apply flex border border-line mb-8; }
+  .login-grid { @apply relative grid grid-cols-[1.2fr_1fr] min-h-[calc(100vh-65px)] overflow-hidden max-md:grid-cols-[1fr]; }
+  .login-grid__bg { @apply absolute inset-0 opacity-60 grayscale-[20%]; }
+  .login-side { @apply relative flex flex-col justify-between text-ink px-14 py-16 max-md:hidden; }
+  /* Painel de vidro: 78% de --bg + desfoque; a foto atravessa de leve. */
+  .login-form { @apply relative flex flex-col justify-center w-full px-14 py-16 bg-bg/78 backdrop-blur-xl border-l border-ink/10 max-md:px-6 max-md:py-10 max-md:border-l-0; }
+  .login-form > * { @apply w-full max-w-form mx-auto; }
+  .role-tabs { @apply flex border border-line rounded-lg overflow-hidden mb-8 bg-card/60; }
   .role-tab { @apply flex flex-1 items-center justify-center h-11 cursor-pointer bg-transparent text-ink border-0 font-display font-extrabold text-12 uppercase tracking-tab no-underline transition-[background-color,color,transform] duration-120 hover:bg-bg-alt hover:text-ink; }
   .role-tab.is-active { @apply bg-bg-alt text-ink; }
 
@@ -566,8 +604,8 @@
 
   /* --- cadastro (cadastro.html): alturas medidas pelo JS em --header-h / --cad-head-h --- */
   .cad-body { @apply flex-1; }
-  .cad-head { @apply sticky top-(--header-h) z-5 border-b border-line bg-bg; }
-  .cad-footer { @apply fixed bottom-0 left-0 right-0 bg-bg border-t border-line px-8 py-4 z-20 max-md:px-5 max-md:py-3; }
+  .cad-head { @apply sticky top-(--header-h) z-5 border-b border-line bg-bg/85 backdrop-blur-lg; }
+  .cad-footer { @apply fixed bottom-0 left-0 right-0 bg-bg/85 backdrop-blur-lg border-t border-line px-8 py-4 z-20 max-md:px-5 max-md:py-3; }
   @media (max-height: 640px) { .cad-head { @apply static; } }
 
   /* --- política de privacidade (privacidade.html) --- */
@@ -578,9 +616,9 @@
   .priv-bullets { @apply m-0 p-0 list-none flex flex-col gap-2.5; }
   .priv-bullets li { @apply grid grid-cols-[14px_1fr] gap-3 text-15 leading-[1.55]; }
   .priv-bullets li .b { @apply text-accent-text font-display font-black pt-0.5; }
-  .priv-callout { @apply p-4 bg-bg-alt border-l-4 border-accent text-14 leading-copy; }
+  .priv-callout { @apply p-4 rounded-lg bg-bg-alt border-l-4 border-accent text-14 leading-copy; }
   .priv-callout--danger { @apply bg-transparent border-danger; }
-  .dt { @apply border border-line; }
+  .dt { @apply border border-line rounded-xl overflow-hidden; }
   .dt__head, .dt__row { @apply grid grid-cols-[180px_1.4fr_1fr] max-md:grid-cols-[1fr]; }
   .dt__head { @apply border-b border-line bg-bg-alt max-md:hidden; }
   .dt__head > div { @apply px-3.5 py-2.5 font-mono text-10 uppercase tracking-widest text-ink-mute; }
@@ -588,19 +626,19 @@
   .dt__row > div:first-child { @apply p-3.5 font-display font-extrabold text-13 uppercase max-md:pb-0; }
   .dt__row > div:nth-child(2) { @apply p-3.5 text-14 leading-normal max-md:pt-1.5; }
   .dt__row > div:nth-child(3) { @apply p-3.5 text-13 leading-normal text-ink-soft max-md:pt-1.5; }
-  .rights { @apply grid grid-cols-[1fr_1fr] border border-line max-md:grid-cols-[1fr]; }
+  .rights { @apply grid grid-cols-[1fr_1fr] border border-line rounded-xl overflow-hidden max-md:grid-cols-[1fr]; }
   .rights__item { @apply grid grid-cols-[40px_1fr] gap-3 items-baseline p-3.5 odd:border-r odd:border-line-soft [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-line-soft max-md:odd:border-r-0 max-md:[&:nth-child(n+2)]:border-t max-md:[&:nth-child(n+2)]:border-line-soft; }
   .rights__n { @apply font-mono text-11 text-accent-text font-bold; }
   .toc-btn { @apply grid grid-cols-[32px_1fr] gap-2 items-baseline w-full px-0 py-2.5 cursor-pointer bg-transparent border-0 border-t border-line-soft text-left text-ink; }
 
   /* --- toasts (ui.js) — pilha fixa, região polite; erro leva role=alert --- */
   .toast-stack { @apply fixed bottom-4 right-4 z-60 flex flex-col gap-2 w-[min(360px,calc(100vw-32px))] pointer-events-none; }
-  .toast { @apply pointer-events-auto flex items-start gap-3 p-3.5 border border-line border-l-4 shadow-menu text-13 leading-normal; }
-  .toast--success { @apply bg-card text-ink border-l-success; }         /* ícone --success sobre --card: 6,8:1 */
+  .toast { @apply pointer-events-auto flex items-start gap-3 p-3.5 rounded-lg border border-line border-l-4 shadow-menu text-13 leading-normal backdrop-blur-lg; }
+  .toast--success { @apply bg-card/92 text-ink border-l-success; }      /* ícone --success sobre --card: 6,8:1 */
   .toast--success .toast__icon { @apply text-success; }
-  .toast--error { @apply bg-card text-ink border-l-danger; }            /* ícone --danger sobre --card: 5,6:1 */
+  .toast--error { @apply bg-card/92 text-ink border-l-danger; }         /* ícone --danger sobre --card: 5,6:1 */
   .toast--error .toast__icon { @apply text-danger; }
-  .toast--info { @apply bg-card text-ink border-line border-l-accent; }   /* texto --ink sobre --card: 15:1; ícone laranja 4,8:1 */
+  .toast--info { @apply bg-card/92 text-ink border-line border-l-accent; } /* texto --ink sobre --card: 15:1; ícone laranja 4,8:1 */
   .toast--info .toast__icon { @apply text-accent; }
   .toast--info :focus-visible { @apply outline-accent; }
   .toast__icon { @apply shrink-0 font-display font-black text-14 leading-none mt-0.5; }
@@ -608,15 +646,17 @@
   .toast__close { @apply shrink-0 inline-flex items-center justify-center size-6 p-0 bg-transparent border-0 rounded cursor-pointer text-16 leading-none opacity-70 hover:opacity-100; }
 
   /* --- tag de atributo confirmável (feed.js): aria-pressed é a fonte da verdade --- */
-  .attr-tag { @apply inline-flex items-center gap-1.5 h-8 px-2.5 border border-line rounded bg-card text-ink font-mono text-11 uppercase tracking-label cursor-pointer transition-colors duration-120 hover:bg-bg-alt; }
-  .attr-tag[aria-pressed="true"] { @apply bg-accent text-accent-ink border-accent hover:bg-accent-hover; }
+  .attr-tag { @apply inline-flex items-center gap-1.5 h-8 px-2.5 border border-line rounded-md bg-card text-ink font-mono text-11 uppercase tracking-label cursor-pointer transition-[background-color,border-color,transform] duration-120 hover:bg-bg-alt hover:-translate-y-px active:translate-y-0 active:scale-95; }
+  .attr-tag[aria-pressed="true"] { @apply bg-accent text-accent-ink border-accent hover:bg-accent-hover motion-safe:animate-pop; }
   .attr-tag__count { @apply font-display font-extrabold text-12 tracking-normal; }
 
   /* Movimento reduzido: hover mantém só a troca de cor — sem subir, sem sombra
      animada, sem giro do chevron. */
   @media (prefers-reduced-motion: reduce) {
     .btn:not(:disabled):hover, .btn:not(:disabled):active, .nav-toggle:hover, .wordmark:hover { @apply translate-y-0; }
-    .btn, .nav-toggle, .wordmark, .site-header, .hero__slide, .hero__dot { @apply transition-none; }
+    .btn, .nav-toggle, .wordmark, .site-header, .hero__slide, .hero__dot, .plan, .choice, .attr-tag, .nav-item { @apply transition-none; }
+    .btn:not(:disabled):hover, .plan:hover, .choice:hover, .attr-tag:hover { @apply scale-100 translate-y-0; }
+    .js-reveal [data-reveal] { @apply opacity-100 translate-y-0 transition-none; }
     .entrar__chevron, .entrar.is-open .entrar__chevron { @apply transition-none rotate-0; }
   }
 }
