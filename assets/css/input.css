@@ -24,38 +24,44 @@
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
-  --color-white: #F9FAFB;
-  --color-bg: #111417;
-  --color-bg-alt: #1A1D22;
-  --color-card: #20252D;
-  --color-surface: #151A1F;
-  --color-surface-alt: #1C2128;
-  --color-ink: #F8FAFC;
-  --color-ink-soft: #EFF4FA;
-  --color-ink-mute: #E6ECF4;
-  --color-line: #374151;
-  --color-line-soft: rgba(255,255,255,0.14);
+  --color-white: #FFFFFF;
+  --color-bg: #F5F4EE;
+  --color-bg-alt: #ECEAE0;
+  --color-ink: #0E0E0F;
+  --color-ink-soft: #48483F;
+  --color-ink-mute: #67675C;     /* escurecido p/ AA (5.7:1 sobre branco) */
+  --color-line: #0E0E0F;
+  --color-line-soft: #D9D6C8;
+  --color-card: #FFFFFF;
 
-  --color-accent: #F97316;
-  --color-accent-ink: #120E0B;
-  --color-accent-soft: rgba(249,115,22,0.16);
-  --color-accent-text: #FB923C;
-  --color-gold: #FB923C;
-  --color-gold-ink: #120E0B;
-  --color-gold-soft: rgba(251,146,60,0.18);
-  --color-gold-deep: #FBBF24;
+  --color-accent: #54F542;       /* verde neon — só como FUNDO (texto preto) ou sobre superfície escura */
+  --color-accent-ink: #0E0E0F;
+  --color-accent-soft: #E0FBDC;
+  --color-accent-text: #177038;  /* verde p/ TEXTO/ícone sobre fundo claro (6.1:1) — decisão AA da Sprint 1 */
 
-  --color-focus: #FBBF24;
+  /* Laranja "oportunidade" — usado no Mapa de oportunidades (gestora).
+     Único lugar com o hex; nos componentes só via var()/color-mix().
+     Para voltar à identidade verde, troque estes dois valores por
+     var(--color-accent) e var(--color-accent-hover). */
+  --color-primary: #F97316;       /* laranja principal */
+  --color-primary-light: #FB923C; /* laranja claro */
 
-  --color-danger: #F97316;
-  --color-danger-soft: rgba(249,115,22,0.14);
-  --color-success: #22C55E;
+  --color-gold: #C8A415;         /* dourado — fundo c/ texto preto */
+  --color-gold-ink: #0E0E0F;
+  --color-gold-soft: rgba(200,164,21,0.18);
+  --color-gold-deep: #7E660E;    /* dourado p/ TEXTO sobre fundo claro (5.5:1) — decisão AA da Sprint 1 */
 
-  /* Estados de interação derivados da nova paleta. */
-  --color-ink-hover: #EEF2F7;
-  --color-accent-hover: #EA580C;
-  --color-gold-hover: #F59E0B;
-  --color-danger-hover: #EA580C;
+  --color-focus: #0E0E0F;        /* anel de foco (16:1+ sobre claro) */
+
+  --color-danger: #C62828;
+  --color-danger-soft: #FCEDED;  /* fundo do campo em erro */
+  --color-success: #1B7A3D;
+
+  /* Cores de hover — cada uma verificada WCAG AA contra o texto que carrega */
+  --color-ink-hover: #333336;    /* texto --bg: 11,43:1 */
+  --color-accent-hover: #45E634; /* texto --ink: 11,60:1 */
+  --color-gold-hover: #B4930F;   /* texto --ink: 6,54:1 */
+  --color-danger-hover: #A82020; /* texto branco: 7,26:1 */
 
   /* Cantos: só o que se clica e o que se preenche. Cards, tags, tabelas,
      avatares e menus continuam retos (rounded-none). */
@@ -138,8 +144,8 @@
   --container-page: 1280px;
 
   /* Sombras */
-  --shadow-btn: 0 2px 6px rgba(13,15,18,0.35);
-  --shadow-header: 0 4px 16px rgba(13,15,18,0.30);
+  --shadow-btn: 0 2px 6px rgba(14,14,15,0.18);
+  --shadow-header: 0 4px 16px rgba(14,14,15,0.10);
   --shadow-menu: 0 14px 32px rgba(0,0,0,0.18);
 
   /* Transições curtas do sistema */
@@ -490,11 +496,11 @@
   .faq p { @apply mt-3 text-ink-soft text-14 leading-copy; }
 
   /* --- hero da landing --- */
-  .hero { @apply relative border-b border-line bg-bg text-ink overflow-hidden; }
+  .hero { @apply relative border-b border-line bg-[#0A0A0B] text-bg overflow-hidden; }
   .hero__bg { @apply absolute inset-0 -scale-x-100; }
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
   .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-20 pb-14 max-md:grid-cols-[1fr] max-md:px-5; }
-  .glass { @apply border border-ink/25 p-6 bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
+  .glass { @apply border border-bg/25 p-6 bg-[rgba(15,15,16,0.55)] backdrop-blur-[12px] text-bg; }
   .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-bg/55; }
   .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg; }
   .glass-stat__delta { @apply font-mono text-11 text-accent; }
