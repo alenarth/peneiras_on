@@ -187,7 +187,7 @@ function renderPeneiras() {
 
   function summaryHTML() {
     const n = registered.size;
-    return `Você está inscrito em <strong>${n} ${n === 1 ? 'peneira' : 'peneiras'}</strong>${n ? ' nesta temporada.' : ' — escolha uma abaixo.'}`;
+    return `Você está inscrito em <strong>${n} ${n === 1 ? 'peneira' : 'peneiras'}</strong>${n ? ' nesta temporada.' : '. Escolha uma abaixo.'}`;
   }
 
   function rows() {
