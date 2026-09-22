@@ -76,7 +76,7 @@ document.querySelector('[data-body]').innerHTML = [
       {cat:'Opcionais',items:'Altura, peso, pé dominante, clube atual, tempo de prática, links de vídeo, foto.',why:'Aumentar o score de completude e dar mais informação ao olheiro.'},
       {cat:'Gerados',items:'Score, ranking, perfil tático sugerido (radar), histórico de peneiras, avaliações, check-in.',why:'Permitir o trabalho do olheiro e a inteligência operacional da gestão.'},
     ]) +
-    `<p class="priv-p"><strong>Não coletamos</strong> dados sensíveis (raça, religião, opinião política, biometria, saúde) — eles não são necessários para o serviço.</p>`),
+    `<p class="priv-p"><strong>Não coletamos</strong> dados sensíveis (raça, religião, opinião política, biometria, saúde), pois eles não são necessários para o serviço.</p>`),
 
   block('finalidades','03','Para que usamos seus dados',
     bullets([
@@ -85,7 +85,7 @@ document.querySelector('[data-body]').innerHTML = [
       '<strong>Comunicação:</strong> SMS/e-mail de confirmação, convocação, lembrete e resultado.',
       '<strong>Avaliação no campo:</strong> registrar notas e parecer do olheiro pós-peneira.',
       '<strong>Pipeline de talentos:</strong> manter histórico de aprovados para sustentar o revenue share (mecanismo de solidariedade FIFA).',
-      '<strong>Inteligência estratégica:</strong> agregados anônimos por região (mapa de calor, funil) — sem identificar pessoas.',
+      '<strong>Inteligência estratégica:</strong> agregados anônimos por região (mapa de calor, funil), sem identificar pessoas.',
     ]) +
     `<div class="priv-callout">Nunca usamos os dados para perfilamento comercial, publicidade direcionada ou venda a terceiros.</div>`),
 
@@ -113,7 +113,7 @@ document.querySelector('[data-body]').innerHTML = [
     dataTable([
       {cat:'Olheiros',items:'Perfil completo do inscrito convocado para a peneira em que atuam.',why:'Execução do contrato.'},
       {cat:'Pelé Academia',items:'Dados agregados e anonimizados; perfis individuais só para gestão.',why:'Co-controlador (parceria).'},
-      {cat:'Operadores',items:'Hospedagem (cloud), SMS, e-mail e analytics — sob contrato de proteção de dados.',why:'Funcionamento técnico.'},
+      {cat:'Operadores',items:'Hospedagem (cloud), SMS, e-mail e analytics, sob contrato de proteção de dados.',why:'Funcionamento técnico.'},
       {cat:'Autoridades',items:'Quando obrigado por lei, ordem judicial ou requisição do MP / Conselho Tutelar.',why:'Obrigação legal.'},
     ]) +
     `<p class="priv-p"><strong>Nunca</strong> compartilhamos com fins comerciais, parceiros publicitários ou venda de leads.</p>`),
@@ -125,7 +125,7 @@ document.querySelector('[data-body]').innerHTML = [
       {cat:'Pipeline aprovados',items:'Até a maioridade + 10 anos, ou prazo do revenue share.',why:'Documentar formação (FIFA).'},
       {cat:'Logs de segurança',items:'6 meses.',why:'Marco Civil (Art. 15).'},
     ]) +
-    `<p class="priv-p">Você pode pedir a exclusão antecipada a qualquer momento — atendemos em até 15 dias.</p>`),
+    `<p class="priv-p">Você pode pedir a exclusão antecipada a qualquer momento. Atendemos em até 15 dias.</p>`),
 
   block('direitos','08','Seus direitos como titular (Art. 18 da LGPD)',
     `<p class="priv-p">Você (ou o responsável legal, se for menor) pode exercer estes direitos a qualquer momento:</p>` +

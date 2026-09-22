@@ -265,7 +265,7 @@ function mountSiteFooter(opts = {}) {
       <div class="wrap site-footer__cols">
         <div>
           ${wordmarkHTML(true)}
-          <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo — independentemente de onde estiver.</p>
+          <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo, independentemente de onde estiver.</p>
           <!-- Sem perfis reais ainda: marcas não interativas, fora da ordem de tabulação -->
           <div class="social" aria-label="Redes sociais (em breve)">
             <span title="Instagram · em breve">IG</span>

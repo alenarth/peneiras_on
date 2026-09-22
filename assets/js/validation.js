@@ -20,7 +20,7 @@ const Validation = (() => {
   const rules = {
     required: (v, msg) => String(v || '').trim() ? '' : (msg || 'Preencha este campo.'),
     email: v => EMAIL.test(String(v || '').trim()) ? '' : 'Digite um e-mail válido, como nome@exemplo.com.',
-    cpf: v => digits(v).length === 11 ? '' : `O CPF precisa ter 11 dígitos — você digitou ${digits(v).length}.`,
+    cpf: v => digits(v).length === 11 ? '' : `O CPF precisa ter 11 dígitos. Você digitou ${digits(v).length}.`,
     // login e recuperação aceitam CPF ou e-mail no mesmo campo
     emailOrCpf: v => {
       const s = String(v || '').trim();
@@ -29,7 +29,7 @@ const Validation = (() => {
       return EMAIL.test(s) ? '' : 'Digite um e-mail válido (nome@exemplo.com) ou um CPF com 11 dígitos.';
     },
     password: v => String(v || '') ? '' : 'Digite sua senha.',
-    code6: v => /^\d{6}$/.test(digits(v)) ? '' : `O código tem 6 dígitos — faltam ${Math.max(0, 6 - digits(v).length)}.`,
+    code6: v => /^\d{6}$/.test(digits(v)) ? '' : `O código tem 6 dígitos. Faltam ${Math.max(0, 6 - digits(v).length)}.`,
     phone: v => digits(v).length >= 10 ? '' : 'Digite o celular com DDD, como (21) 99999-9999.',
     match: (v, other, msg) => v === other ? '' : (msg || 'As senhas não conferem.'),
     strongPassword: v => {
@@ -44,7 +44,7 @@ const Validation = (() => {
       if (!v) return 'Informe a data de nascimento.';
       const a = ageFromISO(v);
       if (a == null) return 'Data inválida.';
-      if (a > 150 || a < 0) return 'Confira o ano — essa data não parece certa.';
+      if (a > 150 || a < 0) return 'Confira o ano. Essa data não parece certa.';
       if (a < min || a > max) return `Idade fora da faixa permitida (${String(min).padStart(2, '0')}–${max}): você tem ${a} anos.`;
       return '';
     },

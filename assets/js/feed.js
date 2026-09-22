@@ -130,17 +130,17 @@ const Feed = (() => {
         state.tags[id] = on ? [...list, attr] : list.filter(x => x !== attr);
         save(); updateCounts(root, id);
         // o toast é lido pelo leitor de tela (região polite) — sem announce() duplicado
-        toast(on ? `${attr} confirmada para ${first} — ${tagCountOf(a, attr)} confirmações.` : `Confirmação de ${attr} desfeita para ${first}.`, { type: on ? 'success' : 'info' });
+        toast(on ? `${attr} confirmada para ${first}: ${tagCountOf(a, attr)} confirmações.` : `Confirmação de ${attr} desfeita para ${first}.`, { type: on ? 'success' : 'info' });
       } else if (btn.hasAttribute('data-vote')) {
         const on = !hasVote(id);
         if (on) state.votes[id] = true; else delete state.votes[id];
         save(); updateCounts(root, id);
-        toast(on ? `Voto registrado para ${first} — ${votesOf(a)} votos.` : `Voto em ${first} desfeito.`, { type: on ? 'success' : 'info' });
+        toast(on ? `Voto registrado para ${first}: ${votesOf(a)} votos.` : `Voto em ${first} desfeito.`, { type: on ? 'success' : 'info' });
       } else if (btn.hasAttribute('data-follow')) {
         const on = !follows(id);
         if (on) state.follows[id] = true; else delete state.follows[id];
         save(); updateCounts(root, id);
-        toast(on ? `Você segue ${a.name} — ${followersOf(a)} seguidores.` : `Você deixou de seguir ${a.name}.`, { type: on ? 'success' : 'info' });
+        toast(on ? `Você segue ${a.name}, que tem ${followersOf(a)} seguidores.` : `Você deixou de seguir ${a.name}.`, { type: on ? 'success' : 'info' });
       }
     });
   }
