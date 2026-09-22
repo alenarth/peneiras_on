@@ -1,251 +1,249 @@
 /* ============================================================
-   PENEIRAS ON — Criar perfil (cadastro.html)
-   Wizard de 5 passos, página pública. Veio de atleta.html?tela=cadastro:
-   quem está criando conta não pode ver o shell da conta de outra pessoa.
+   PENEIRAS ON — Cadastro (criar conta) + Conclusão de cadastro
+   Fluxo real:
+     1) criar conta (nome, e-mail, senha, persona) → confirmar e-mail
+     2) confirmar e-mail → login (senha + código)
+     3) cadastro.html?fluxo=completar → concluir perfil (jogador ou profissional)
    ============================================================ */
 mountSimpleHeader('Criar perfil', 'index.html', 'Voltar à home', { cta: false });
 
 const screenEl = document.querySelector('[data-screen]');
-if (!screenEl) {
-  throw new Error('cadastro.html está sem [data-screen]; o script não pode inicializar.');
+if (!screenEl) throw new Error('cadastro.html está sem [data-screen].');
+const params = new URLSearchParams(location.search);
+const tipo = ['olheiro','academia','jogador'].includes(params.get('tipo')) ? params.get('tipo') : 'jogador';
+const fluxo = params.get('fluxo');
+
+const UFS = ['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'];
+const POSICOES = ['Goleiro','Zagueiro','Lateral','Volante','Meia','Ponta','Atacante'];
+
+function fieldHTML(label, control, hint, optional) {
+  return `<label class="field"><div class="field__label"><span>${esc(label)}</span>${optional?'<span class="field__optional">opcional</span>':''}</div>${control}${hint?`<span class="field__hint">${esc(hint)}</span>`:''}</label>`;
+}
+function indisponivelGuard() {
+  if (window.PeneirasAuth && window.PeneirasAuth.indisponivel) {
+    toast('Cadastro indisponível: ' + window.PeneirasAuth.indisponivel, { type: 'error', duration: 8000 });
+    return true;
+  }
+  return false;
 }
 
-// Alturas reais do cabeçalho e do bloco de score → variáveis CSS (sticky e
-// scroll-padding acompanham o que está na tela, sem 65px chumbado).
-const measure = 'ResizeObserver' in window ? new ResizeObserver(entries => {
-  entries.forEach(en => {
-    const key = en.target.classList.contains('site-header') ? '--header-h' : '--cad-head-h';
-    // offsetHeight, não contentRect: a borda de 1px do cabeçalho conta
-    document.documentElement.style.setProperty(key, en.target.offsetHeight + 'px');
+if (fluxo === 'completar') iniciarConclusao();
+else renderCriarConta();
+
+/* ------------------------------------------------------------------ */
+/* 1) CRIAR CONTA                                                      */
+/* ------------------------------------------------------------------ */
+function renderCriarConta() {
+  const titulos = {
+    jogador: 'Crie sua conta<br>de jogador.',
+    olheiro: 'Solicite seu<br>acesso de olheiro.',
+    academia: 'Solicite o acesso<br>da academia.',
+  };
+  const nota = {
+    jogador: 'Depois de confirmar o e-mail e entrar, você conclui o cadastro com CPF e dados do futebol.',
+    olheiro: 'Depois de confirmar o e-mail e entrar, você informa empresa e cargo. O acesso é liberado após aprovação da gestão.',
+    academia: 'Depois de confirmar o e-mail e entrar, você informa os dados da academia. O acesso é liberado após aprovação.',
+  };
+  screenEl.innerHTML = `
+    <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
+      <span class="kicker uppercase">${tipo==='jogador'?'Conta gratuita':'Solicitação de acesso'}</span>
+      <h1 class="display text-fluid-sm mt-3 mb-3 mx-0">${titulos[tipo]}</h1>
+      <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">${esc(nota[tipo])}</p>
+      <form class="flex flex-col gap-4 max-w-copy" data-form-conta novalidate>
+        ${fieldHTML('Nome completo', `<input class="input" id="c-nome" autocomplete="name" placeholder="Seu nome completo">`)}
+        ${fieldHTML('E-mail', `<input class="input" id="c-email" type="email" autocomplete="email" placeholder="voce@exemplo.com">`)}
+        ${fieldHTML('Senha', `<input class="input" id="c-senha" type="password" autocomplete="new-password" placeholder="Mínimo 8, com maiúscula e número">`,'Pelo menos 8 caracteres, 1 maiúscula e 1 número.')}
+        ${fieldHTML('Confirmar senha', `<input class="input" id="c-senha2" type="password" autocomplete="new-password" placeholder="Repita a senha">`)}
+        <button type="submit" class="btn btn--accent btn--lg btn--full mt-2">${tipo==='jogador'?'Criar conta →':'Solicitar acesso →'}</button>
+      </form>
+      <p class="mono text-mute mt-6 normal-case leading-copy">Já tem conta? <a href="login.html?tipo=${tipo}" class="text-ink">Entrar →</a></p>
+    </div>`;
+
+  const form = screenEl.querySelector('[data-form-conta]');
+  const nome = screenEl.querySelector('#c-nome');
+  const email = screenEl.querySelector('#c-email');
+  const senha = screenEl.querySelector('#c-senha');
+  const senha2 = screenEl.querySelector('#c-senha2');
+  Validation.bind(form, [
+    { el: nome, validate: v => Validation.rules.required(v, 'Digite seu nome completo.') },
+    { el: email, validate: v => Validation.rules.email(v) },
+    { el: senha, validate: v => Validation.rules.strongPassword(v) },
+    { el: senha2, validate: v => Validation.rules.match(v, senha.value, 'As senhas não conferem.'), dependsOn: senha },
+  ], async () => {
+    if (indisponivelGuard()) return;
+    const btn = form.querySelector('button[type="submit"]');
+    const orig = btn.textContent; btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      // guarda a intenção (não-secreta) para rotear a conclusão profissional depois
+      try { localStorage.setItem('po_intencao', tipo); } catch (e) {}
+      const r = await PeneirasAuth.cadastrarConta({ nome: nome.value, email: email.value, senha: senha.value, papelSolicitado: tipo });
+      if (!r.ok) { toast(r.erro || 'Não foi possível criar a conta.', { type: 'error', duration: 7000 }); return; }
+      renderConfirmeEmail(email.value, r.provavelExistente);
+    } catch (e) {
+      toast('Falha de rede. Tente novamente.', { type: 'error' });
+    } finally { btn.disabled = false; btn.textContent = orig; }
   });
-}) : null;
-if (measure) measure.observe(document.querySelector('.site-header'));
+}
 
-// Ao focar por Tab, o Chromium ignora scroll-padding e deixa o campo parcialmente
-// sob o bloco sticky ou a barra fixa. Corrige a rolagem só quando isso acontece.
-screenEl.addEventListener('focusin', e => {
-  const el = e.target;
-  if (!el.getBoundingClientRect || el.closest('.cad-footer')) return;
-  const r = el.getBoundingClientRect();
-  const bar = screenEl.querySelector('.cad-footer');
-  const head = screenEl.querySelector('.cad-head');
-  const bottomLimit = (bar ? bar.getBoundingClientRect().top : innerHeight) - 16;
-  const topLimit = (head && getComputedStyle(head).position === 'sticky' ? head.getBoundingClientRect().bottom : parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0) + 16;
-  // instantâneo: rolagem suave a cada Tab atrapalharia quem navega por teclado
-  if (r.bottom > bottomLimit) window.scrollBy({ top: r.bottom - bottomLimit, behavior: 'instant' });
-  else if (r.top < topLimit) window.scrollBy({ top: r.top - topLimit, behavior: 'instant' });
-});
-const params = new URLSearchParams(location.search);
+function renderConfirmeEmail(email, provavelExistente) {
+  screenEl.innerHTML = `
+    <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
+      ${tagHTML('Confira seu e-mail', 'accent')}
+      <h1 class="display text-fluid-sm mt-4 mb-3 mx-0">Confirme seu e-mail.</h1>
+      <p class="text-16 leading-copy text-ink-soft max-w-copy-sm mt-0 mb-6 mx-0">
+        Enviamos um link de confirmação para <strong>${esc(email)}</strong>. Abra o link para ativar sua conta e depois volte para entrar.
+      </p>
+      ${provavelExistente ? `<p class="mono py-3 px-3.5 bg-accent-soft border border-line-soft text-12 normal-case tracking-normal">Se você já tinha conta com esse e-mail, use <a href="login.html?tipo=${tipo}" class="text-ink">Entrar</a> ou <a href="recuperar.html" class="text-ink">Recuperar senha</a>.</p>` : ''}
+      <div class="btn-row flex gap-2 flex-wrap mt-8">
+        <a href="login.html?tipo=${tipo}" class="btn btn--accent btn--lg">Ir para o login →</a>
+        <a href="index.html" class="btn btn--ghost btn--lg">Voltar à home</a>
+      </div>
+      <p class="mono text-mute mt-6 normal-case">Não recebeu? Verifique spam. O link expira conforme a configuração do provedor.</p>
+    </div>`;
+  window.scrollTo(0, 0);
+}
 
-// ?evento=<id> vindo de peneiras.html → login → aqui. Id inválido ou ausente
-// cai no cadastro normal; o passo 2 então mostra a peneira mais próxima.
-const evento = MOCK.EVENTS.find(e => e.id === params.get('evento')) || null;
-const nearest = evento || MOCK.SEASON.nextEvent;
+/* ------------------------------------------------------------------ */
+/* 2) CONCLUIR CADASTRO (guarded)                                     */
+/* ------------------------------------------------------------------ */
+async function iniciarConclusao() {
+  if (indisponivelGuard()) { screenEl.innerHTML = mensagem('Configuração ausente. Tente mais tarde.'); return; }
+  screenEl.innerHTML = mensagem('Validando sua sessão…');
+  const conta = await PeneirasAuth.exigirAcesso({}); // exige login + código
+  if (!conta) return; // exigirAcesso já redirecionou
 
-function renderCadastro() {
-  const STEPS = ['Identificação','Origem','Futebol','Mídias','Responsável'];
-  const form = { name:'',dob:'',cpf:'',state:'RJ',city:'',position:'',foot:'',height:'',weight:'',club:'',years:'',videos:'',photo:false,consent:false,responsible:'',responsiblePhone:'' };
-  let step = 1;
+  // Já concluído? Vai para a área certa.
+  if (conta.atleta_id || conta.profissional) { location.replace(PeneirasAuth.destinoPorPapel(conta)); return; }
 
-  function score() {
-    let s=0;
-    if(form.name)s+=8; if(form.dob)s+=8; if(form.cpf.length>=11)s+=10;
-    if(form.state&&form.city)s+=8; if(form.position)s+=10; if(form.foot)s+=4;
-    if(form.height)s+=4; if(form.weight)s+=4; if(form.club)s+=6; if(form.years)s+=4;
-    if(form.videos)s+=18; if(form.photo)s+=8; if(form.consent)s+=8;
-    return Math.min(100,s);
-  }
-  function age() {
-    if(!form.dob) return null;
-    const d=new Date(form.dob), now=new Date();
-    let a=now.getFullYear()-d.getFullYear();
-    const m=now.getMonth()-d.getMonth();
-    if(m<0||(m===0&&now.getDate()<d.getDate()))a--;
-    return isNaN(a)?null:a;
-  }
+  let intencao = 'jogador';
+  try { intencao = localStorage.getItem('po_intencao') || 'jogador'; } catch (e) {}
+  const ehProfissional = conta.papel === 'olheiro' || intencao === 'olheiro' || intencao === 'academia';
 
-  /* Bloco do score — redesenhado a cada tecla, não só a cada troca de passo. */
-  function scoreBlockHTML() {
-    const sc = score();
-    return `${progressHTML(sc,100,{label:'Score de completude',sublabel:sc+'%'})}
-          <div class="font-mono text-10 text-ink-mute flex justify-between">
-            <span>0 → 100% · cada campo adicional sobe seu score</span>
-            <span class="${sc>=60?'text-success':'text-ink-mute'}">${sc>=80?'◆ alto':sc>=60?'◐ bom':'○ inicial'}</span>
-          </div>`;
-  }
+  if (ehProfissional) renderConclusaoProfissional(conta, intencao === 'academia' ? 'academia' : (conta.papel === 'olheiro' ? 'olheiro' : intencao));
+  else renderConclusaoJogador(conta);
+}
 
+function renderConclusaoProfissional(conta, tipoProf) {
+  const titulo = tipoProf === 'academia' ? 'Dados da academia.' : 'Seu credenciamento.';
+  screenEl.innerHTML = `
+    <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
+      <span class="kicker uppercase">Concluir solicitação · ${esc(tipoProf)}</span>
+      <h1 class="display text-fluid-sm mt-3 mb-3 mx-0">${esc(titulo)}</h1>
+      <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">Olá, ${esc(conta.nome || '')}. Informe os dados abaixo. Seu acesso fica <strong>pendente</strong> até a aprovação da gestão.</p>
+      <form class="flex flex-col gap-4 max-w-copy" data-form-prof novalidate>
+        ${fieldHTML('Empresa / organização', `<input class="input" id="p-empresa" value="${tipoProf==='academia'?'Pelé Academia':''}" placeholder="Nome da empresa">`)}
+        ${fieldHTML('Cargo / função', `<input class="input" id="p-cargo" placeholder="ex.: Olheiro, Coordenador">`)}
+        <button type="submit" class="btn btn--accent btn--lg btn--full mt-2">Enviar solicitação →</button>
+      </form>
+    </div>`;
+  const form = screenEl.querySelector('[data-form-prof]');
+  const empresa = screenEl.querySelector('#p-empresa');
+  const cargo = screenEl.querySelector('#p-cargo');
+  Validation.bind(form, [
+    { el: empresa, validate: v => Validation.rules.required(v, 'Informe a empresa/organização.') },
+    { el: cargo, validate: v => Validation.rules.required(v, 'Informe o cargo/função.') },
+  ], async () => {
+    const btn = form.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      const r = await PeneirasAuth.solicitarAcessoProfissional({ tipo: tipoProf, empresa: empresa.value, cargo: cargo.value });
+      if (!r.ok) { toast(r.erro || 'Não foi possível enviar a solicitação.', { type: 'error' }); btn.disabled=false; btn.textContent='Enviar solicitação →'; return; }
+      try { localStorage.removeItem('po_intencao'); } catch (e) {}
+      location.replace('aguardando.html');
+    } catch (e) { btn.disabled=false; btn.textContent='Enviar solicitação →'; toast('Falha de rede.', { type: 'error' }); }
+  });
+}
+
+function renderConclusaoJogador(conta) {
+  const form = { nome: conta.nome || '', cpf:'', dob:'', estado:'RJ', cidade:'', posicao:'', pe:'', altura:'', peso:'', clube:'', anos:'', telefone:'', respNome:'', respTel:'', consent:false };
+  function idade() { const a = Validation.ageFromISO ? Validation.ageFromISO(form.dob) : null; return a; }
   function render() {
-    const a = age();
-    const bad = a!=null&&(a<7||a>19), needs = a!=null&&a<18;
+    const a = idade();
+    const menor = a != null && a < 18;
     screenEl.innerHTML = `
-      <div class="cad-head" data-cad-head>
-        <div class="max-w-narrow my-0 mx-auto py-5 px-8 flex flex-col gap-3">
-          <div class="flex items-center justify-between gap-3 flex-wrap">
-            <span class="kicker uppercase">${evento ? 'Inscrição · ' + eventShortName(evento) : 'Criar perfil gratuito'}</span>
-            ${tagHTML('PASSO '+step+'/5 · '+STEPS[step-1],'outline')}
+      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-24 px-8">
+        <span class="kicker uppercase">Concluir cadastro · jogador</span>
+        <h1 class="display text-fluid-sm mt-3 mb-3 mx-0">Complete seu perfil.</h1>
+        <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">Olá, ${esc(conta.nome||'')}. Faltam alguns dados para o seu perfil ficar completo. O CPF fica <strong>privado</strong> e vira também uma forma de login.</p>
+        <form class="flex flex-col gap-5 max-w-copy" data-form-jog novalidate>
+          ${fieldHTML('Nome completo', `<input class="input" id="j-nome" value="${esc(form.nome)}" autocomplete="name">`)}
+          ${fieldHTML('CPF', `<input class="input" id="j-cpf" inputmode="numeric" placeholder="000.000.000-00" value="${esc(form.cpf)}">`,'11 dígitos — vira um identificador de login.')}
+          ${fieldHTML('Data de nascimento', `<input class="input" type="date" id="j-dob" value="${esc(form.dob)}">`, a!=null? 'Você tem '+a+' anos' : '7 a 19 anos')}
+          <div class="g g-2 gap-3">
+            ${fieldHTML('Estado', `<select class="select" id="j-uf">${UFS.map(s=>`<option ${s===form.estado?'selected':''}>${s}</option>`).join('')}</select>`)}
+            ${fieldHTML('Cidade', `<input class="input" id="j-cidade" value="${esc(form.cidade)}" placeholder="Sua cidade">`)}
           </div>
-          ${evento ? `<p class="mono m-0 py-2.5 px-3.5 bg-accent-soft border border-line-soft text-12 normal-case tracking-normal" data-event-context>Você está se inscrevendo em ${esc(evento.name)} · ${fmtDotDate(evento.date, 'full')}</p>` : ''}
-          <div data-score>${scoreBlockHTML()}</div>
-        </div>
-      </div>
-
-      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-30 px-8">
-        <h1 class="display text-fluid-sm mt-0 mb-8 mx-0">${stepTitle()}</h1>
-        <div class="flex flex-col gap-5 max-w-copy">${stepFields()}</div>
-      </div>
-
-      <div class="cad-footer">
-        <div class="max-w-narrow my-0 mx-auto flex gap-3 items-center">
-          <span class="mono text-mute">${STEPS[step-1]} · ${step}/5</span>
-          <div class="ml-auto flex gap-2">
-            ${step>1?`<button class="btn btn--ghost" id="back">← Voltar</button>`:''}
-            ${step<5?`<button class="btn btn--primary" id="next">Próximo passo →</button>`:''}
-            ${step===5?`<button class="btn btn--accent" id="finish">✓ Confirmar inscrição</button>`:''}
+          ${fieldHTML('Posição principal', `<div class="g g-2 gap-2" id="j-pos">${POSICOES.map(p=>`<button type="button" class="choice ${form.posicao===p?'is-active':''}" data-pos="${p}">${p}</button>`).join('')}</div>`)}
+          ${fieldHTML('Pé dominante', `<div class="flex gap-2" id="j-pe">${['Direito','Esquerdo','Ambidestro'].map(p=>`<button type="button" class="choice choice--accent ${form.pe===p?'is-active':''} flex-1 h-11" data-pe="${p}">${p}</button>`).join('')}</div>`, null, true)}
+          <div class="g g-2 gap-3">
+            ${fieldHTML('Altura (cm)', `<input class="input" id="j-alt" inputmode="numeric" value="${esc(form.altura)}" placeholder="ex.: 165">`,'',true)}
+            ${fieldHTML('Peso (kg)', `<input class="input" id="j-peso" inputmode="numeric" value="${esc(form.peso)}" placeholder="ex.: 58">`,'',true)}
           </div>
-        </div>
+          ${fieldHTML('Onde joga hoje', `<input class="input" id="j-clube" value="${esc(form.clube)}" placeholder="Escolinha ou clube">`,'',true)}
+          ${fieldHTML('Tempo de prática (anos)', `<input class="input" id="j-anos" inputmode="numeric" value="${esc(form.anos)}" placeholder="ex.: 2">`,'',true)}
+          ${fieldHTML('Telefone de contato', `<input class="input" id="j-tel" inputmode="tel" value="${esc(form.telefone)}" placeholder="(21) 9 9999-9999">`,'',true)}
+          ${menor ? `
+            <div class="pt-2 border-t border-t-line-soft"><div class="kicker uppercase mb-2">Responsável (menor de 18)</div></div>
+            ${fieldHTML('Nome do responsável legal', `<input class="input" id="j-resp" value="${esc(form.respNome)}" placeholder="Nome completo do responsável">`)}
+            ${fieldHTML('Celular do responsável', `<input class="input" id="j-resp-tel" inputmode="tel" value="${esc(form.respTel)}" placeholder="(21) 9 9999-9999">`)}
+            <button type="button" id="j-consent" class="flex gap-3 items-start border border-ink p-4 cursor-pointer text-left ${form.consent?'bg-accent text-accent-ink':'bg-card text-ink'}">
+              <span class="w-5.5 h-5.5 shrink-0 border-[1.5px] border-ink flex items-center justify-center font-display ${form.consent?'bg-ink text-accent':''}">${form.consent?'✓':''}</span>
+              <span><span class="font-display font-extrabold text-13 uppercase">Aceito o termo de responsável</span><br><span class="text-12 leading-normal">Autorizo o tratamento dos dados do menor conforme LGPD/ECA.</span></span>
+            </button>` : ''}
+          <button type="submit" class="btn btn--accent btn--lg btn--full mt-2">Concluir cadastro →</button>
+        </form>
       </div>`;
 
-    bindFields();
-    if (measure) measure.observe(screenEl.querySelector('[data-cad-head]'));
-    const back=screenEl.querySelector('#back'), next=screenEl.querySelector('#next'), finish=screenEl.querySelector('#finish');
-    if(back) back.onclick=()=>{ step--; render(); };
-    // Regras do passo (validation.js): erro aparece no blur ou na tentativa de
-    // avançar; aí o foco vai para o primeiro campo inválido. Grupos de botões
-    // (posição, pé, termo) validam pelo estado do formulário.
-    const q = id => screenEl.querySelector('#' + id);
-    const R = Validation.rules;
-    const stepRules = {
-      1: [{ el: q('f-name'), validate: v => R.required(v, 'Digite seu nome completo.') },
-          { el: q('f-dob'), validate: v => R.ageRange(v, 7, 19) },
-          { el: q('f-cpf'), validate: v => R.cpf(v) }],
-      2: [{ el: q('f-city'), validate: v => R.required(v, 'Informe a cidade onde você mora.') }],
-      3: [{ el: q('f-pos'), validate: () => form.position ? '' : 'Escolha sua posição principal.' },
-          { el: q('f-foot'), validate: () => form.foot ? '' : 'Escolha o pé dominante.' }],
-      4: [],
-      5: needs ? [{ el: q('f-resp'), validate: v => R.required(v, 'Informe o nome completo do responsável legal.') },
-                  { el: q('f-resp-phone'), validate: v => R.phone(v) },
-                  { el: q('f-consent'), validate: () => form.consent ? '' : 'Aceite o termo de responsável para continuar.' }] : [],
-    };
-    const validator = Validation.bind(null, (stepRules[step] || []).filter(f => f.el));
-    if(next) next.onclick=()=>{ if (validator.validateAll(true)) { step++; render(); } };
-    if(finish) finish.onclick=()=>{ if (validator.validateAll(true)) renderDone(); };
-
-    function stepTitle() {
-      return ['Quem é você?','De onde vem<br>o futebol?','Como você joga?','Mostre o seu jogo.','Falta só o responsável.'][step-1];
+    // bind campos
+    const bind = (id, key, digitsOnly, max) => { const e = screenEl.querySelector('#'+id); if (e) e.oninput = () => { let v = e.value; if (digitsOnly) { v = v.replace(/\D/g,'').slice(0, max||99); e.value = v; } form[key]=v; }; };
+    bind('j-nome','nome'); bind('j-cpf','cpf',true,11); bind('j-cidade','cidade'); bind('j-alt','altura',true,3);
+    bind('j-peso','peso',true,3); bind('j-clube','clube'); bind('j-anos','anos',true,2); bind('j-tel','telefone');
+    const uf = screenEl.querySelector('#j-uf'); if (uf) uf.onchange = () => form.estado = uf.value;
+    const dob = screenEl.querySelector('#j-dob'); if (dob) dob.onchange = () => { form.dob = dob.value; render(); };
+    screenEl.querySelectorAll('[data-pos]').forEach(b => b.onclick = () => { form.posicao = b.dataset.pos; render(); });
+    screenEl.querySelectorAll('[data-pe]').forEach(b => b.onclick = () => { form.pe = b.dataset.pe; render(); });
+    if (menor) {
+      bind('j-resp','respNome'); bind('j-resp-tel','respTel');
+      const cons = screenEl.querySelector('#j-consent'); if (cons) cons.onclick = () => { form.consent = !form.consent; render(); };
     }
-    function stepFields() {
-      if(step===1) return `
-        ${field('Nome completo',`<input class="input" id="f-name" placeholder="Seu nome completo" value="${esc(form.name)}">`)}
-        ${field('Data de nascimento',`<input class="input" type="date" id="f-dob" value="${esc(form.dob)}">`, a!=null&&!bad?'Você tem '+a+' anos':'')}
-        ${field('CPF',`<input class="input" id="f-cpf" inputmode="numeric" placeholder="000.000.000-00" value="${esc(form.cpf)}">`,'11 dígitos, só números')}`;
-      if(step===2) return `
-        ${field('Estado',`<select class="select" id="f-state">${['AC','AL','AM','AP','BA','CE','DF','ES','GO','MA','MG','MS','MT','PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'].map(s=>`<option ${s===form.state?'selected':''}>${s}</option>`).join('')}</select>`)}
-        ${field('Cidade',`<input class="input" id="f-city" placeholder="Sua cidade" value="${esc(form.city)}">`)}
-        <div class="bg-bg-alt p-4 border border-line-soft">
-          <div class="kicker uppercase mb-1.5">${evento ? 'Peneira escolhida' : 'Peneira mais próxima'}</div>
-          <div class="flex items-baseline justify-between"><span class="display text-18">${eventShortName(nearest)}</span><span class="font-mono text-12">${fmtDotDate(nearest.date)}</span></div>
-          <div class="mt-1 font-mono text-11 text-ink-soft">${evento ? nearest.city + '/' + nearest.state : '0 km de você · alocação automática'}</div>
-        </div>`;
-      if(step===3) return `
-        ${field('Posição principal',`<div class="g g-2 gap-2" id="f-pos">${['Goleiro','Zagueiro','Lateral','Volante','Meia','Ponta','Atacante'].map(p=>`<button type="button" class="choice ${form.position===p?'is-active':''}" data-pos="${p}">${p}</button>`).join('')}</div>`)}
-        ${field('Pé dominante',`<div class="flex gap-2" id="f-foot">${['Direito','Esquerdo','Ambidestro'].map(p=>`<button type="button" class="choice choice--accent ${form.foot===p?'is-active':''} flex-1 h-11" data-foot="${p}">${p}</button>`).join('')}</div>`)}
-        <div class="g g-2 gap-3">
-          ${field('Altura (cm)',`<input class="input" id="f-h" inputmode="numeric" placeholder="ex.: 165" value="${esc(form.height)}">`,'',null,true)}
-          ${field('Peso (kg)',`<input class="input" id="f-w" inputmode="numeric" placeholder="ex.: 58" value="${esc(form.weight)}">`,'',null,true)}
-        </div>
-        ${field('Onde joga hoje',`<input class="input" id="f-club" placeholder="Nome da escolinha ou clube" value="${esc(form.club)}">`,'',null,true)}
-        ${field('Tempo de prática (anos)',`<input class="input" id="f-years" inputmode="numeric" placeholder="ex.: 2" value="${esc(form.years)}">`,'',null,true)}`;
-      if(step===4) return `
-        <div class="bg-accent text-accent-ink p-4 border border-ink flex items-center gap-3">
-          <span class="display text-36">+25</span>
-          <div><div class="font-display font-extrabold text-14 uppercase">Vídeos aumentam seu score</div><div class="font-mono text-11">até 25 pontos no ranking do olheiro</div></div>
-        </div>
-        ${field('Link do Instagram com vídeos',`<input class="input" id="f-videos" placeholder="instagram.com/seu.usuario" value="${esc(form.videos)}">`,'@usuario ou link direto',null,true)}
-        ${field('Foto de rosto',`<button type="button" id="f-photo" class="h-30 w-full bg-bg-alt border border-dashed border-ink cursor-pointer flex flex-col items-center justify-center gap-1.5 text-ink">${form.photo?'<span class="display text-20">✓ Foto adicionada</span><span class="font-mono text-11 text-ink-soft">clique para remover</span>':'<span class="display text-20">+ enviar</span><span class="font-mono text-11 text-ink-soft">jpg, png · até 5MB</span>'}</button>`,'',null,true)}`;
-      // step 5
-      if(needs) return `
-        ${field('Nome do responsável legal',`<input class="input" id="f-resp" placeholder="Nome completo do responsável" value="${esc(form.responsible)}">`)}
-        ${field('Celular do responsável',`<input class="input" id="f-resp-phone" inputmode="tel" placeholder="(21) 9 9999-9999" value="${esc(form.responsiblePhone)}">`,'Receberá SMS de confirmação')}
-        <button type="button" id="f-consent" class="flex gap-3 items-start border border-ink p-4 cursor-pointer text-left ${form.consent?'bg-accent text-accent-ink':'bg-card text-ink'}">
-          <span class="w-5.5 h-5.5 shrink-0 border-[1.5px] border-ink flex items-center justify-center text-accent font-display ${form.consent?'bg-ink':'bg-transparent'}">${form.consent?'✓':''}</span>
-          <span><span class="font-display font-extrabold text-13 uppercase">Aceito o termo de responsável</span><br><span class="text-12 leading-normal">Autorizo a participação do menor na peneira e o tratamento dos dados conforme LGPD/ECA.</span></span>
-        </button>`;
-      return `<div class="p-6 bg-accent text-accent-ink border border-ink"><div class="display text-24">Você é maior.</div><div class="text-13 mt-2">Sem necessidade de responsável. Confirme sua inscrição.</div></div>`;
-    }
-  }
 
-  function field(label, control, hint, error, optional) {
-    const ctrl = error ? control.replace(/<(input|select|textarea)\b/, '<$1 aria-invalid="true"') : control;
-    return `<label class="field"><div class="field__label"><span>${label}</span>${optional?'<span class="field__optional">opcional</span>':''}</div>${ctrl}${hint?`<span class="field__hint">${hint}</span>`:''}${error?`<span class="field__error" role="alert">${error}</span>`:''}</label>`;
-  }
+    const el = screenEl.querySelector('[data-form-jog]');
+    const q = id => screenEl.querySelector('#'+id);
+    const regras = [
+      { el: q('j-nome'), validate: v => Validation.rules.required(v, 'Digite seu nome completo.') },
+      { el: q('j-cpf'), validate: v => Validation.rules.cpf(v) },
+      { el: q('j-dob'), validate: v => Validation.rules.ageRange(v, 7, 19) },
+      { el: q('j-cidade'), validate: v => Validation.rules.required(v, 'Informe a cidade.') },
+    ];
+    if (menor) regras.push(
+      { el: q('j-resp'), validate: v => Validation.rules.required(v, 'Informe o responsável.') },
+      { el: q('j-resp-tel'), validate: v => Validation.rules.phone(v) });
 
-  function bindFields() {
-    const n=screenEl.querySelector('#f-name'); if(n) n.oninput=()=>{ form.name=n.value; updateLive(); };
-    const dob=screenEl.querySelector('#f-dob'); if(dob) dob.oninput=()=>{ form.dob=dob.value; updateLive(); paintDobHint(dob); };
-    const cpf=screenEl.querySelector('#f-cpf'); if(cpf) cpf.oninput=()=>{ form.cpf=cpf.value.replace(/\D/g,'').slice(0,11); cpf.value=form.cpf; updateLive(); };
-    const st=screenEl.querySelector('#f-state'); if(st) st.onchange=()=>{ form.state=st.value; updateLive(); };
-    const city=screenEl.querySelector('#f-city'); if(city) city.oninput=()=>{ form.city=city.value; updateLive(); };
-    screenEl.querySelectorAll('[data-pos]').forEach(b=>b.onclick=()=>{ form.position=b.dataset.pos; render(); });
-    screenEl.querySelectorAll('[data-foot]').forEach(b=>b.onclick=()=>{ form.foot=b.dataset.foot; render(); });
-    ['f-h:height','f-w:weight','f-club:club','f-years:years','f-videos:videos','f-resp:responsible','f-resp-phone:responsiblePhone'].forEach(pair=>{
-      const [id,key]=pair.split(':'); const e=screenEl.querySelector('#'+id);
-      if(e) e.oninput=()=>{ form[key]=e.value; updateLive(); };
+    Validation.bind(el, regras.filter(r => r.el), async () => {
+      if (!form.posicao) { toast('Escolha sua posição principal.', { type: 'error' }); return; }
+      if (menor && !form.consent) { toast('Aceite o termo de responsável.', { type: 'error' }); return; }
+      const btn = el.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Concluindo…';
+      try {
+        const r = await PeneirasAuth.concluirCadastroJogador({
+          nome: form.nome, cpf: form.cpf, nascimento: form.dob, estado: form.estado, cidade: form.cidade,
+          posicao: form.posicao, pe: form.pe || null, altura: form.altura || null, peso: form.peso || null,
+          clube: form.clube || null, anos_jogando: form.anos || null, contato_telefone: form.telefone || null,
+          responsavel_nome: menor ? form.respNome : null, responsavel_telefone: menor ? form.respTel : null,
+          consentimento: menor ? true : undefined, consentimento_versao: 'resp-v1',
+        });
+        if (!r.ok) {
+          btn.disabled = false; btn.textContent = 'Concluir cadastro →';
+          toast(r.mensagem || 'Não foi possível concluir. Revise os dados.', { type: 'error', duration: 7000 });
+          return;
+        }
+        try { localStorage.removeItem('po_intencao'); } catch (e) {}
+        toast('Cadastro concluído!', { type: 'success' });
+        location.replace('atleta.html?tela=status');
+      } catch (e) { btn.disabled = false; btn.textContent = 'Concluir cadastro →'; toast('Falha de rede.', { type: 'error' }); }
     });
-    const photo=screenEl.querySelector('#f-photo'); if(photo) photo.onclick=()=>{ form.photo=!form.photo; render(); };
-    const cons=screenEl.querySelector('#f-consent'); if(cons) cons.onclick=()=>{ form.consent=!form.consent; render(); };
   }
-  /* Conclusão: confirma antes de mandar para o login — sem isto a pessoa
-     preenchia cinco passos e caía num formulário de entrada, como se tivesse
-     dado errado. Sem bloco sticky nem barra fixa. */
-  function renderDone() {
-    const sc = score();
-    const loginHref = 'login.html?tipo=jogador' + (evento ? '&evento=' + encodeURIComponent(evento.id) : '');
-    document.documentElement.style.setProperty('--cad-head-h', '0px');
-    screenEl.innerHTML = `
-      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
-        ${tagHTML('Inscrição enviada', 'accent')}
-        <h1 class="display text-fluid-sm mt-4 mb-3 mx-0" tabindex="-1" data-done-title>Perfil criado.<br>Você está no jogo.</h1>
-        <p class="text-16 leading-copy text-ink-soft max-w-copy-sm mt-0 mb-8 mx-0">${evento
-          ? `Sua inscrição em <strong>${esc(evento.name)}</strong> (${fmtDotDate(evento.date, 'full')}) foi registrada. Você recebe SMS com a confirmação e, se for convocado, com local e horário.`
-          : 'Seu perfil foi registrado. Você recebe SMS com a confirmação e será alocado na peneira mais próxima com vaga.'}</p>
-        <div class="card max-w-copy-sm">
-          <div class="g g-2 gap-4 mb-5">
-            ${statHTML('Score de completude', sc + '%', { sub: sc >= 80 ? 'alto' : sc >= 60 ? 'bom' : 'inicial' })}
-            ${statHTML('Passos concluídos', '5/5', { sub: STEPS.length + ' etapas' })}
-          </div>
-          ${progressHTML(sc, 100, { sm: true })}
-          <div class="font-mono text-10 text-ink-mute mt-2">Você pode completar o perfil depois, pela sua área. Cada campo adicional sobe o score.</div>
-        </div>
-        <div class="btn-row flex gap-2 flex-wrap mt-8">
-          <a href="${loginHref}" class="btn btn--accent btn--lg">Entrar para acompanhar →</a>
-          <a href="peneiras.html" class="btn btn--ghost btn--lg">Ver outras peneiras</a>
-        </div>
-      </div>`;
-    const title = screenEl.querySelector('[data-done-title]');
-    window.scrollTo(0, 0);
-    title.focus({ preventScroll: true });
-    toast('Inscrição enviada! Perfil criado com ' + sc + '% de completude.', { type: 'success', duration: 6000 });
-  }
-
-  /* Idade calculada sem redesenhar o passo: redesenhar recriava o <input type="date">
-     e derrubava o foco no meio da digitação por teclado (o Chromium dispara o
-     evento a cada segmento dia/mês/ano). Só a dica e o erro são trocados. */
-  function paintDobHint(dob) {
-    const wrap = dob.closest('.field'); if (!wrap) return;
-    const a = age(), bad = a != null && (a < 7 || a > 19);
-    wrap.querySelectorAll('.field__hint').forEach(e => e.remove());
-    // o erro de faixa etária é responsabilidade do validation.js (blur / tentativa)
-    if (a != null && !bad) wrap.insertAdjacentHTML('beforeend', `<span class="field__hint">Você tem ${a} anos</span>`);
-  }
-
-  /* Atualiza o que muda a cada tecla sem recriar os campos:
-     estado dos botões e a barra de score. */
-  function updateLive() {
-    const sc=screenEl.querySelector('[data-score]');
-    if(sc) sc.innerHTML=scoreBlockHTML();
-  }
-
   render();
 }
 
-renderCadastro();
+function mensagem(txt) {
+  return `<div class="cad-body w-full max-w-narrow my-0 mx-auto pt-16 pb-16 px-8"><p class="text-16 text-ink-soft">${esc(txt)}</p></div>`;
+}

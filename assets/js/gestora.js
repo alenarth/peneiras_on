@@ -15,7 +15,48 @@ document.querySelectorAll('.nav-item').forEach(n => {
   if (n.getAttribute('data-nav') === tela) n.classList.add('is-active');
 });
 
-SCREENS[tela]();
+bootGestora();
+
+async function bootGestora() {
+  if (window.PeneirasAuth && window.PeneirasAuth.indisponivel) {
+    screenEl.innerHTML = `<div class="w-full max-w-page my-0 mx-auto py-16 px-8"><h1 class="display text-fluid-sm">Acesso indisponível</h1><p class="text-ink-soft">${esc(window.PeneirasAuth.indisponivel)}</p><p><a href="login.html?tipo=academia" class="text-ink underline">Ir para o login →</a></p></div>`;
+    return;
+  }
+  const conta = await PeneirasAuth.exigirAcesso({ papeis: ['gestora'] });
+  if (!conta) return;
+  // identidade no aside
+  const badge = document.querySelector('.aside__badge');
+  if (badge) {
+    const nome = badge.querySelector('.font-mono'); const titulo = badge.querySelector('.display');
+    if (titulo) titulo.textContent = 'Gestora'; if (nome) nome.textContent = conta.nome || 'Gestora';
+  }
+  const foot = document.querySelector('.aside__foot');
+  if (foot && !foot.querySelector('[data-sair]')) {
+    const b = document.createElement('button');
+    b.setAttribute('data-sair', ''); b.className = 'btn btn--ghost btn--sm mt-3'; b.textContent = 'Sair';
+    b.addEventListener('click', async () => { await PeneirasAuth.sair(); location.replace('login.html?tipo=academia'); });
+    foot.appendChild(b);
+  }
+  if (params.get('demo') === '1') {
+    SCREENS[tela]();
+    const aviso = document.createElement('div');
+    aviso.className = 'mono normal-case text-12 py-2 px-8 bg-accent text-accent-ink text-center';
+    aviso.textContent = 'Demonstração do produto — dados fictícios.';
+    screenEl.prepend(aviso);
+  } else {
+    screenEl.innerHTML = `
+      <div class="w-full max-w-page my-0 mx-auto py-10 px-8">
+        <span class="kicker uppercase">Gestão · Pelé Academia</span>
+        <h1 class="display text-fluid-sm mt-3 mb-2 mx-0">Olá, ${esc(conta.nome || '')}.</h1>
+        <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">Seu acesso de gestão está ativo. Dashboard, mapa de oportunidades e pipeline ainda são demonstração e ficam desativados nesta versão do MVP.</p>
+        <div class="btn-row flex gap-2 flex-wrap">
+          <a href="gestora.html?tela=dashboard&demo=1" class="btn btn--ghost btn--lg">Ver demonstração do produto</a>
+          <button data-sair class="btn btn--primary btn--lg">Sair</button>
+        </div>
+      </div>`;
+    screenEl.querySelectorAll('[data-sair]').forEach(b => b.addEventListener('click', async () => { await PeneirasAuth.sair(); location.replace('login.html?tipo=academia'); }));
+  }
+}
 
 /* ---------------- helpers de gráfico ---------------- */
 function sparkline(data, w=140, h=28, color='var(--color-ink)') {

@@ -16,7 +16,10 @@ for (const f of readdirSync(root)) {
 }
 cpSync(join(root, 'assets'), join(out, 'assets'), {
   recursive: true,
-  // fontes do Tailwind não vão para produção; o navegador só precisa do compilado
-  filter: (src) => !/(input|residual)\.css$/.test(src),
+  // fontes do Tailwind não vão para produção; o navegador só precisa do compilado.
+  // config.example.js é só referência; o config.js real (público) já foi gerado.
+  filter: (src) => !/(input|residual)\.css$/.test(src) && !/config\.example\.js$/.test(src),
 });
+// A pasta api/ (funções serverless) NÃO entra em dist/: a Vercel a detecta na raiz
+// do projeto. Nenhum segredo/arquivo de api vai para o output estático.
 console.log('dist/ pronto:', readdirSync(out).join(', '));
