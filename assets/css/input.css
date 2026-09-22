@@ -81,6 +81,7 @@
   --text-14: 14px;
   --text-15: 15px;
   --text-16: 16px;
+  --text-17: 17px;
   --text-18: 18px;
   --text-20: 20px;
   --text-22: 22px;
@@ -89,19 +90,20 @@
   --text-28: 28px;
   --text-32: 32px;
   --text-36: 36px;
+  --text-40: 40px;
   --text-44: 44px;
   --text-48: 48px;
   --text-56: 56px;
   --text-64: 64px;
   --text-72: 72px;
   /* Display fluido (heros e títulos de seção) */
-  --text-fluid-hero: clamp(34px, 8vw, 128px);
-  --text-fluid-hero-sm: clamp(34px, 8vw, 120px);
-  --text-fluid-h1: clamp(56px, 6vw, 96px);
-  --text-fluid-lg: clamp(28px, 6vw, 80px);
-  --text-fluid-md: clamp(36px, 5vw, 72px);
-  --text-fluid-sm: clamp(32px, 7vw, 56px);
-  --text-fluid-p: clamp(28px, 4vw, 56px);
+  --text-fluid-hero: clamp(32px, 6vw, 92px);
+  --text-fluid-hero-sm: clamp(32px, 6vw, 88px);
+  --text-fluid-h1: clamp(44px, 4.5vw, 72px);
+  --text-fluid-lg: clamp(28px, 4.5vw, 60px);
+  --text-fluid-md: clamp(30px, 3.8vw, 52px);
+  --text-fluid-sm: clamp(28px, 5vw, 44px);
+  --text-fluid-p: clamp(22px, 2.8vw, 38px);
 
   /* Alturas de linha (display comprimido → corpo) */
   --leading-display-xtight: 0.85;
@@ -217,7 +219,7 @@
   .wrap--narrow { @apply max-w-narrow; }
   .wrap--tight { @apply max-w-tight; }
   .section { @apply border-b border-line; }
-  .section__pad { @apply py-20; }
+  .section__pad { @apply py-16; }
   .grid-2 { @apply grid grid-cols-[repeat(2,1fr)] gap-6 max-md:grid-cols-[1fr]; }
   .grid-3 { @apply grid grid-cols-[repeat(3,1fr)] gap-6 max-md:grid-cols-[1fr]; }
   .grid-4 { @apply grid grid-cols-[repeat(4,1fr)] gap-6 max-md:grid-cols-[1fr]; }
@@ -271,12 +273,14 @@
   .kicker { @apply font-mono text-11 uppercase tracking-kicker-lg text-ink-mute; }
   .mono { @apply font-mono text-11 uppercase tracking-label; }
   .display { @apply font-display font-black tracking-display-lg uppercase leading-display m-0; }
-  .h-hero { font-size: clamp(64px, 9vw, 140px); @apply leading-display-tight tracking-tighter max-md:text-[clamp(40px,13vw,140px)]; }
-  .h1 { font-size: clamp(48px, 6vw, 72px); @apply leading-[0.92] max-md:text-[clamp(34px,11vw,72px)]; }
-  .h2 { @apply text-56 leading-display max-md:text-[clamp(32px,9vw,56px)]; }
-  .h3 { @apply text-36 leading-display-loose tracking-display-md max-md:text-[clamp(24px,6vw,36px)]; }
-  .h-panel { @apply text-44 max-md:text-[clamp(30px,9vw,44px)]; }
-  .lead { @apply text-18 leading-normal text-ink-soft; }
+  /* Escala de títulos reduzida (~25%): o display preto em caixa alta já pesa;
+     acima disso ele engole o resto da tela. */
+  .h-hero { font-size: clamp(44px, 6.2vw, 96px); @apply leading-display-tight tracking-tighter max-md:text-[clamp(36px,10vw,96px)]; }
+  .h1 { font-size: clamp(40px, 4.5vw, 56px); @apply leading-[0.92] max-md:text-[clamp(32px,9vw,56px)]; }
+  .h2 { @apply text-44 leading-display max-md:text-[clamp(28px,7.5vw,44px)]; }
+  .h3 { @apply text-28 leading-display-loose tracking-display-md max-md:text-[clamp(22px,5.5vw,28px)]; }
+  .h-panel { @apply text-36 max-md:text-[clamp(26px,7.5vw,36px)]; }
+  .lead { @apply text-17 leading-copy text-ink-soft; }
   .mark { @apply bg-accent text-accent-ink px-[0.06em]; }
   .mark-gold { @apply bg-gold-soft text-gold-deep px-[0.06em]; }
 
@@ -350,8 +354,8 @@
   /* --- stat / kpi --- */
   .stat { @apply flex flex-col gap-1; }
   .stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink-mute; }
-  .stat__value { @apply font-display font-black tracking-display-lg text-36 leading-display; }
-  .stat__value--big { @apply text-56; }
+  .stat__value { @apply font-display font-black tracking-display-lg text-32 leading-display; }
+  .stat__value--big { @apply text-44; }
   .stat__delta { @apply font-mono text-11 text-success; }
   .stat__sub { @apply font-mono text-11 text-ink-mute; }
 
@@ -502,14 +506,17 @@
   .hero__slide { @apply absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out; }
   .hero__slide.is-active { @apply opacity-100; }
   .hero__slide--flip { @apply -scale-x-100; }
+  /* As artes novas são quentes e cheias de luz: escurecidas e dessaturadas para
+     não disputar com o título e o laranja dos botões. */
+  .hero__slide--dim { @apply brightness-[.5] saturate-[.75]; }
   .hero__dots { @apply flex gap-2; }
   .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
   .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
-  .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-16 items-end px-0 pt-20 pb-14 max-md:grid-cols-[1fr] max-md:px-5; }
+  .hero__inner { @apply relative grid grid-cols-[1.2fr_1fr] gap-14 items-end px-0 pt-14 pb-10 max-md:grid-cols-[1fr] max-md:px-5; }
   .glass { @apply border border-ink/25 p-6 bg-[rgba(26,29,34,0.72)] backdrop-blur-[12px] text-ink; }
   .glass-stat__label { @apply font-mono text-10 uppercase tracking-kicker text-ink/60; }
-  .glass-stat__value { @apply font-display font-black text-36 leading-display tracking-display-lg; }
+  .glass-stat__value { @apply font-display font-black text-28 leading-display tracking-display-lg; }
   .glass-stat__delta { @apply font-mono text-11 text-accent; }
 
   /* --- planos --- */
@@ -517,7 +524,7 @@
   .plan { @apply relative flex flex-col gap-4 p-7 min-h-130 bg-card text-ink border-r border-line last:border-r-0; }
   .plan--featured { @apply bg-bg text-ink border-t-4 border-b-4 border-t-gold border-b-gold border-l border-l-gold -mt-1 -mb-1; }
   .plan__ribbon { @apply absolute -top-1 -left-px -right-px flex justify-between items-center bg-gold text-gold-ink px-3.5 py-1.5 font-mono text-10 font-bold uppercase tracking-kicker-lg; }
-  .plan__price { @apply font-display font-black text-48 leading-display-xtight tracking-display-lg; }
+  .plan__price { @apply font-display font-black text-40 leading-display-xtight tracking-display-lg; }
   .plan__features { @apply m-0 p-0 list-none flex flex-col gap-2.5; }
   .plan__features li { @apply grid grid-cols-[16px_1fr] gap-2.5 text-13 leading-normal pt-2 border-t border-line-soft first:border-t-0; }
   .plan__check { @apply text-accent-text font-display font-black; }

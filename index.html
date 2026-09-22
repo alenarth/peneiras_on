@@ -38,8 +38,8 @@
          (hover, foco, aba oculta) e de prefers-reduced-motion. -->
     <div class="hero__slides" data-hero-slides aria-hidden="true">
       <div class="hero__slide hero__slide--flip pele-bg is-active" data-slide></div>
-      <div class="hero__slide hero-gol-bg" data-slide></div>
-      <div class="hero__slide hero-app-bg" data-slide></div>
+      <div class="hero__slide hero__slide--dim hero-gol-bg" data-slide></div>
+      <div class="hero__slide hero__slide--dim hero-app-bg" data-slide></div>
     </div>
     <div class="hero__scrim"></div>
     <div class="hero__top-fade"></div>
@@ -50,10 +50,10 @@
           <span class="mark inline-block leading-display-loose">talento</span><br>
           encontra<br>o&nbsp;jogo<span class="text-[0.6em]">.</span>
         </h1>
-        <p class="lead max-w-form mt-8 text-ink/78">
+        <p class="lead max-w-form mt-6 text-ink/78">
           Peneiras On é a plataforma que descentraliza a captação de talentos no Brasil. De Manaus a Caxias, do Piauí ao Rio Grande do Sul, o olheiro chega até você.
         </p>
-        <div class="flex gap-3 mt-8 flex-wrap">
+        <div class="flex gap-3 mt-7 flex-wrap">
           <a href="cadastro.html" class="btn btn--accent btn--lg">Inscreva-se agora</a>
           <a href="peneiras.html" class="btn btn--gold btn--lg">Encontrar peneiras →</a>
         </div>
@@ -72,7 +72,7 @@
             <span class="font-mono text-10 text-accent" data-next-status></span>
           </div>
           <div class="p-6">
-            <div class="display text-32 tracking-display" data-next-name></div>
+            <div class="display text-26 tracking-display" data-next-name></div>
             <div class="flex justify-between mt-4 font-mono text-13">
               <span data-next-date></span><span data-next-age></span>
             </div>
@@ -135,7 +135,7 @@
   <section id="manifesto" class="on-dark relative bg-bg text-ink overflow-hidden">
     <div class="pele-bg bg-left absolute inset-0 opacity-35 grayscale-[40%]"></div>
     <div class="manifesto__scrim"></div>
-    <div class="wrap relative py-24 px-8">
+    <div class="wrap relative py-16 px-8">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-6 h-px bg-accent"></span>
         <span class="kicker accent">MANIFESTO</span>
@@ -145,7 +145,7 @@
       </p>
       <div class="mt-12 pt-6 border-t border-t-ink/20 flex justify-between items-baseline">
         <span class="kicker text-ink/55">Em parceria com</span>
-        <span class="display gold text-24 tracking-btn">Pelé Academia</span>
+        <span class="display gold text-20 tracking-btn">Pelé Academia</span>
       </div>
     </div>
   </section>
@@ -240,7 +240,7 @@
     <div class="wrap g g-faq py-16 px-8 gap-16 items-start">
       <div>
         <span class="tag tag--outline">FAQ</span>
-        <h3 class="display text-56 mt-3">Dúvidas que todo mundo tem.</h3>
+        <h3 class="display h2 mt-3">Dúvidas que todo mundo tem.</h3>
       </div>
       <div class="faq">
         <details><summary>A inscrição é mesmo gratuita?<span class="font-mono text-18">+</span></summary><p>Sim. Sempre. O plano premium só dá visibilidade extra. A inscrição é gratuita para sempre.</p></details>
@@ -262,7 +262,7 @@
   <script>
     mountSiteHeader('index.html');
     mountSiteFooter();
-    mountHeroSlider(document.querySelector('.hero'));
+    mountHeroSlider(document.querySelector('.hero'), { interval: 4500 });
 
     // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
     const season = MOCK.SEASON;

@@ -50,7 +50,7 @@
 .marquee { overflow: hidden; white-space: nowrap; }
 .marquee__track {
   display: inline-flex; gap: 48px; padding: 14px 0;
-  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  font-family: var(--font-display); font-weight: 800; font-size: 18px;
   text-transform: uppercase; letter-spacing: -0.02em;
   animation: marquee 40s linear infinite;
 }

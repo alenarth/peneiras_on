@@ -246,7 +246,7 @@ function renderCheckin() {
         <div class="sticky top-6 flex flex-col gap-4">
           <div class="card--dark p-5">
             <div class="kicker text-ink/55">Comparecimento</div>
-            <div class="display text-72 leading-display-xtight mt-2">${Math.round(present/list.length*100)}<span class="text-32">%</span></div>
+            <div class="display text-56 leading-display-xtight mt-2">${Math.round(present/list.length*100)}<span class="text-32">%</span></div>
             <div class="mt-3.5"><div class="progress progress--sm"><div class="progress__fill" style="width:${present/list.length*100}%"></div></div></div>
             <div class="flex justify-between mt-2 font-mono text-11 opacity-70"><span>${present} presentes</span><span>${list.length-present} aguardando</span></div>
           </div>
@@ -291,7 +291,7 @@ function renderAvaliacao() {
           <div class="flex gap-4 items-end mb-6">
             ${avatarHTML(a.name,{size:72})}
             <div class="flex-1">${tagHTML(MOCK.posLabel(a),'outline')}<div class="display text-36 mt-1.5">${a.name}</div><div class="font-mono text-11 text-ink-soft mt-1">${a.age} anos · ${a.city}/${a.state}</div></div>
-            <div class="text-right"><div class="kicker uppercase">Média</div><div class="display text-64 leading-display-xtight">${avg}</div></div>
+            <div class="text-right"><div class="kicker uppercase">Média</div><div class="display text-48 leading-display-xtight">${avg}</div></div>
           </div>
 
           <div class="card p-6">
