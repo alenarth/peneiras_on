@@ -58,6 +58,6 @@ export const AUTH = {
   maxTentativas: 5,
   reenvioMinSeg: 60,
   sessaoVerificadaTtlSeg: 12 * 60 * 60, // 12h de autorização explícita
-  rateJanelaSeg: 15 * 60,
-  rateMaxIniciar: 10, // por IP+conta na janela
+  rateJanelaSeg: 5 * 60,   // janela de contagem e duração do bloqueio (5 min)
+  rateMaxIniciar: 30,      // tentativas de login por IP na janela (antes de bloquear)
 };
