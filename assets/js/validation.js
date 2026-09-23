@@ -20,7 +20,14 @@ const Validation = (() => {
   const rules = {
     required: (v, msg) => String(v || '').trim() ? '' : (msg || 'Preencha este campo.'),
     email: v => EMAIL.test(String(v || '').trim()) ? '' : 'Digite um e-mail válido, como nome@exemplo.com.',
-    cpf: v => digits(v).length === 11 ? '' : `O CPF precisa ter 11 dígitos. Você digitou ${digits(v).length}.`,
+    cpf: v => {
+      const c = digits(v);
+      if (c.length !== 11) return `O CPF precisa ter 11 dígitos. Você digitou ${c.length}.`;
+      if (/^(\d)\1{10}$/.test(c)) return 'CPF inválido (dígitos repetidos).';
+      const dv = base => { let s = 0; for (let i = 0; i < base.length; i++) s += Number(base[i]) * (base.length + 1 - i); const r = (s * 10) % 11; return r === 10 ? 0 : r; };
+      if (dv(c.slice(0, 9)) !== Number(c[9]) || dv(c.slice(0, 10)) !== Number(c[10])) return 'CPF inválido. Confira os números.';
+      return '';
+    },
     // login e recuperação aceitam CPF ou e-mail no mesmo campo
     emailOrCpf: v => {
       const s = String(v || '').trim();
