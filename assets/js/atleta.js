@@ -149,7 +149,7 @@ function renderPerfil() {
       <div class="section-label"><span class="section-label__title">Comunidade</span><span class="section-label__action">${Feed.followButtonHTML(ME)}</span></div>
       <div class="kicker uppercase mb-2">Atributos confirmados por quem viu você jogar</div>
       <div class="flex flex-wrap gap-1.5" data-tags>${Feed.attrTagsHTML(ME)}</div>
-      <div class="font-mono text-10 text-ink-mute mt-3">As confirmações e os seguidores são os mesmos do <a href="feed.html" class="text-ink underline underline-offset-3">feed</a> e ficam salvos neste navegador.</div>
+      <div class="font-mono text-10 text-ink-mute mt-3">As confirmações e os seguidores são os mesmos dos <a href="feed.html" class="text-ink underline underline-offset-3">destaques</a> e ficam salvos neste navegador.</div>
     </div>
 
     <div class="g g-main gap-6">
