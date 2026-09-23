@@ -36,17 +36,17 @@ else renderCriarConta();
 function renderCriarConta() {
   const titulos = {
     jogador: 'Crie sua conta<br>de jogador.',
-    olheiro: 'Solicite seu<br>acesso de olheiro.',
-    academia: 'Solicite o acesso<br>da academia.',
+    olheiro: 'Crie sua conta<br>de olheiro.',
+    academia: 'Crie a conta<br>da academia.',
   };
   const nota = {
-    jogador: 'Depois de confirmar o e-mail e entrar, você conclui o cadastro com CPF e dados do futebol.',
-    olheiro: 'Depois de confirmar o e-mail e entrar, você informa empresa e cargo. O acesso é liberado após aprovação da gestão.',
-    academia: 'Depois de confirmar o e-mail e entrar, você informa os dados da academia. O acesso é liberado após aprovação.',
+    jogador: 'Depois de entrar, você conclui o cadastro com CPF e dados do futebol.',
+    olheiro: 'E-mail e senha bastam. Depois de entrar, você já acessa o painel de olheiro.',
+    academia: 'E-mail e senha bastam. Depois de entrar, você já acessa o painel de gestão.',
   };
   screenEl.innerHTML = `
     <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
-      <span class="kicker uppercase">${tipo==='jogador'?'Conta gratuita':'Solicitação de acesso'}</span>
+      <span class="kicker uppercase">Conta gratuita</span>
       <h1 class="display text-fluid-sm mt-3 mb-3 mx-0">${titulos[tipo]}</h1>
       <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">${esc(nota[tipo])}</p>
       <form class="flex flex-col gap-4 max-w-copy" data-form-conta novalidate>
@@ -54,7 +54,7 @@ function renderCriarConta() {
         ${fieldHTML('E-mail', `<input class="input" id="c-email" type="email" autocomplete="email" placeholder="voce@exemplo.com">`)}
         ${fieldHTML('Senha', `<input class="input" id="c-senha" type="password" autocomplete="new-password" placeholder="Mínimo 8, com maiúscula e número">`,'Pelo menos 8 caracteres, 1 maiúscula e 1 número.')}
         ${fieldHTML('Confirmar senha', `<input class="input" id="c-senha2" type="password" autocomplete="new-password" placeholder="Repita a senha">`)}
-        <button type="submit" class="btn btn--accent btn--lg btn--full mt-2">${tipo==='jogador'?'Criar conta →':'Solicitar acesso →'}</button>
+        <button type="submit" class="btn btn--accent btn--lg btn--full mt-2">Criar conta →</button>
       </form>
       <p class="mono text-mute mt-6 normal-case leading-copy">Já tem conta? <a href="login.html?tipo=${tipo}" class="text-ink">Entrar →</a></p>
     </div>`;
@@ -115,48 +115,19 @@ function renderConfirmeEmail(email, provavelExistente) {
 async function iniciarConclusao() {
   if (indisponivelGuard()) { screenEl.innerHTML = mensagem('Configuração ausente. Tente mais tarde.'); return; }
   screenEl.innerHTML = mensagem('Validando sua sessão…');
-  const conta = await PeneirasAuth.exigirAcesso({}); // exige login + código
+  const conta = await PeneirasAuth.exigirAcesso({});
   if (!conta) return; // exigirAcesso já redirecionou
 
-  // Já concluído? Vai para a área certa.
-  if (conta.atleta_id || conta.profissional) { location.replace(PeneirasAuth.destinoPorPapel(conta)); return; }
-
-  let intencao = 'jogador';
-  try { intencao = localStorage.getItem('po_intencao') || 'jogador'; } catch (e) {}
-  const ehProfissional = conta.papel === 'olheiro' || intencao === 'olheiro' || intencao === 'academia';
-
-  if (ehProfissional) renderConclusaoProfissional(conta, intencao === 'academia' ? 'academia' : (conta.papel === 'olheiro' ? 'olheiro' : intencao));
-  else renderConclusaoJogador(conta);
-}
-
-function renderConclusaoProfissional(conta, tipoProf) {
-  const titulo = tipoProf === 'academia' ? 'Dados da academia.' : 'Seu credenciamento.';
-  screenEl.innerHTML = `
-    <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
-      <span class="kicker uppercase">Concluir solicitação · ${esc(tipoProf)}</span>
-      <h1 class="display text-fluid-sm mt-3 mb-3 mx-0">${esc(titulo)}</h1>
-      <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">Olá, ${esc(conta.nome || '')}. Informe os dados abaixo. Seu acesso fica <strong>pendente</strong> até a aprovação da gestão.</p>
-      <form class="flex flex-col gap-4 max-w-copy" data-form-prof novalidate>
-        ${fieldHTML('Empresa / organização', `<input class="input" id="p-empresa" value="${tipoProf==='academia'?'Pelé Academia':''}" placeholder="Nome da empresa">`)}
-        ${fieldHTML('Cargo / função', `<input class="input" id="p-cargo" placeholder="ex.: Olheiro, Coordenador">`)}
-        <button type="submit" class="btn btn--accent btn--lg btn--full mt-2">Enviar solicitação →</button>
-      </form>
-    </div>`;
-  const form = screenEl.querySelector('[data-form-prof]');
-  const empresa = screenEl.querySelector('#p-empresa');
-  const cargo = screenEl.querySelector('#p-cargo');
-  Validation.bind(form, [
-    { el: empresa, validate: v => Validation.rules.required(v, 'Informe a empresa/organização.') },
-    { el: cargo, validate: v => Validation.rules.required(v, 'Informe o cargo/função.') },
-  ], async () => {
-    const btn = form.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Enviando…';
-    try {
-      const r = await PeneirasAuth.solicitarAcessoProfissional({ tipo: tipoProf, empresa: empresa.value, cargo: cargo.value });
-      if (!r.ok) { toast(r.erro || 'Não foi possível enviar a solicitação.', { type: 'error' }); btn.disabled=false; btn.textContent='Enviar solicitação →'; return; }
-      try { localStorage.removeItem('po_intencao'); } catch (e) {}
-      location.replace('aguardando.html');
-    } catch (e) { btn.disabled=false; btn.textContent='Enviar solicitação →'; toast('Falha de rede.', { type: 'error' }); }
-  });
+  // Olheiro/Academia: MVP sem aprovação — e-mail + senha bastam. Vão direto ao painel.
+  if (conta.persona === 'olheiro' || conta.persona === 'academia') {
+    try { localStorage.removeItem('po_intencao'); } catch (e) {}
+    location.replace(PeneirasAuth.destinoPorPapel(conta));
+    return;
+  }
+  // Jogador já concluído? Vai para a área certa.
+  if (conta.atleta_id) { location.replace(PeneirasAuth.destinoPorPapel(conta)); return; }
+  // Jogador: formulário de perfil (CPF + dados do futebol).
+  renderConclusaoJogador(conta);
 }
 
 function renderConclusaoJogador(conta) {

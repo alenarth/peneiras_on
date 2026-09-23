@@ -130,10 +130,11 @@
         location.replace(destinoPorPapel(conta));
         return null;
       }
-      // Exigência extra: profissional aprovado (para olheiro/academia).
-      if (opts.exigirAprovado) {
-        if (!conta.profissional) { location.replace('cadastro.html?fluxo=completar'); return null; }
-        if (conta.profissional.situacao !== 'aprovado') { location.replace('aguardando.html'); return null; }
+      // Acesso por persona (jogador/olheiro/academia). MVP: sem aprovação.
+      var permitidosPersona = opts.personas || null;
+      if (permitidosPersona && permitidosPersona.indexOf(conta.persona) < 0) {
+        location.replace(destinoPorPapel(conta));
+        return null;
       }
       return conta;
     },
@@ -146,16 +147,6 @@
         headers: { Authorization: 'Bearer ' + token }, body: dados,
       });
       return Object.assign({ ok: r.ok && r.dados.ok }, r.dados);
-    },
-
-    /* ---- Solicitação profissional (RPC exige sessão verificada) ---- */
-    async solicitarAcessoProfissional(opts) {
-      var c = precisaCliente();
-      var r = await c.rpc('solicitar_acesso_profissional', {
-        p_tipo: opts.tipo, p_empresa: opts.empresa, p_cargo: opts.cargo,
-      });
-      if (r.error) return { ok: false, erro: r.error.message };
-      return Object.assign({ ok: (r.data && r.data.status === 'ok') }, r.data || {});
     },
 
     /* ---- 5. Sair ---- */
@@ -186,15 +177,12 @@
   };
 
   function destinoPorPapel(conta) {
-    var prof = conta && conta.profissional;
-    if (prof) {
-      if (prof.situacao !== 'aprovado') return 'aguardando.html';
-      return prof.tipo === 'academia' ? 'gestora.html?tela=dashboard' : 'olheiro.html?tela=lista';
-    }
-    if (conta && conta.papel === 'gestora') return 'gestora.html?tela=dashboard';
+    var persona = conta && conta.persona;
+    var papel = conta && conta.papel;
+    if (persona === 'academia' || papel === 'gestora') return 'gestora.html?tela=dashboard';
+    if (persona === 'olheiro' || papel === 'olheiro') return 'olheiro.html?tela=lista';
     if (conta && conta.atleta_id) return 'atleta.html?tela=status';
-    // olheiro sem solicitação, ou atleta sem perfil concluído → conclusão de cadastro.
-    if (conta && conta.papel === 'olheiro') return 'cadastro.html?fluxo=completar';
+    // jogador ainda sem perfil concluído → conclusão de cadastro.
     return 'cadastro.html?fluxo=completar';
   }
 

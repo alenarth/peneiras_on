@@ -11,21 +11,21 @@ const ROLES = {
     sub:'Acompanhe sua inscrição e seu perfil.',
     idLabel:'CPF ou e-mail', idPlaceholder:'000.000.000-00 ou seu@email.com',
     persona:'jogador',
-    tips:['Jogador entra por CPF (depois de concluir o cadastro) ou por e-mail.','Menores de 18 concluem o cadastro com dados do responsável.','Todo login pede um código enviado ao seu e-mail.'],
+    tips:['Jogador entra por CPF (depois de concluir o cadastro) ou por e-mail.','Menores de 18 concluem o cadastro com dados do responsável.','Login com e-mail (ou CPF) e senha.'],
   },
   olheiro: {
     label:'Olheiro', tag:'Acesso credenciado', title:'Veja talento. Não planilha.',
     sub:'Lista otimizada e perfil completo dos atletas.',
     idLabel:'E-mail', idPlaceholder:'olheiro@exemplo.com',
     persona:'olheiro',
-    tips:['Acesso liberado após aprovação da gestão.','Enquanto pendente, você vê a tela de aguardo.','Todo login pede um código enviado ao seu e-mail.'],
+    tips:['E-mail e senha bastam — sem aprovação.','Você acessa o painel de olheiro assim que entra.','Login com e-mail e senha.'],
   },
   academia: {
     label:'Academia', tag:'Gestão estratégica', title:'Operação vira estratégia.',
     sub:'Painel de gestão da Pelé Academia.',
     idLabel:'E-mail', idPlaceholder:'gestor@exemplo.com',
     persona:'academia',
-    tips:['Acesso restrito a administradores aprovados.','Solicitação de conta não concede acesso sozinha.','Todo login pede um código enviado ao seu e-mail.'],
+    tips:['E-mail e senha bastam — sem aprovação.','Você acessa o painel de gestão assim que entra.','Login com e-mail e senha.'],
   },
 };
 
@@ -98,7 +98,7 @@ if (bottom) {
       <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Criar conta grátis →</a>`;
   } else {
     bottom.innerHTML = `<span class="text-13 text-ink-soft">Ainda não tem conta?</span>
-      <a href="cadastro.html?tipo=${role}" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Solicitar acesso →</a>`;
+      <a href="cadastro.html?tipo=${role}" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Criar conta →</a>`;
   }
 }
 
