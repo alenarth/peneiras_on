@@ -108,28 +108,29 @@ if (window.PeneirasAuth && window.PeneirasAuth.indisponivel) {
 }
 
 // ------------------------------------------------------------------
-// Estado do fluxo. Etapa 'senha' → 'codigo'.
+// Login direto: e-mail/CPF + senha → sessão (sem código por e-mail).
 // ------------------------------------------------------------------
-let desafioAtual = null;
-
 if (form && idInput && pwdInput) {
-  const v = Validation.bind(form, [
+  Validation.bind(form, [
     { el: idInput, validate: x => role === 'jogador' ? Validation.rules.emailOrCpf(x) : Validation.rules.email(x) },
     { el: pwdInput, validate: x => Validation.rules.password(x) },
-  ], enviarSenha);
+  ], entrar);
 }
 
-async function enviarSenha() {
+async function entrar() {
   const btn = form.querySelector('button[type="submit"]');
   const original = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Enviando…';
+  btn.disabled = true; btn.textContent = 'Entrando…';
   try {
-    const r = await PeneirasAuth.iniciarLogin({
+    const r = await PeneirasAuth.login({
       identificador: idInput.value, senha: pwdInput.value, persona: cfg.persona,
     });
-    if (r.ok && r.desafio) {
-      desafioAtual = r.desafio;
-      renderCodigo(r.destino, r.reenvio_em || 60);
+    if (r.ok) {
+      const conta = await PeneirasAuth.carregarMinhaConta();
+      let destino;
+      if (proximo && /^[a-z0-9_\-./?=&]+\.html/i.test(proximo)) destino = proximo;
+      else destino = PeneirasAuth.destinoPorPapel(conta.status === 'ok' ? conta : { papel: cfg.persona === 'jogador' ? 'atleta' : cfg.persona });
+      location.replace(destino);
       return;
     }
     if (r.erro === 'email_nao_confirmado') {
@@ -146,82 +147,4 @@ async function enviarSenha() {
   }
 }
 
-function renderCodigo(destino, reenvioSeg) {
-  const formArea = form;
-  formArea.innerHTML = `
-    <p class="mono py-3 px-3.5 bg-accent-soft border border-line-soft text-12 normal-case tracking-normal">
-      Enviamos um código de 6 dígitos para <strong>${esc(destino || 'seu e-mail')}</strong>. Ele expira em 5 minutos.</p>
-    <div class="field">
-      <div class="field__label"><span>Código de verificação</span></div>
-      <div class="flex gap-2" id="code" role="group" aria-label="Código de 6 dígitos">
-        ${[0,1,2,3,4,5].map(i=>`<input class="code-input input text-center" data-i="${i}" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Dígito ${i+1} de 6">`).join('')}
-      </div>
-    </div>
-    <button type="button" id="verificar" class="btn btn--primary btn--lg btn--full">Verificar e entrar →</button>
-    <div class="flex justify-between items-center mt-2">
-      <button type="button" id="reenviar" class="bg-transparent border-0 cursor-pointer font-mono text-11 uppercase tracking-label text-ink-soft underline underline-offset-3" disabled>Reenviar (${reenvioSeg}s)</button>
-      <button type="button" id="voltar" class="bg-transparent border-0 cursor-pointer text-13 text-ink-soft underline underline-offset-3">← Trocar credenciais</button>
-    </div>`;
-
-  const inputs = [...formArea.querySelectorAll('.code-input')];
-  const group = formArea.querySelector('#code');
-  const collect = () => inputs.map(i => i.value).join('');
-  inputs.forEach((inp, i) => {
-    inp.addEventListener('input', () => {
-      const d = inp.value.replace(/\D/g,'');
-      if (d.length > 1) { [...d].slice(0, 6 - i).forEach((c,n)=>{ inputs[i+n].value=c; }); inputs[Math.min(i+d.length,5)].focus(); }
-      else { inp.value = d; if (d && i < 5) inputs[i+1].focus(); }
-    });
-    inp.addEventListener('keydown', e => { if (e.key==='Backspace' && !inp.value && i>0) inputs[i-1].focus(); });
-    inp.addEventListener('paste', e => {
-      const d = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
-      if (d) { e.preventDefault(); [...d].slice(0,6).forEach((c,n)=>{ if(inputs[n]) inputs[n].value=c; }); inputs[Math.min(d.length,6)-1].focus(); }
-    });
-  });
-  inputs[0].focus();
-
-  formArea.querySelector('#verificar').addEventListener('click', () => verificar(collect(), group, inputs));
-  const reBtn = formArea.querySelector('#reenviar');
-  let restante = reenvioSeg;
-  const tick = setInterval(() => {
-    restante--;
-    if (restante <= 0) { clearInterval(tick); reBtn.disabled = false; reBtn.textContent = 'Reenviar código'; }
-    else reBtn.textContent = `Reenviar (${restante}s)`;
-  }, 1000);
-  reBtn.addEventListener('click', async () => {
-    if (reBtn.disabled) return;
-    reBtn.disabled = true;
-    const r = await PeneirasAuth.reenviarCodigo(desafioAtual);
-    if (r.ok) { toast('Novo código enviado.', { type: 'success' }); restante = reenvioSeg;
-      reBtn.textContent = `Reenviar (${restante}s)`;
-      const t2 = setInterval(()=>{ restante--; if(restante<=0){clearInterval(t2);reBtn.disabled=false;reBtn.textContent='Reenviar código';} else reBtn.textContent=`Reenviar (${restante}s)`; },1000);
-    } else { reBtn.disabled = false; toast(r.mensagem || 'Não foi possível reenviar.', { type: 'error' }); }
-  });
-  formArea.querySelector('#voltar').addEventListener('click', () => location.reload());
-}
-
-async function verificar(codigo, group, inputs) {
-  const msg = Validation.rules.code6(codigo);
-  if (msg) { Validation.setError(group, msg); (inputs.find(i=>!i.value)||inputs[0]).focus(); return; }
-  Validation.clearError(group);
-  const btn = form.querySelector('#verificar');
-  btn.disabled = true; btn.textContent = 'Verificando…';
-  try {
-    const r = await PeneirasAuth.verificarCodigo({ desafio: desafioAtual, codigo });
-    if (!r.ok) {
-      btn.disabled = false; btn.textContent = 'Verificar e entrar →';
-      Validation.setError(group, r.mensagem || 'Código inválido.');
-      inputs.forEach(i=>i.value=''); inputs[0].focus();
-      return;
-    }
-    // Sessão liberada: descobrir destino pelo papel/estado.
-    const conta = await PeneirasAuth.carregarMinhaConta();
-    let destino;
-    if (proximo && /^[a-z0-9_\-./?=&]+\.html/i.test(proximo)) destino = proximo;
-    else destino = PeneirasAuth.destinoPorPapel(conta.status === 'ok' ? conta : { papel: cfg.persona === 'jogador' ? 'atleta' : cfg.persona });
-    location.replace(destino);
-  } catch (e) {
-    btn.disabled = false; btn.textContent = 'Verificar e entrar →';
-    toast('Falha de rede ao verificar. Tente novamente.', { type: 'error' });
-  }
-}
+// Fluxo de código por e-mail (OTP) removido — login agora é senha direta.

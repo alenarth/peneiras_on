@@ -75,32 +75,21 @@
       return { ok: true, provavelExistente: !!provavelExistente };
     },
 
-    /* ---- 2. Login: senha → código ---- */
-    async iniciarLogin(opts) {
-      var r = await api('/api/auth/iniciar', {
+    /* ---- 2. Login: e-mail/CPF + senha → sessão (sem código) ---- */
+    async login(opts) {
+      var r = await api('/api/auth/login', {
         body: {
-          identificador: opts.identificador, senha: opts.senha,
-          persona: opts.persona, captchaToken: opts.captchaToken,
+          identificador: opts.identificador, senha: opts.senha, persona: opts.persona,
         },
       });
-      return Object.assign({ ok: r.ok }, r.dados);
-    },
-
-    async verificarCodigo(opts) {
-      var r = await api('/api/auth/verificar', { body: { desafio: opts.desafio, codigo: opts.codigo } });
       if (!r.ok || !r.dados.ok) return Object.assign({ ok: false }, r.dados);
-      // Instala a sessão liberada com a API oficial do SDK.
+      // Instala a sessão devolvida pelo servidor com a API oficial do SDK.
       var s = r.dados.session;
       var set = await precisaCliente().auth.setSession({
         access_token: s.access_token, refresh_token: s.refresh_token,
       });
       if (set.error) return { ok: false, erro: set.error.message };
       return { ok: true, usuario_id: r.dados.usuario_id };
-    },
-
-    async reenviarCodigo(desafio) {
-      var r = await api('/api/auth/reenviar', { body: { desafio: desafio } });
-      return Object.assign({ ok: r.ok }, r.dados);
     },
 
     /* ---- 3. Estado da conta (servidor valida sessão verificada) ---- */
