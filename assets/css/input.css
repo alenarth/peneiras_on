@@ -810,7 +810,11 @@
   /* --- tag de atributo confirmável (feed.js): aria-pressed é a fonte da verdade --- */
   .attr-tag { @apply inline-flex items-center gap-1.5 h-8 px-2.5 border border-line rounded-md bg-card text-ink font-mono text-11 uppercase tracking-label cursor-pointer transition-[background-color,border-color,transform] duration-120 hover:bg-bg-alt hover:-translate-y-px active:translate-y-0 active:scale-95; }
   .attr-tag[aria-pressed="true"] { @apply bg-accent text-accent-ink border-accent hover:bg-accent-hover motion-safe:animate-pop; }
+   .attr-tag__icon { @apply inline-flex items-center justify-center w-4 font-display text-14 leading-none; }
   .attr-tag__count { @apply font-display font-extrabold text-12 tracking-normal; }
+   .vote-control { @apply inline-flex items-center gap-1; }
+   .vote-control .btn { @apply size-8 p-0; }
+   .vote-control__count { @apply min-w-8 text-center font-display font-extrabold text-13; }
 
   /* Movimento reduzido: hover mantém só a troca de cor — sem subir, sem sombra
      animada, sem giro do chevron. */

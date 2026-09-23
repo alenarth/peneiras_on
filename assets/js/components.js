@@ -68,7 +68,7 @@ function mountSiteHeader(active) {
           <a href="index.html#como-funciona">Como funciona</a>
           <a href="index.html#planos">Planos</a>
           <a href="peneiras.html">Peneiras</a>
-          <a href="feed.html">Feed</a>
+          <a href="feed.html">Destaques</a>
           <a href="sobre.html">Sobre</a>
           <a href="index.html#faq">FAQ</a>
         </nav>
@@ -294,7 +294,7 @@ function mountSiteFooter(opts = {}) {
             <a href="sobre.html">Sobre</a>
             <a href="index.html#faq">FAQ</a>
             <a href="index.html#planos">Planos</a>
-            <a href="feed.html">Feed</a>
+            <a href="feed.html">Destaques</a>
           </div>
         </div>
         <div>
