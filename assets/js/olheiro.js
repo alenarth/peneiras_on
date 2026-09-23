@@ -50,19 +50,6 @@ function aplicarIdentidadeAside(conta, papelLabel) {
     foot.appendChild(b);
   }
 }
-function renderContaRealPainel(conta, subtitulo, demoHref, loginHref) {
-  screenEl.innerHTML = `
-    <div class="w-full max-w-page my-0 mx-auto py-10 px-8">
-      <span class="kicker uppercase">${esc(subtitulo)}</span>
-      <h1 class="display text-fluid-sm mt-3 mb-2 mx-0">Olá, ${esc(conta.nome || '')}.</h1>
-      <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">Seu acesso está ativo. As telas de lista, avaliação e mapa ainda são demonstração e ficam desativadas nesta versão do MVP.</p>
-      <div class="btn-row flex gap-2 flex-wrap">
-        <a href="${demoHref}" class="btn btn--ghost btn--lg">Ver demonstração do produto</a>
-        <button data-sair class="btn btn--primary btn--lg">Sair</button>
-      </div>
-    </div>`;
-  screenEl.querySelectorAll('[data-sair]').forEach(b => b.addEventListener('click', async () => { await PeneirasAuth.sair(); location.replace(loginHref); }));
-}
 function marcarDemoPainel() {
   const aviso = document.createElement('div');
   aviso.className = 'mono normal-case text-12 py-2 px-8 bg-accent text-accent-ink text-center';
