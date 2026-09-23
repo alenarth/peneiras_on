@@ -1,5 +1,5 @@
 // POST /api/cadastro/jogador — conclui o cadastro do jogador de forma atômica.
-// Exige access_token (sessão) COM sessão verificada por código. O usuario_id vem
+// Exige access_token (sessão autenticada válida). O usuario_id vem
 // do TOKEN validado, nunca do body. O CPF é normalizado, validado e hasheado aqui
 // (a chave HMAC nunca vai ao banco nem ao browser).
 import { ConfigError, env } from '../_lib/env.js';
@@ -40,12 +40,8 @@ export default async function handler(req, res) {
     if (!info || !info.sessionId) return json(res, 401, { ok: false, erro: 'token_invalido' });
     const admin = adminClient();
 
-    // Barreira: precisa de sessão verificada por código.
-    const { data: verificada } = await admin.rpc('checar_sessao_verificada', {
-      p_usuario: info.user.id, p_session: info.sessionId,
-    });
-    if (!verificada) return json(res, 403, { ok: false, erro: 'sem_sessao_verificada',
-      mensagem: 'Entre com senha e código antes de concluir o cadastro.' });
+    // Barreira: basta uma sessão autenticada válida (o token foi verificado no
+    // servidor Auth por usuarioDoToken acima). Login sem código por e-mail.
 
     // Validação server-side.
     const nome = txt(body.nome, 150);

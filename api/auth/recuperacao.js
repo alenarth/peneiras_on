@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     // Invalida autorizações verificadas: acessos antigos não sobrevivem à troca.
     await admin.rpc('revogar_sessoes_usuario', { p_usuario: info.user.id }).catch(() => {});
 
-    return json(res, 200, { ok: true, mensagem: 'Senha atualizada. Entre novamente com senha e código.' });
+    return json(res, 200, { ok: true, mensagem: 'Senha atualizada. Entre novamente com e-mail e senha.' });
   } catch (e) {
     if (e instanceof ConfigError) return json(res, 500, { ok: false, erro: 'config' });
     console.error('[recuperacao]', e);
