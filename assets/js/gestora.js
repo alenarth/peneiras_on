@@ -22,7 +22,7 @@ async function bootGestora() {
     screenEl.innerHTML = `<div class="w-full max-w-page my-0 mx-auto py-16 px-8"><h1 class="display text-fluid-sm">Acesso indisponível</h1><p class="text-ink-soft">${esc(window.PeneirasAuth.indisponivel)}</p><p><a href="login.html?tipo=academia" class="text-ink underline">Ir para o login →</a></p></div>`;
     return;
   }
-  const conta = await PeneirasAuth.exigirAcesso({ papeis: ['gestora'] });
+  const conta = await PeneirasAuth.exigirAcesso({ papeis: ['gestora'], persona: 'academia' });
   if (!conta) return;
   // identidade no aside
   const badge = document.querySelector('.aside__badge');

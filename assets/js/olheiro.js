@@ -24,7 +24,7 @@ async function bootOlheiro() {
     screenEl.innerHTML = avisoConfigPainel('olheiro', window.PeneirasAuth.indisponivel); return;
   }
   // Exige papel olheiro E aprovação (pendente → aguardando.html).
-  const conta = await PeneirasAuth.exigirAcesso({ papeis: ['olheiro'], exigirAprovado: true });
+  const conta = await PeneirasAuth.exigirAcesso({ papeis: ['olheiro'], exigirAprovado: true, persona: 'olheiro' });
   if (!conta) return;
   aplicarIdentidadeAside(conta, 'Olheiro');
   if (params.get('demo') === '1') { SCREENS[tela](); marcarDemoPainel(); }
