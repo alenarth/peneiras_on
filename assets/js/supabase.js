@@ -72,7 +72,10 @@
       // Resposta neutra: duplicidade de e-mail no Auth não deve afirmar conta nova.
       var identities = res.data && res.data.user && res.data.user.identities;
       var provavelExistente = identities && identities.length === 0;
-      return { ok: true, provavelExistente: !!provavelExistente };
+      // Com "Confirm email" desligado, o signUp já devolve sessão ativa: não há
+      // e-mail de confirmação a esperar — o cadastro segue direto pro app.
+      var sessaoAtiva = !!(res.data && res.data.session);
+      return { ok: true, provavelExistente: !!provavelExistente, sessaoAtiva: sessaoAtiva };
     },
 
     /* ---- 2. Login: e-mail/CPF + senha → sessão (sem código) ---- */

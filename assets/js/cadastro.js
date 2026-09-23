@@ -78,6 +78,12 @@ function renderCriarConta() {
       try { localStorage.setItem('po_intencao', tipo); } catch (e) {}
       const r = await PeneirasAuth.cadastrarConta({ nome: nome.value, email: email.value, senha: senha.value, papelSolicitado: tipo });
       if (!r.ok) { toast(r.erro || 'Não foi possível criar a conta.', { type: 'error', duration: 7000 }); return; }
+      // Conta já nasce ativa (Confirm email desligado): segue direto pra conclusão.
+      if (r.sessaoAtiva) {
+        toast('Conta criada! Vamos concluir seu perfil.', { type: 'success' });
+        location.replace('cadastro.html?fluxo=completar');
+        return;
+      }
       renderConfirmeEmail(email.value, r.provavelExistente);
     } catch (e) {
       toast('Falha de rede. Tente novamente.', { type: 'error' });
