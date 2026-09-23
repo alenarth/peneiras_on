@@ -71,10 +71,9 @@ export default async function handler(req, res) {
     if (usuarioId) {
       const { data: personaConta } = await admin.rpc('persona_da_conta', { p_usuario: usuarioId });
       if (personaConta && personaConta !== persona) {
-        const labels = { jogador: 'Jogador', olheiro: 'Olheiro', academia: 'Academia' };
-        const certa = labels[personaConta] || personaConta;
-        return json(res, 403, { ok: false, erro: 'persona_incorreta',
-          mensagem: `Esta conta é de ${certa}. Entre pela aba ${certa}.` });
+        // Persona da aba não bate com a da conta. NÃO revela qual é a persona
+        // (evita enumeração de contas): responde igual a credencial inválida.
+        return json(res, 400, GENERICO);
       }
     }
 

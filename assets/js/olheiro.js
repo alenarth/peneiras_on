@@ -27,8 +27,9 @@ async function bootOlheiro() {
   const conta = await PeneirasAuth.exigirAcesso({ personas: ['olheiro'], persona: 'olheiro' });
   if (!conta) return;
   aplicarIdentidadeAside(conta, 'Olheiro');
-  if (params.get('demo') === '1') { SCREENS[tela](); marcarDemoPainel(); }
-  else renderContaRealPainel(conta, 'Olheiro credenciado', 'olheiro.html?tela=lista&demo=1', 'login.html?tipo=olheiro');
+  // Renderiza a tela selecionada (lista/perfil/check-in/avaliação). Dados fictícios.
+  SCREENS[tela]();
+  marcarDemoPainel();
 }
 
 function aplicarIdentidadeAside(conta, papelLabel) {
