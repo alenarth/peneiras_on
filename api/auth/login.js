@@ -65,11 +65,24 @@ export default async function handler(req, res) {
       return json(res, 400, GENERICO);
     }
 
-    // 4) Entrega a sessão ao navegador (sem cache). O front instala com setSession.
+    // 4) Exigir que a persona da aba escolhida bata com a persona da conta.
+    //    (Jogador não entra pela aba de olheiro/academia, e vice-versa.)
+    const usuarioId = signin.user?.id || null;
+    if (usuarioId) {
+      const { data: personaConta } = await admin.rpc('persona_da_conta', { p_usuario: usuarioId });
+      if (personaConta && personaConta !== persona) {
+        const labels = { jogador: 'Jogador', olheiro: 'Olheiro', academia: 'Academia' };
+        const certa = labels[personaConta] || personaConta;
+        return json(res, 403, { ok: false, erro: 'persona_incorreta',
+          mensagem: `Esta conta é de ${certa}. Entre pela aba ${certa}.` });
+      }
+    }
+
+    // 5) Entrega a sessão ao navegador (sem cache). O front instala com setSession.
     const sess = signin.session;
     return json(res, 200, {
       ok: true,
-      usuario_id: signin.user?.id || null,
+      usuario_id: usuarioId,
       session: { access_token: sess.access_token, refresh_token: sess.refresh_token },
     });
 

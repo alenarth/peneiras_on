@@ -58,12 +58,17 @@
       var c = precisaCliente();
       // Cliente só cria atleta/olheiro; academia solicitada permanece sem gestão.
       var papel = opts.papelSolicitado === 'olheiro' ? 'olheiro' : 'atleta';
+      // Persona pretendida (jogador/olheiro/academia): distingue academia de
+      // jogador no banco ANTES da aprovação. O acesso a painel continua dependendo
+      // de papel + aprovação — isto só serve para o login exigir a aba correta.
+      var persona = (opts.papelSolicitado === 'olheiro' || opts.papelSolicitado === 'academia')
+        ? opts.papelSolicitado : 'jogador';
       var redirect = (cfg.SITE_URL || location.origin) + '/confirmado.html';
       var res = await c.auth.signUp({
         email: String(opts.email || '').trim().toLowerCase(),
         password: opts.senha,
         options: {
-          data: { nome: String(opts.nome || '').trim(), papel: papel },
+          data: { nome: String(opts.nome || '').trim(), papel: papel, persona: persona },
           emailRedirectTo: redirect,
           captchaToken: opts.captchaToken,
         },
