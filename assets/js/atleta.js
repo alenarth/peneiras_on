@@ -25,7 +25,81 @@ document.querySelectorAll('.atleta-tab').forEach(t => {
   if (t.getAttribute('data-tab') === tela) t.classList.add('is-active');
 });
 
-if (!legacyCadastro) SCREENS[tela]();
+/* Guard de sessão: nada de dados até validar login + código + papel. O primeiro
+   atleta do MOCK NUNCA é apresentado como "você". */
+bootAtleta();
+
+async function bootAtleta() {
+  if (legacyCadastro) return;
+  if (telaParam === 'completar') { location.replace('cadastro.html?fluxo=completar'); return; }
+  if (window.PeneirasAuth && window.PeneirasAuth.indisponivel) {
+    screenEl.innerHTML = avisoConfigAtleta(window.PeneirasAuth.indisponivel); return;
+  }
+  const conta = await PeneirasAuth.exigirAcesso({ papeis: ['atleta'] });
+  if (!conta) return; // redirecionado
+  if (!conta.atleta_id) { location.replace('cadastro.html?fluxo=completar'); return; }
+  aplicarIdentidadeAtleta(conta);
+  if (params.get('demo') === '1') { SCREENS[tela](); marcarDemoAtleta(); }
+  else renderContaRealAtleta(conta);
+}
+
+function aplicarIdentidadeAtleta(conta) {
+  // Cabeçalho estático tem nome/plano fictícios: substitui pela identidade real
+  // e remove qualquer alegação de "Premium".
+  const nomeEl = document.querySelector('.site-header__actions .font-display');
+  const subEl = document.querySelector('.site-header__actions .font-mono');
+  const av = document.querySelector('.site-header__actions .avatar');
+  const tag = document.querySelector('.site-header__actions .tag');
+  if (nomeEl) nomeEl.textContent = conta.nome || 'Jogador';
+  if (subEl) subEl.textContent = 'Jogador';
+  if (av) av.textContent = (conta.nome || 'J').slice(0, 2).toUpperCase();
+  if (tag) { tag.textContent = 'Jogador'; tag.classList.remove('tag--gold'); tag.classList.add('tag--outline'); }
+  // botão sair no cabeçalho
+  const actions = document.querySelector('.site-header__actions');
+  if (actions && !actions.querySelector('[data-sair]')) {
+    const b = document.createElement('button');
+    b.setAttribute('data-sair', '');
+    b.className = 'btn btn--ghost btn--sm';
+    b.textContent = 'Sair';
+    b.addEventListener('click', sairAtleta);
+    actions.appendChild(b);
+  }
+}
+
+async function sairAtleta() { await PeneirasAuth.sair(); location.replace('login.html?tipo=jogador'); }
+
+function renderContaRealAtleta(conta) {
+  screenEl.innerHTML = `
+    <div class="w-full max-w-page my-0 mx-auto py-10 px-8">
+      <span class="kicker uppercase">Minha conta</span>
+      <h1 class="display text-fluid-sm mt-3 mb-2 mx-0">Olá, ${esc(conta.nome || 'jogador')}.</h1>
+      <p class="text-15 leading-copy text-ink-soft max-w-copy-sm mb-8">Seu cadastro está concluído. Esta é a sua área. Recursos de score, avaliação e alocação ainda são demonstração e ficam desativados nesta versão.</p>
+      <div class="card max-w-copy mb-6">
+        <div class="g g-2 gap-4">
+          <div><div class="kicker uppercase mb-1">Papel</div><div class="display text-20">Jogador</div></div>
+          <div><div class="kicker uppercase mb-1">Cadastro</div><div class="display text-20 text-success">Concluído ✓</div></div>
+        </div>
+      </div>
+      <div class="btn-row flex gap-2 flex-wrap">
+        <a href="peneiras.html" class="btn btn--primary btn--lg">Ver peneiras</a>
+        <a href="atleta.html?tela=perfil&demo=1" class="btn btn--ghost btn--lg">Ver demonstração do produto</a>
+        <button data-sair class="btn btn--ghost btn--lg">Sair</button>
+      </div>
+      <div class="mono text-mute mt-8 normal-case leading-copy">Demonstração = telas de produto com dados fictícios, sem relação com sua conta.</div>
+    </div>`;
+  screenEl.querySelectorAll('[data-sair]').forEach(b => b.addEventListener('click', sairAtleta));
+}
+
+function marcarDemoAtleta() {
+  const aviso = document.createElement('div');
+  aviso.className = 'mono normal-case text-12 py-2 px-8 bg-accent text-accent-ink text-center';
+  aviso.textContent = 'Demonstração do produto — dados fictícios, não são da sua conta.';
+  screenEl.prepend(aviso);
+}
+
+function avisoConfigAtleta(msg) {
+  return `<div class="w-full max-w-page my-0 mx-auto py-16 px-8"><h1 class="display text-fluid-sm">Acesso indisponível</h1><p class="text-ink-soft">${esc(msg)}</p><p><a href="login.html?tipo=jogador" class="text-ink underline">Ir para o login →</a></p></div>`;
+}
 
 /* ---------------- STATUS ---------------- */
 function renderStatus() {

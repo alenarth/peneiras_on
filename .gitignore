@@ -26,3 +26,12 @@ dist/
 uploads/
 tmp/
 *.log
+
+# Segredos e configuração local — NUNCA versionar
+.env
+.env.*
+!.env.example
+
+# Config público gerado no build a partir das envs (copie do config.example.js
+# para desenvolvimento local)
+assets/js/config.js
