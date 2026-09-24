@@ -120,16 +120,20 @@
 
     // Equipe: todos contribuíram em tudo, então só nome e RM — e os cartões
     // seguem a mesma altura e o mesmo alinhamento, sem função por pessoa.
+    // Fotos em assets/team/ (480×600, 4:5, rosto na mesma altura em todas).
     const team = [
-      {name:'Arthur Alen Amorelli Pereira',rm:'571897'},
-      {name:'João Thees Castro Santiago',rm:'572829'},
-      {name:'Caio Viana de Faria',rm:'570634'},
-      {name:'Clara Diel Gama Secco',rm:'571679'},
-      {name:'Anna',rm:'—'},
+      {name:'Arthur Alen Amorelli Pereira',rm:'571897',foto:'arthur'},
+      {name:'João Thees Castro Santiago',rm:'572829',foto:'joao'},
+      {name:'Caio Viana de Faria',rm:'570634',foto:'caio'},
+      {name:'Clara Diel Gama Secco',rm:'571679',foto:'clara'},
+      {name:'Anna Júlia Elias Andrade',rm:'573453',foto:'anna'},
     ];
     document.querySelector('[data-team]').innerHTML = team.map(p=>`
       <div class="card card--hover flex flex-col gap-4 p-5 h-full">
-        <div class="player-img aspect-[4/5]">foto</div>
+        <picture class="player-img aspect-[4/5] overflow-hidden">
+          <source srcset="assets/team/${p.foto}.webp" type="image/webp">
+          <img src="assets/team/${p.foto}.jpg" alt="Foto de ${p.name}" width="480" height="600" loading="lazy" decoding="async" class="block w-full h-full object-cover object-top">
+        </picture>
         <div class="mt-auto">
           <div class="font-display font-black text-14 uppercase tracking-display-sm leading-heading-sm min-h-9">${p.name}</div>
           <div class="font-mono text-11 text-ink-mute mt-2 pt-2 border-t border-line-soft">RM ${p.rm}</div>

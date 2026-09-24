@@ -11,9 +11,9 @@ Semi-presencial Rio de Janeiro · Sprint 3 · 2º semestre de 2026
 
 - Arthur Alen Amorelli Pereira — RM 571897
 - Caio Viana de Faria — RM 570634
-- [NOME COMPLETO DO INTEGRANTE 3] — RM [RM]
-- [NOME COMPLETO DO INTEGRANTE 4] — RM [RM]
-- [NOME COMPLETO DO INTEGRANTE 5] — RM [RM]
+- Clara Diel Gama Secco — RM 571679
+- Anna Júlia Elias Andrade — RM 573453
+- João Thees Castro Santiago — RM 572829
 
 **Deploy:** [https://peneirason.vercel.app](https://peneirason.vercel.app)
 
@@ -82,6 +82,7 @@ assets/
     favicon.svg, icon-192/512.png, apple-touch-icon.png, og-image.png
   pele-hero.webp / .jpg,
   hero-gol.*, hero-app.*         → imagens de fundo do carrossel do hero (WebP + fallback JPEG)
+  team/                          → fotos da equipe em sobre.html (480×600, WebP + fallback JPEG)
   css/input.css                  → entrada do Tailwind: @theme (tokens) + base + componentes (@apply)
   css/residual.css               → CSS autoral residual, justificado bloco a bloco (ver abaixo)
   css/tailwind.css               → SAÍDA compilada (gerada pelo build, fora do git)
@@ -238,11 +239,11 @@ publica só `dist/` (páginas + assets, sem `node_modules` nem os fontes do CSS)
 
 | Integrante | RM | Branch(es) | Pull Request(s) | Telas/Componentes entregues |
 |---|---|---|---|---|
-| Arthur Alen Amorelli Pereira | 571897 | arthur | [PR] | Migração completa para Tailwind CSS v4 (tema em `@theme`, componentização com `@apply`, `residual.css` justificado bloco a bloco, build npm e configuração de deploy na Vercel); páginas públicas `peneiras.html`, `cadastro.html` e `feed.html`; módulos `ui.js` (toasts, `announce()`, storage defensivo), `feed.js` (tags de atributo, votos, seguir, filtros, persistência) e `validation.js` (validação de formulários, incluindo o login); auditoria de acessibilidade WCAG 2.1 AA |
-| Caio Viana de Faria | 570634 | caio | [PR] | Mudança na paleta de cores do site (tema escuro + laranja). |
-| [NOME COMPLETO DO INTEGRANTE 3] | [RM] | [branch] | [PR] | [a preencher] |
-| [NOME COMPLETO DO INTEGRANTE 4] | [RM] | [branch] | [PR] | [a preencher] |
-| [NOME COMPLETO DO INTEGRANTE 5] | [RM] | [branch] | [PR] | [a preencher] |
+| Arthur Alen Amorelli Pereira | 571897 | arthur | [#1](https://github.com/alenarth/peneiras_on/pull/1) | Migração completa para Tailwind CSS v4 (tema em `@theme`, componentização com `@apply`, `residual.css` justificado bloco a bloco, build npm e configuração de deploy na Vercel); páginas públicas `peneiras.html`, `cadastro.html` e `feed.html`; módulos `ui.js` (toasts, `announce()`, storage defensivo), `feed.js` (tags de atributo, votos, seguir, filtros, persistência) e `validation.js` (validação de formulários, incluindo o login); auditoria de acessibilidade WCAG 2.1 AA |
+| Caio Viana de Faria | 570634 | caio | [#2](https://github.com/alenarth/peneiras_on/pull/2), [#3](https://github.com/alenarth/peneiras_on/pull/3), [#7](https://github.com/alenarth/peneiras_on/pull/7) | Mudança na paleta de cores do site (tema escuro + laranja). |
+| João Thees Castro Santiago | 572829 | joao | [#4](https://github.com/alenarth/peneiras_on/pull/4), [#6](https://github.com/alenarth/peneiras_on/pull/6), [#10](https://github.com/alenarth/peneiras_on/pull/10) | Banco de dados, QA, integração e assistência no front-end |
+| Clara Diel Gama Secco | 571679 | Clara | [#12](https://github.com/alenarth/peneiras_on/pull/12) | Assistência no front-end e documentação |
+| Anna Júlia Elias Andrade | 573453 | anna | — | Documentação, QA e implementação visual |
 
 ---
 FIAP — Engenharia de Software — Semi-Presencial RJ · 2026
