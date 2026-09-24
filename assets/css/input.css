@@ -9,8 +9,7 @@
 @import "tailwindcss";
 @import "./residual.css" layer(components);
 
-@source "../../*.html";
-@source "../js/*.js";
+@config "../../tailwind.config.js"; /* content: páginas .html e assets/js/*.js */
 
 /* ---------- 1. TOKENS (Sprint 1, valores idênticos ao antigo :root) ---------- */
 @theme {

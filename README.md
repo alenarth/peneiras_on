@@ -74,6 +74,7 @@ cai na tela padrão da persona.
 ```
 index.html, sobre.html, …        → páginas (markup)
 favicon.ico, site.webmanifest    → ícone legado (16/32/48) e manifesto PWA, copiados para dist/
+tailwind.config.js               → caminhos de conteúdo do Tailwind (carregado por @config no input.css)
 assets/
   brand/                         → identidade visual, vetorizada da arte oficial (2 cores, 3–6 KB cada)
     logo.svg                     → símbolo + wordmark empilhados (og-image, materiais)
@@ -94,7 +95,8 @@ assets/
     components.js                → header, footer, dropdown, helpers de markup (tagHTML, statHTML…)
     hero.js                      → carrossel de fundo do hero da landing (crossfade, indicadores,
                                    pausa em hover/foco/aba oculta, respeita prefers-reduced-motion)
-    brazil-map.js                → malha SVG dos 27 estados (@svg-maps/brazil, MIT)
+    brazil-map.js                → malha SVG dos 27 estados (@svg-maps/brazil, MIT), usada por
+                                   mapa.js e mapa-calor.js
     mapa.js                      → mapa interativo de peneiras.html: cor e selo por estado a partir de
                                    MOCK.EVENTS, tooltip, teclado, seleção sincronizada com o filtro
     mapa-calor.js                → mapa de calor da gestora: mesma malha, pintada pela faixa de demanda
@@ -103,6 +105,8 @@ assets/
     validation.js                → regras de validação e renderização de erro dos formulários
     radar.js                     → radar tático (SVG) + classificador de posição
     privacidade.js               → conteúdo da política
+    peneiras.js                  → calendário público (filtros, destaque, sincronia com o mapa)
+    cadastro.js                  → wizard de cadastro de 5 passos
     login.js, recuperar.js       → lógica das telas de acesso
     atleta.js, olheiro.js,
     gestora.js                   → lógica de cada persona
@@ -112,12 +116,17 @@ assets/
 
 Todo o comportamento é **JavaScript vanilla com manipulação direta do DOM** — sem framework,
 sem runtime além do navegador. Os módulos são carregados por `<script>` na ordem
-`data.js → ui.js → components.js → (módulo da tela)`. Quem controla o quê:
+`data.js → ui.js → components.js → (módulos auxiliares) → (módulo da tela)` — os auxiliares
+são `hero.js` na landing, `brazil-map.js` + `mapa.js` em `peneiras.html` e `brazil-map.js` +
+`mapa-calor.js` em `gestora.html`. Quem controla o quê:
 
 | Tela | Funcionalidade | Arquivo(s) |
 |---|---|---|
 | Todas | Header público (nav, hambúrguer, menu "Entrar", scrollspy, sombra ao rolar), rodapé, card de peneira, contagem regressiva | `components.js` |
 | Todas | Toasts de sucesso/erro/informação, região `aria-live` (`announce()`), helpers de DOM, `localStorage` com try/catch | `ui.js` |
+| `index.html` | **Carrossel de fundo do hero**: troca as imagens por crossfade a cada 3,8 s; indicadores gerados em JS, clicáveis e navegáveis por ← →; pausa com o mouse sobre o hero, com foco nos indicadores e com a aba oculta; sob `prefers-reduced-motion` não avança sozinho (os indicadores continuam funcionando) | `hero.js` (`mountHeroSlider`, chamado pelo script inline da página) |
+| `peneiras.html`, `gestora.html` | Malha SVG dos 27 estados (um `<path>` por UF) compartilhada pelos dois mapas — só dados, sem comportamento | `brazil-map.js` |
+| `peneiras.html` | **Mapa interativo do Brasil**: estado com peneira aberta em laranja com selo do número de abertas, só encerradas em cinza; tooltip no mouse e no foco; clique/Enter/Espaço seleciona o estado e filtra a lista, clicar de novo desmarca; `?uf=` chega com o estado escolhido; entrada em cascata ao aparecer na tela | `mapa.js` (desenho e interação) + `peneiras.js` (sincroniza mapa e lista) |
 | `feed.html` | Mural de destaques a partir de `MOCK.ATHLETES`; **confirmação de tags de atributo** (`aria-pressed` + contador), **votos** (um por pessoa, votar de novo desfaz), **seguir** (contador de seguidores); **filtros em tempo real** por posição e estado, combináveis, com contador e estado vazio; persistência em `localStorage` (`peneiras-on.feed.v1`) e botão "Zerar interações" | `feed.js` (usa `ui.js` para toast/announce/storage) |
 | `atleta.html?tela=perfil` | Bloco "Comunidade": as mesmas tags confirmáveis e o botão seguir do feed, reaproveitando `Feed.attrTagsHTML`, `Feed.followButtonHTML` e `Feed.bind` | `feed.js` + `atleta.js` |
 | `atleta.html` | Status (contagem regressiva), perfil (radar tático), minhas peneiras (filtros, inscrição) | `atleta.js`, `radar.js` |
@@ -126,7 +135,8 @@ sem runtime além do navegador. Os módulos são carregados por `<script>` na or
 | `recuperar.html` | 4 passos; **validação** de CPF/e-mail, código de 6 dígitos e confirmação de senha coincidente; toast ao enviar código e ao salvar | `recuperar.js` + `validation.js` |
 | `peneiras.html` | Calendário com filtros por status/estado, destaque com contagem regressiva | `peneiras.js` |
 | `olheiro.html` | Lista com busca/filtros (anúncio com debounce), favoritar (toast), check-in, avaliação (nota, decisão, toast) | `olheiro.js`, `radar.js` |
-| `gestora.html` | Dashboard, mapa de calor (filtros, bolhas escaladas pelo container), pipeline, eventos | `gestora.js` |
+| `gestora.html` | Dashboard, pipeline, eventos; na tela do mapa, os filtros e o painel da região selecionada | `gestora.js` |
+| `gestora.html?tela=mapa` | **Mapa de calor da demanda**: cada estado pintado por faixa (baixa/média/alta/crítica) com legenda; cobertura (peneira aberta) como contorno + ponto; filtros "Demanda alta", "Com peneira" e "Demanda reprimida" atenuam o que está fora do recorte em vez de esconder; tooltip no mouse e no foco; clique/Enter/Espaço seleciona a região e clicar de novo limpa | `mapa-calor.js` (desenho, legenda e interação) + `gestora.js` (filtros e painel) |
 | `privacidade.html` | Sumário com rolagem e foco, conteúdo da política | `privacidade.js` |
 
 **Padrões de acessibilidade das interações:** estado de alternância em `aria-pressed`;
@@ -141,7 +151,9 @@ anunciados por `announce()`; nada de animação sob `prefers-reduced-motion`.
   Código modular por responsabilidade: `ui.js` (interface genérica), `feed.js` (feed e interações
   sociais), `validation.js` (formulários), `components.js` (markup compartilhado) e um arquivo por tela.
 - **Tailwind CSS v4** com `@tailwindcss/cli`. O tema é configurado em CSS, no bloco `@theme` de
-  `assets/css/input.css` (forma prevista para a v4, equivalente ao `tailwind.config.js` da v3).
+  `assets/css/input.css` (forma prevista para a v4). O `tailwind.config.js` da raiz, carregado
+  por `@config` no mesmo arquivo, declara só os caminhos de conteúdo (`./*.html` e
+  `./assets/js/*.js`); os tokens ficam no `@theme`.
 - **Design system da Sprint 1 como tokens do Tailwind** — os 27 tokens do antigo `:root` viraram
   `--color-*` (23 cores, incluindo as 4 de hover), `--font-*` (Archivo, Inter, JetBrains Mono),
   `--radius` (4px) e `--breakpoint-*` (560px e 900px, os dois pontos de quebra do projeto). Além
@@ -160,11 +172,12 @@ anunciados por `announce()`; nada de animação sob `prefers-reduced-motion`.
 - **Detecção de classes.** O Tailwind só gera o que encontra literalmente no código-fonte, por
   isso toda classe aparece completa no HTML/JS; estados condicionais usam ternários com os dois
   nomes inteiros (`${on ? 'bg-accent' : 'bg-ink'}`), nunca concatenação de prefixo.
-- **Contraste e foco preservados.** Os tokens semânticos `--color-accent-text` (#177038) e
-  `--color-gold-deep` (#7E660E) existem porque verde e dourado não passam AA como texto sobre
-  fundo claro; seguem usados nos mesmos lugares (`.accent`, `.gold`, `.plan__check`,
-  `.rights__n`…). O anel de foco de 3px continua em `outline` (nunca removido sem substituto),
-  com o raio do componente.
+- **Contraste e foco preservados.** Texto em laranja usa o token semântico
+  `--color-accent-text` (#FB923C), um tom mais claro que o laranja de preenchimento
+  `--color-accent` (#F97316), e texto em dourado usa `--color-gold-deep` (#FBBF24); os dois ficam
+  acima de AA sobre `--card` e `--bg` (razões na seção de paleta abaixo) e são usados em
+  `.accent`, `.gold`, `.plan__check`, `.rights__n`… O anel de foco de 3px continua em `outline`
+  (nunca removido sem substituto), com o raio do componente.
 
 ### CSS autoral residual (`assets/css/residual.css`)
 
