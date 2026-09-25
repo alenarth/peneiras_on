@@ -256,7 +256,7 @@ publica só `dist/` (páginas + assets, sem `node_modules` nem os fontes do CSS)
 | Caio Viana de Faria | 570634 | caio | [#2](https://github.com/alenarth/peneiras_on/pull/2), [#3](https://github.com/alenarth/peneiras_on/pull/3), [#7](https://github.com/alenarth/peneiras_on/pull/7) | Mudança na paleta de cores do site (tema escuro + laranja). |
 | João Thees Castro Santiago | 572829 | joao | [#4](https://github.com/alenarth/peneiras_on/pull/4), [#6](https://github.com/alenarth/peneiras_on/pull/6), [#10](https://github.com/alenarth/peneiras_on/pull/10) | Banco de dados, QA, integração e assistência no front-end |
 | Clara Diel Gama Secco | 571679 | Clara | [#12](https://github.com/alenarth/peneiras_on/pull/12) | Assistência no front-end e documentação |
-| Anna Júlia Elias Andrade | 573453 | anna | — | Documentação, QA e implementação visual |
+| Anna Júlia Elias Andrade | 573453 | anna | [#13] | Documentação, QA e implementação visual |
 
 ---
 FIAP — Engenharia de Software — Semi-Presencial RJ · 2026
