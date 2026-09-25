@@ -104,7 +104,7 @@ if (togglePwdBtn && pwd) togglePwdBtn.addEventListener('click', function() {
 const bottom = document.querySelector('[data-bottom-row]');
 if (role === 'jogador') {
   bottom.innerHTML = `<span class="text-13 text-ink-soft">Ainda não se inscreveu?</span>
-    <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Inscreva-se grátis →</a>`;
+    <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" class="py-1 -my-1 font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Inscreva-se grátis →</a>`;
 } else {
   const alts = Object.keys(ROLES).filter(r => r !== role);
   bottom.innerHTML = `<span class="text-13 text-ink-soft">É outro perfil?</span>

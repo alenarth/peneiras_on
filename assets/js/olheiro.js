@@ -142,7 +142,7 @@ function renderPerfil() {
   const ranked = MOCK.classifyPosition(a.attrs);
   const top = ranked[0];
   screenEl.innerHTML = `<div class="pad">
-    <a href="olheiro.html?tela=lista" class="bg-transparent border-0 cursor-pointer font-mono text-11 uppercase text-ink-soft no-underline inline-block mb-4">← VOLTAR PARA LISTA</a>
+    <a href="olheiro.html?tela=lista" class="bg-transparent border-0 cursor-pointer font-mono text-11 uppercase text-ink-soft no-underline inline-block py-1 -my-1 mb-3">← VOLTAR PARA LISTA</a>
     <div class="g g-aside-md gap-6">
       <div class="flex flex-col gap-4">
         <div class="card p-5">

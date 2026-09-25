@@ -129,6 +129,10 @@ const UI = (() => {
       // irmãos que revelam juntos entram em cascata; quem já está na tela ganha atraso menor
       const sib = [...el.parentElement.children].filter(c => c.hasAttribute('data-reveal'));
       el.style.setProperty('--i', String(Math.min(sib.indexOf(el), 6)));
+    });
+    // Leituras de layout num laço separado das escritas acima: intercaladas,
+    // cada getBoundingClientRect forçava um recálculo de layout por elemento.
+    els.forEach(el => {
       const r = el.getBoundingClientRect();
       if (r.top < innerHeight && r.bottom > 0) requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-in')));
       else io.observe(el);

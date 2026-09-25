@@ -39,8 +39,10 @@ function wordmarkHTML(opts = {}) {
 
 /* ---------- Redes sociais ----------
    Ícones desenhados aqui (SVG inline, currentColor): sem perfis reais ainda,
-   são marcas não interativas, fora da ordem de tabulação — o nome vai no
-   title e no aria-label para quem usa leitor de tela. */
+   são marcas não interativas, fora da ordem de tabulação. Cada ícone é um
+   item da lista de redes (role="listitem"): span genérico não aceita
+   aria-label, então o nome vai em texto visualmente oculto (lido pelo leitor
+   de tela) e no title (dica para o mouse). */
 const SOCIAL_ICONS = [
   ['Instagram', '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/>'],
   ['YouTube', '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9.2 15.2 12 10 14.8Z" fill="currentColor" stroke="none"/>'],
@@ -48,7 +50,7 @@ const SOCIAL_ICONS = [
   ['LinkedIn', '<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M7.6 10.4v6.2M7.6 7.6v.1M11.6 16.6v-6.2M11.6 12.9c0-1.4 1-2.5 2.4-2.5s2.4 1.1 2.4 2.5v3.7"/>'],
   ['WhatsApp', '<path d="M4.2 19.8 5.5 16a7.6 7.6 0 1 1 2.9 2.7Z"/><path d="M9.2 9.1c.5 2.2 2.1 3.8 4.3 4.4l1-1.2 1.7.9-.3 1.5c-2.9.5-6.4-2.6-6.6-6l1.4-.4Z" fill="currentColor" stroke="none"/>'],
 ].map(([name, body]) =>
-  `<span title="${name} · em breve" aria-label="${name} (em breve)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg></span>`
+  `<span role="listitem" title="${name} · em breve"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg><span class="sr-only">${name} (em breve)</span></span>`
 ).join('');
 
 /* ---------- Site header (nav pública) ---------- */
@@ -284,8 +286,9 @@ function mountSiteFooter(opts = {}) {
         <div>
           ${wordmarkHTML()}
           <p class="site-footer__desc">Plataforma de captação de talentos. Onde o talento encontra o jogo, independentemente de onde estiver.</p>
-          <!-- Sem perfis reais ainda: marcas não interativas, fora da ordem de tabulação -->
-          <div class="social" aria-label="Redes sociais (em breve)">${SOCIAL_ICONS}</div>
+          <!-- Sem perfis reais ainda: marcas não interativas, fora da ordem de tabulação.
+               role="list" dá à div um papel que aceita nome acessível. -->
+          <div class="social" role="list" aria-label="Redes sociais (em breve)">${SOCIAL_ICONS}</div>
         </div>
         <div>
           <div class="foot-col__title">Plataforma</div>
