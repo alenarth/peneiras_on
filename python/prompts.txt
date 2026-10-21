@@ -1,0 +1,49 @@
+PENEIRAS ON - CTWP (Sprint 4) - MVP Concierge
+Registro dos prompts de IA generativa usados na Sprint 4.
+Ferramenta: Claude (Claude Code) - modelo Opus 5.5
+
+Divisao de papeis: o aluno (Joao) define arquitetura, fluxos e decisoes;
+a IA implementa os trechos que o aluno autoriza e explica cada parte.
+
+====================================================================
+1. Leitura do enunciado
+====================================================================
+Prompt: "leia o arquivo leia-me.md e siga as instrucoes dadas. [...] traga-me
+o que o professor pediu no documento pdf. seja direto"
+Uso: a IA extraiu do PDF o checklist da Sprint 4 de CTWP.
+
+====================================================================
+2. Arquitetura da coleta de dados
+====================================================================
+Prompt: "como posso preparar estes dados? [...] milhares de usuarios irao
+acessar o site [...] acho a ideia de Forms muito primitiva [...] tem que ser
+algo mais hands-on no site em si, que nao seja um banco de dados"
+Uso: a IA sugeriu Google Apps Script + Planilha + CSV lido pelo Python.
+Decisao do aluno: adotar o fluxo.
+
+Prompt: "e possivel [...] enviar os dados coletados e tratados de volta para
+o front end [...]?"
+Uso: a IA explicou o caminho de volta (doGet por codigo aleatorio, nao por
+CPF, para evitar IDOR). Decisao do aluno: deixar para uma fase posterior.
+
+Prompt: "veja o que o prof de web dev pede e se esta permitido este fluxo"
+Uso: a IA conferiu o fluxo contra as secoes de WD e FED do PDF.
+
+====================================================================
+3. Fase 1 - coleta do cadastro do jogador
+====================================================================
+Prompt: "comecemos somente com jogador. CPF coletar inteiro. atributo de
+habilidades deve coletar o que o front e o back (sprint 3 python) tem a
+respeito. o JS vc ira escrever e me direcionar a como criar os arquivos e
+plugar aqui pois nao tenho conhecimento sobre."
+Uso: a IA escreveu python/CONTRATO.md, apps-script/Code.gs,
+assets/js/envio.js e a ligacao em cadastro.js/cadastro.html.
+
+Prompt: "no npm, ele encontrou 5 vulnerabilidades graves, deixo assim?"
+Uso: a IA analisou o npm audit (DoS em devDependencies do Tailwind, que nao
+vao para o deploy) e recomendou nao usar --force antes do NEXT.
+
+Prompt: "gravou sim. prepare somente o commit, NAO E PARA DAR MERGE. prepare
+o PR tambem que o arthur ira revisar"
+Uso: a IA fez o commit na branch back-office e preparou o Pull Request para
+revisao, sem merge.

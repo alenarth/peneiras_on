@@ -156,7 +156,13 @@ function renderCadastro() {
     };
     const validator = Validation.bind(null, (stepRules[step] || []).filter(f => f.el));
     if(next) next.onclick=()=>{ if (validator.validateAll(true)) { step++; render(); } };
-    if(finish) finish.onclick=()=>{ if (validator.validateAll(true)) renderDone(); };
+    // Envia para a planilha da equipe (envio.js). O botão trava enquanto envia
+    // para um clique duplo não gerar duas inscrições.
+    if(finish) finish.onclick=async()=>{
+      if (!validator.validateAll(true)) return;
+      finish.disabled=true; finish.textContent='Enviando…';
+      renderDone(await Envio.inscricao(form, evento));
+    };
 
     function stepTitle() {
       return ['Quem é você?','De onde vem<br>o futebol?','Como você joga?','Mostre o seu jogo.','Falta só o responsável.'][step-1];
@@ -233,8 +239,12 @@ function renderCadastro() {
   /* Conclusão: confirma antes de mandar para o login — sem isto a pessoa
      preenchia cinco passos e caía num formulário de entrada, como se tivesse
      dado errado. Sem bloco sticky nem barra fixa. */
-  function renderDone() {
+  function renderDone(envio) {
     const sc = score();
+    // Concierge: a análise é feita pela equipe, então o prazo é dito com honestidade.
+    const aviso = envio === 'enviado'
+      ? 'Nossa equipe analisa cada inscrição e calcula sua alocação e seu ranking em até 48 horas.'
+      : 'Sua internet oscilou: a inscrição ficou guardada neste aparelho e será enviada sozinha quando a conexão voltar. Mantenha esta página no navegador.';
     const loginHref = 'login.html?tipo=jogador' + (evento ? '&evento=' + encodeURIComponent(evento.id) : '');
     document.documentElement.style.setProperty('--cad-head-h', '0px');
     screenEl.innerHTML = `
@@ -244,6 +254,7 @@ function renderCadastro() {
         <p class="text-16 leading-copy text-ink-soft max-w-copy-sm mt-0 mb-8 mx-0">${evento
           ? `Sua inscrição em <strong>${esc(evento.name)}</strong> (${fmtDotDate(evento.date, 'full')}) foi registrada. Você recebe SMS com a confirmação e, se for convocado, com local e horário.`
           : 'Seu perfil foi registrado. Você recebe SMS com a confirmação e será alocado na peneira mais próxima com vaga.'}</p>
+        <p class="text-14 leading-copy text-ink-soft max-w-copy-sm -mt-4 mb-8 mx-0" data-envio-aviso>${aviso}</p>
         <div class="card max-w-copy-sm">
           <div class="g g-2 gap-4 mb-5">
             ${statHTML('Score de completude', sc + '%', { sub: sc >= 80 ? 'alto' : sc >= 60 ? 'bom' : 'inicial' })}
@@ -260,7 +271,8 @@ function renderCadastro() {
     const title = screenEl.querySelector('[data-done-title]');
     window.scrollTo(0, 0);
     title.focus({ preventScroll: true });
-    toast('Inscrição enviada! Perfil criado com ' + sc + '% de completude.', { type: 'success', duration: 6000 });
+    if (envio === 'enviado') toast('Inscrição enviada! Perfil criado com ' + sc + '% de completude.', { type: 'success', duration: 6000 });
+    else toast('Sem conexão: a inscrição foi guardada e será enviada assim que a internet voltar.', { type: 'info', duration: 8000 });
   }
 
   /* Idade calculada sem redesenhar o passo: redesenhar recriava o <input type="date">
