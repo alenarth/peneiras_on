@@ -1,0 +1,5 @@
+# Dados reais dos usuários (CPF, telefone de menor) — NUNCA versionar (LGPD/ECA)
+*.csv
+*.xlsx
+
+__pycache__/
