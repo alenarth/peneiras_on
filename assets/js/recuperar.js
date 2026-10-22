@@ -60,7 +60,7 @@ function renderStep1(focusField) {
       <button class="btn btn--primary btn--lg btn--full" id="send">Enviar código →</button>
       <div class="pt-4 border-t border-t-line-soft flex justify-between">
         <span class="text-13 text-ink-soft">Lembrou a senha?</span>
-        <a href="login.html?tipo=jogador" class="font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Entrar →</a>
+        <a href="login.html?tipo=jogador" class="py-1 -my-1 font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Entrar →</a>
       </div>
     </div>`;
   // estilo dos botões de canal

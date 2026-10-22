@@ -13,7 +13,12 @@
 
 /* ---------- 1. TOKENS (Sprint 1, valores idênticos ao antigo :root) ---------- */
 @theme {
-  /* Tipografia — três famílias */
+  /* Tipografia — três famílias. O Google Fonts carrega sem bloquear a
+     renderização (display=swap): até a fonte chegar o texto sai no fallback,
+     então toda pilha tem um. A display NÃO leva system-ui: o Archivo não tem
+     a seta "→", que hoje cai no sans-serif; com system-ui antes dele, a seta
+     mudaria de glifo e largura no Windows em todos os botões. A mono cai numa
+     monoespaçada, senão números tabulares e contagens mudariam de largura. */
   --font-display: "Archivo", "Helvetica Neue", sans-serif;
   --font-body: "Inter", "Helvetica Neue", system-ui, sans-serif;
   --font-sans: "Inter", "Helvetica Neue", system-ui, sans-serif; /* preflight usa --font-sans no body */
@@ -462,8 +467,13 @@
   .site-header__inner { @apply flex items-center gap-6 py-4 max-md:flex-wrap; }
   .site-nav { @apply flex gap-6 ml-8 max-md:hidden max-md:order-10 max-md:basis-full max-md:flex-col max-md:gap-0 max-md:ml-0 max-md:mt-3 max-md:border-t max-md:border-line; }
   .site-nav.is-open { @apply max-md:flex; }
-  .site-nav a { @apply relative font-mono text-11 uppercase tracking-label text-ink-soft no-underline cursor-pointer transition-colors duration-150 hover:text-ink max-md:px-0.5 max-md:py-3.5 max-md:border-b max-md:border-line-soft; }
-  .site-nav a::before { content: ""; @apply absolute left-0 -bottom-1 h-px w-full bg-accent origin-left scale-x-0 transition-transform duration-200 ease-out max-md:hidden; }
+  /* Alvo de toque no desktop: o texto tem 16,5px de altura e "FAQ" só 22,5px
+     de largura. py-1/px-0.5 levam a caixa a pelo menos 24,5 × 26,5px e as
+     margens negativas devolvem o espaço (a barra e o espaçamento não mudam).
+     O sublinhado desconta o mesmo acolchoamento (bottom-0, left/right-0.5)
+     para ficar exatamente onde estava. */
+  .site-nav a { @apply relative py-1 -my-1 px-0.5 -mx-0.5 font-mono text-11 uppercase tracking-label text-ink-soft no-underline cursor-pointer transition-colors duration-150 hover:text-ink max-md:px-0.5 max-md:py-3.5 max-md:my-0 max-md:mx-0 max-md:border-b max-md:border-line-soft; }
+  .site-nav a::before { content: ""; @apply absolute left-0.5 right-0.5 bottom-0 h-px bg-accent origin-left scale-x-0 transition-transform duration-200 ease-out max-md:hidden; }
   .site-nav a:hover::before, .site-nav a.is-active::before { @apply scale-x-100; }
   .site-nav a.is-active { @apply text-ink; }
   .site-nav.is-open { @apply motion-safe:animate-pop-in; }
@@ -481,7 +491,7 @@
     .site-header__inner { @apply flex-wrap; }
     .site-nav { @apply hidden order-10 basis-full flex-col gap-0 ml-0 mt-3 border-t border-line; }
     .site-nav.is-open { @apply flex; }
-    .site-nav a { @apply px-0.5 py-3.5 border-b border-line-soft; }
+    .site-nav a { @apply px-0.5 py-3.5 m-0 border-b border-line-soft; }
     .site-nav a::before { @apply hidden; }
     .nav-toggle { @apply inline-flex; }
     .site-header__actions { @apply ml-auto; }
@@ -516,19 +526,23 @@
   .site-footer__cols { @apply grid grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-8 px-0 pt-14 pb-8 max-md:grid-cols-[1fr] max-md:px-5; }
   .foot-col__title { @apply font-mono text-10 uppercase tracking-kicker text-ink/55 mb-3.5 pb-2.5 border-b border-ink/15; }
   .foot-col__links { @apply flex flex-col gap-2.5; }
-  .foot-col__links a { @apply text-13 transition-[color,translate] duration-150 hover:text-accent hover:translate-x-1 max-md:py-1.5; }
+  /* Alvo de toque: py-1 leva a caixa a 27,5px (mínimo 24) e o -my-1 devolve o
+     espaço, então a coluna não muda de altura. No celular o py-1.5 já basta. */
+  .foot-col__links a { @apply text-13 py-1 -my-1 transition-[color,translate] duration-150 hover:text-accent hover:translate-x-1 max-md:py-1.5 max-md:my-0; }
   .site-footer__desc { @apply mt-4 text-ink/65 text-13 max-w-desc leading-copy; }
   .social { @apply flex gap-2 mt-5; }
-  .social a, .social span { @apply inline-flex items-center justify-center size-9 rounded-md border border-ink/25 transition-[background-color,color,transform,border-color] duration-150; }
+  /* `> span`: só o item da lista, não o texto oculto (sr-only) que vai dentro dele */
+  .social a, .social > span { @apply inline-flex items-center justify-center size-9 rounded-md border border-ink/25 transition-[background-color,color,transform,border-color] duration-150; }
   .social svg { @apply size-4.5; }
-  .social span:hover { @apply -translate-y-px border-ink/45; }
-  .social span { @apply opacity-60 cursor-default; }
+  .social > span:hover { @apply -translate-y-px border-ink/45; }
+  .social > span { @apply opacity-60 cursor-default; }
   .social a:hover { @apply bg-accent text-accent-ink border-accent -translate-y-px; }
   .site-footer__bottom { @apply border-t border-ink/15; }
   .site-footer--compact { @apply border-t border-line; }
   .site-footer--compact .site-footer__bottom { @apply border-t-0; }
   .site-footer__bottom-inner { @apply flex justify-between items-center flex-wrap gap-3 px-0 py-5 font-mono text-11 leading-relaxed text-ink/55 max-md:px-5 max-md:flex-col max-md:items-start max-md:gap-2; }
-  .site-footer__bottom-inner a { @apply inline-block max-md:py-1; }
+  /* py-1 dá 26px de caixa de toque; o -my-1 anula o efeito na altura da linha */
+  .site-footer__bottom-inner a { @apply inline-block py-1 -my-1 max-md:my-0; }
 
   /* --- tabela --- */
   .table { @apply w-full border-collapse font-body text-13; }
@@ -598,9 +612,16 @@
     .hero__slide.is-active { animation: hero-pan 12s ease-out both; }
   }
   @keyframes hero-pan { from { transform: scale(1.05) translateX(-1.4%); } to { transform: scale(1.12) translateX(1.4%); } }
-  .hero__dots { @apply flex gap-2; }
-  .hero__dot { @apply relative size-3 p-0 rounded-full bg-ink/35 border border-ink/50 cursor-pointer transition-[background-color,transform] duration-120 hover:bg-ink/70 before:absolute before:-inset-2 before:content-['']; }
-  .hero__dot[aria-current="true"] { @apply bg-accent border-accent scale-110; }
+  /* Indicadores: o botão é a área de toque real (28×28px, transparente) e o
+     ponto de 12px é desenhado no ::before, centralizado. O Lighthouse mede a
+     caixa do elemento, não um pseudo-elemento ampliado. gap-1 separa as caixas
+     (não se tocam); o -m-2 devolve os 8px de folga de cada lado, então o ponto
+     da direita e a altura da faixa ficam onde estavam. O anel de foco continua
+     em volta do ponto, como antes. O botão fica quadrado (rounded-none): canto
+     arredondado recorta a área clicável no Chrome. */
+  .hero__dots { @apply flex gap-1 -m-2; }
+  .hero__dot { @apply relative inline-flex items-center justify-center size-7 p-0 rounded-none bg-transparent border-0 cursor-pointer focus-visible:outline-none before:size-3 before:rounded-full before:bg-ink/35 before:border before:border-ink/50 before:content-[''] before:transition-[background-color,transform] before:duration-120 hover:before:bg-ink/70 focus-visible:before:outline-solid focus-visible:before:outline-3 focus-visible:before:outline-focus focus-visible:before:outline-offset-2; }
+  .hero__dot[aria-current="true"] { @apply before:bg-accent before:border-accent before:scale-110; }
   .hero__top-fade { @apply absolute top-0 left-0 right-0 h-25 pointer-events-none; }
   /* Luz do cursor (ui.js marca [data-spotlight] e escreve --mx/--my): um halo
      quente segue o mouse sobre a foto e some quando o ponteiro sai. Só
@@ -819,6 +840,7 @@
      animada, sem giro do chevron. */
   @media (prefers-reduced-motion: reduce) {
     .btn:not(:disabled):hover, .btn:not(:disabled):active, .nav-toggle:hover, .wordmark:hover { @apply translate-y-0; }
+    .hero__dot { @apply before:transition-none; }
     .btn, .nav-toggle, .wordmark, .site-header, .hero__slide, .hero__dot, .plan, .choice, .attr-tag, .nav-item { @apply transition-none; }
     .btn:not(:disabled):hover, .plan:hover, .choice:hover, .attr-tag:hover { @apply scale-100 translate-y-0; }
     .js-reveal [data-reveal] { @apply opacity-100 translate-y-0 transition-none; }

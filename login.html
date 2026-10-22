@@ -6,7 +6,10 @@
   <title>Entrar · Peneiras On</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Fontes sem bloquear a renderização: entram como preload e viram folha de
+       estilo quando terminam de baixar; sem JavaScript, o <noscript> carrega igual. -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
   <meta name="description" content="Entre no Peneiras On como jogador, olheiro ou academia.">
   <meta name="theme-color" content="#111417">
   <link rel="icon" href="favicon.ico" sizes="32x32">
@@ -71,7 +74,7 @@
         </label>
         <div class="flex justify-between items-center">
           <label class="flex items-center gap-2 text-13 cursor-pointer"><input class="w-4 h-4 accent-accent" type="checkbox" checked>Manter conectado</label>
-          <a href="recuperar.html" class="text-13 text-ink underline underline-offset-3">Esqueci a senha</a>
+          <a href="recuperar.html" class="py-1 -my-1 text-13 text-ink underline underline-offset-3">Esqueci a senha</a>
         </div>
         <button type="submit" class="btn btn--primary btn--lg btn--full">Entrar →</button>
 

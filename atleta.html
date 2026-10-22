@@ -6,7 +6,10 @@
   <title>Minha conta · Peneiras On</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Fontes sem bloquear a renderização: entram como preload e viram folha de
+       estilo quando terminam de baixar; sem JavaScript, o <noscript> carrega igual. -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
   <meta name="description" content="Área do atleta: status da inscrição, perfil e peneiras da temporada.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#111417">
