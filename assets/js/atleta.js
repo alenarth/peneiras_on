@@ -1,13 +1,15 @@
 /* ============================================================
-   PENEIRAS ON — Atleta (status · perfil · peneiras)
+   PENEIRAS ON — Atleta (status · perfil · peneiras · mensagens)
+   Os dados chegam por fetch (data.js): a tela mostra o carregando, e só
+   então ME e a tela escolhida são montados.
    ============================================================ */
-const ME = MOCK.ATHLETES[0];
+let ME = null;   // MOCK.ATHLETES[0] — o atleta "logado" do protótipo
 const screenEl = document.querySelector('[data-screen]');
 if (!screenEl) {
   throw new Error('atleta.html está sem [data-screen]; o script não pode inicializar.');
 }
 const params = new URLSearchParams(location.search);
-const SCREENS = { status: renderStatus, perfil: renderPerfil, peneiras: renderPeneiras };
+const SCREENS = { status: renderStatus, perfil: renderPerfil, peneiras: renderPeneiras, mensagens: renderMensagens };
 const telaParam = params.get('tela') || 'status';
 // ?tela= desconhecido cai na tela padrão em vez de deixar o <main> vazio
 const tela = SCREENS[telaParam] ? telaParam : 'status';
@@ -25,7 +27,11 @@ document.querySelectorAll('.atleta-tab').forEach(t => {
   if (t.getAttribute('data-tab') === tela) t.classList.add('is-active');
 });
 
-if (!legacyCadastro) SCREENS[tela]();
+if (!legacyCadastro) Dados.iniciar(() => { ME = MOCK.ATHLETES[0]; SCREENS[tela](); }, {
+  vitrine: screenEl,
+  mensagem: 'Carregando sua conta…',
+  erro: 'Os dados da sua conta não chegaram.',
+});
 
 /* ---------------- STATUS ---------------- */
 function renderStatus() {
@@ -123,7 +129,7 @@ function renderPerfil() {
 
     <div class="g g-aside-md gap-6 mb-6">
       <div class="card p-6">
-        <div class="player-img h-75">3x4</div>
+        ${Foto.campoHTML({ id: 'perfil-foto', rotulo: 'Foto de perfil', grande: true, previa: fotoPerfil, alt: `Pré-visualização da foto de perfil de ${ME.name}` })}
         <div class="g g-4 border-t border-t-line-soft mt-4">
           ${[['Altura',ME.height+'cm'],['Peso',ME.weight+'kg'],['Pé',ME.foot[0]],['Tempo',ME.yearsPlaying+'a']].map((s,i)=>`<div class="py-3.5 px-1.5 text-center ${i<3?'border-r border-line-soft':''}"><div class="display text-22">${s[1]}</div><div class="font-mono text-9 text-ink-mute uppercase tracking-widest mt-0.5">${s[0]}</div></div>`).join('')}
         </div>
@@ -175,7 +181,11 @@ function renderPerfil() {
     </div>
   </div>`;
   Feed.bind(screenEl);
+  // FileReader (foto.js): a prévia fica na memória da página; não há servidor
+  // de imagens no protótipo, então nada é salvo nem enviado.
+  Foto.ligar(screenEl, { id: 'perfil-foto', alt: `Pré-visualização da foto de perfil de ${ME.name}`, aoMudar: url => { fotoPerfil = url; } });
 }
+let fotoPerfil = null;
 
 /* ---------------- PENEIRAS ---------------- */
 /* Versão pessoal do calendário: mesmo card e mesmo filtro por status da
@@ -196,8 +206,12 @@ function renderPeneiras() {
 
   function paint(announceResult) {
     const data = rows();
-    screenEl.querySelector('[data-rows]').innerHTML =
+    const list = screenEl.querySelector('[data-rows]');
+    // cronômetros dos cards antigos são limpos antes de trocar a lista (components.js)
+    EventTimers.stop(list);
+    list.innerHTML =
       data.length ? data.map(e => eventCardHTML(e, 'atleta', { registered: registered.has(e.id) })).join('') : eventsEmptyHTML();
+    EventTimers.watch(list, MOCK.EVENTS);
     screenEl.querySelector('[data-count]').textContent = `${data.length} de ${MOCK.EVENTS.length} peneiras`;
     screenEl.querySelectorAll('[data-status]').forEach(b => {
       const on = b.dataset.status === filters.status;
@@ -243,4 +257,31 @@ function renderPeneiras() {
   screenEl.querySelectorAll('[data-status]').forEach(b => b.onclick = () => { filters.status = b.dataset.status; paint(true); });
   screenEl.querySelector('[data-mine]').onclick = () => { filters.mine = !filters.mine; paint(true); };
   paint(false);
+}
+
+/* ---------------- MENSAGENS ---------------- */
+/* A conversa do atleta com o olheiro, pelo mesmo chat.js do painel do
+   olheiro. A regra de proteção vale dos dois lados: é o atleta menor quem
+   mais costuma passar o próprio número. */
+function renderMensagens() {
+  const conversa = MOCK.CONVERSAS.find(c => c.atleta === ME.id);
+  screenEl.innerHTML = `<div class="atleta-main">
+    <div class="mb-8">
+      <span class="tag tag--outline">Mensagens</span>
+      <h1 class="display h1 mt-2 mb-0 mx-0">Fale com<br>o <span class="mark">olheiro.</span></h1>
+      <p class="text-15 text-ink-soft mt-3 mb-0 max-w-copy-sm">Toda conversa acontece aqui dentro, intermediada pela Peneiras On. Seu responsável pode acompanhar.</p>
+    </div>
+    <div class="max-w-copy" data-chat></div>
+  </div>`;
+  const host = screenEl.querySelector('[data-chat]');
+  if (!conversa) {
+    host.innerHTML = `<div class="card state-card"><p class="state-card__title">Nenhuma conversa ainda.</p><p class="state-card__text">Quando um olheiro credenciado escrever para você, a conversa aparece aqui.</p></div>`;
+    return;
+  }
+  Chat.montar(host, {
+    persona: 'atleta',
+    conversa,
+    menor: ME.age < 18,
+    outro: { nome: conversa.olheiro, sub: 'Olheiro credenciado · ID 0042' },
+  });
 }

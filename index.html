@@ -71,16 +71,16 @@
       <div class="flex flex-col gap-6">
         <div class="glass g g-2 gap-6">
           <div><div class="glass-stat__label">Inscritos ativos</div><div class="glass-stat__value" data-countup>18.420</div><div class="glass-stat__delta">+412 hoje</div></div>
-          <div><div class="glass-stat__label">Peneiras 2026</div><div class="glass-stat__value" data-season-events></div><a class="glass-stat__label underline underline-offset-3" href="peneiras.html" data-season-states></a></div>
+          <div><div class="glass-stat__label">Peneiras 2026</div><div class="glass-stat__value" data-season-events>—</div><a class="glass-stat__label underline underline-offset-3" href="peneiras.html" data-season-states></a></div>
           <div><div class="glass-stat__label">Cidades atingidas</div><div class="glass-stat__value" data-countup>127</div><div class="glass-stat__delta">+24 vs 2025</div></div>
           <div><div class="glass-stat__label">Aprovados</div><div class="glass-stat__value" data-countup>187</div><div class="glass-stat__label">seguem em formação</div></div>
         </div>
-        <div class="glass p-0 border-accent">
+        <div class="glass p-0 border-accent" data-next-card>
           <div class="py-5 px-6 flex items-baseline justify-between border-b border-b-ink/20">
             <span class="glass-stat__label">Próxima peneira</span>
             <span class="font-mono text-10 text-accent" data-next-status></span>
           </div>
-          <div class="p-6">
+          <div class="p-6" data-next-body>
             <div class="display text-32 tracking-display" data-next-name></div>
             <div class="flex justify-between mt-4 font-mono text-13">
               <span data-next-date></span><span data-next-age></span>
@@ -277,48 +277,66 @@
     mountSiteFooter();
     mountHeroSlider(document.querySelector('.hero'), { interval: 3800 });
 
-    // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
-    const season = MOCK.SEASON;
-    document.querySelector('[data-season-events]').textContent = season.events;
-    document.querySelector('[data-season-states]').textContent = `em ${season.states} estados · ver calendário →`;
-
-    // Card da próxima peneira — data e prazo calculados, nunca chumbados
-    const next = season.nextEvent;
-    const dayMs = 86400000;
-    const daysLeft = Math.ceil((new Date(next.date + 'T00:00:00') - new Date(new Date().toDateString())) / dayMs);
-    // Com as inscrições encerradas, o status do evento ("aberta") deixa de valer:
-    // vira uma tag legível de relance, como a "encerrada" do countdown do atleta.
-    const closed = daysLeft < 1;
-    const statusEl = document.querySelector('[data-next-status]');
-    if (closed) statusEl.innerHTML = tagHTML('Inscrições encerradas', 'outline-on-dark');
-    else statusEl.textContent = '● ' + next.status.toUpperCase();
-    // "Peneira Rio — Caxias" → "Rio · Caxias": o nome curto acompanha o evento, como o resto do card
-    document.querySelector('[data-next-name]').textContent = eventShortName(next);
-    document.querySelector('[data-next-date]').textContent = fmtDotDate(next.date, 'full').split('·').join(' · ');
-    document.querySelector('[data-next-age]').textContent = `Sub-${next.age.split('-')[0]} → Sub-${next.age.split('-')[1]}`;
-    document.querySelector('[data-next-progress]').innerHTML =
-      progressHTML(Math.min(next.registered, next.capacity * 5), next.capacity * 5);
-    document.querySelector('[data-next-registered]').textContent = `${fmtNum(next.registered)} inscritos`;
-    document.querySelector('[data-next-capacity]').textContent =
-      `${next.capacity} vagas${daysLeft > 1 ? ' · ' + daysLeft + ' dias restantes' : daysLeft === 1 ? ' · último dia' : ''}`;
-
-    // Inscrição exige conta: o botão leva ao login já com o evento no endereço,
-    // e é lá que a mensagem "para se inscrever, crie sua conta" aparece.
-    const nextCta = document.querySelector('[data-next-cta]');
-    if (closed) {
-      nextCta.replaceWith(Object.assign(document.createElement('button'), {
-        className: 'btn btn--ghost btn--sm', disabled: true, textContent: 'Inscrições encerradas',
-      }));
-    } else {
-      nextCta.href = `login.html?tipo=jogador&evento=${encodeURIComponent(next.id)}`;
+    // Marquee: montado já, sem depender dos dados; quando eles chegam, entra o
+    // número de estados da temporada.
+    function mountMarquee(states) {
+      const items = ['07 → 19 anos',...(states ? [`${states} estados`] : []),'Inscrição gratuita','Score em tempo real','Anexe seus vídeos e fotos','Inteligência na análise dos seus dados esportivos','Tecnologia de alocação automática'];
+      let html = '';
+      for (let k=0;k<3;k++) items.forEach((t,i)=>{ html += `<span>${t}</span><span class="${i%2?'text-gold':'text-accent'}">●</span>`; });
+      document.getElementById('marquee-track').innerHTML = html;
     }
+    mountMarquee(null);
 
-    // Marquee
-    const items = ['07 → 19 anos',`${season.states} estados`,'Inscrição gratuita','Score em tempo real','Anexe seus vídeos e fotos','Inteligência na análise dos seus dados esportivos','Tecnologia de alocação automática'];
-    const track = document.getElementById('marquee-track');
-    let html = '';
-    for (let k=0;k<3;k++) items.forEach((t,i)=>{ html += `<span>${t}</span><span class="${i%2?'text-gold':'text-accent'}">●</span>`; });
-    track.innerHTML = html;
+    // Sprint 4: os dados vêm por fetch (data.js). Enquanto chegam, o card da
+    // próxima peneira mostra o carregando; se falharem, mostra o erro com
+    // "Tentar de novo" — o resto da landing não depende deles.
+    Dados.iniciar(iniciarLanding, {
+      vitrine: document.querySelector('[data-next-body]'),
+      ocupado: document.querySelector('[data-next-card]'),
+      mensagem: 'Carregando a próxima peneira…',
+      erro: 'A próxima peneira não carregou.',
+    });
+
+    function iniciarLanding() {
+      // Números da temporada: uma fonte só (MOCK.SEASON, derivado de MOCK.EVENTS)
+      const season = MOCK.SEASON;
+      document.querySelector('[data-season-events]').textContent = season.events;
+      document.querySelector('[data-season-states]').textContent = `em ${season.states} estados · ver calendário →`;
+
+      // Card da próxima peneira — data e prazo calculados, nunca chumbados
+      const next = season.nextEvent;
+      const dayMs = 86400000;
+      const daysLeft = Math.ceil((new Date(next.date + 'T00:00:00') - new Date(new Date().toDateString())) / dayMs);
+      // Com as inscrições encerradas, o status do evento ("aberta") deixa de valer:
+      // vira uma tag legível de relance, como a "encerrada" do countdown do atleta.
+      // eventStatus: o prazo de inscrição (encerraEm) também encerra, não só a data
+      const closed = daysLeft < 1 || eventStatus(next) === 'encerrada';
+      const statusEl = document.querySelector('[data-next-status]');
+      if (closed) statusEl.innerHTML = tagHTML('Inscrições encerradas', 'outline-on-dark');
+      else statusEl.textContent = '● ' + next.status.toUpperCase();
+      // "Peneira Rio — Caxias" → "Rio · Caxias": o nome curto acompanha o evento, como o resto do card
+      document.querySelector('[data-next-name]').textContent = eventShortName(next);
+      document.querySelector('[data-next-date]').textContent = fmtDotDate(next.date, 'full').split('·').join(' · ');
+      document.querySelector('[data-next-age]').textContent = `Sub-${next.age.split('-')[0]} → Sub-${next.age.split('-')[1]}`;
+      document.querySelector('[data-next-progress]').innerHTML =
+        progressHTML(Math.min(next.registered, next.capacity * 5), next.capacity * 5);
+      document.querySelector('[data-next-registered]').textContent = `${fmtNum(next.registered)} inscritos`;
+      document.querySelector('[data-next-capacity]').textContent =
+        `${next.capacity} vagas${daysLeft > 1 ? ' · ' + daysLeft + ' dias restantes' : daysLeft === 1 ? ' · último dia' : ''}`;
+
+      // Inscrição exige conta: o botão leva ao login já com o evento no endereço,
+      // e é lá que a mensagem "para se inscrever, crie sua conta" aparece.
+      const nextCta = document.querySelector('[data-next-cta]');
+      if (closed) {
+        nextCta.replaceWith(Object.assign(document.createElement('button'), {
+          className: 'btn btn--ghost btn--sm', disabled: true, textContent: 'Inscrições encerradas',
+        }));
+      } else {
+        nextCta.href = `login.html?tipo=jogador&evento=${encodeURIComponent(next.id)}`;
+      }
+
+      mountMarquee(season.states);
+    }
   </script>
 </body>
 </html>

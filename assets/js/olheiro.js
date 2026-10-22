@@ -1,12 +1,13 @@
 /* ============================================================
-   PENEIRAS ON — Olheiro (lista · perfil · check-in · avaliação)
+   PENEIRAS ON — Olheiro (lista · perfil · check-in · avaliação · mensagens)
+   Os dados chegam por fetch (data.js); a tela só é montada depois.
    ============================================================ */
 const screenEl = document.querySelector('[data-screen]');
 if (!screenEl) {
   throw new Error('olheiro.html está sem [data-screen]; o script não pode inicializar.');
 }
 const params = new URLSearchParams(location.search);
-const SCREENS = { lista: renderLista, perfil: renderPerfil, checkin: renderCheckin, avaliacao: renderAvaliacao };
+const SCREENS = { lista: renderLista, perfil: renderPerfil, checkin: renderCheckin, avaliacao: renderAvaliacao, mensagens: renderMensagens };
 const telaParam = params.get('tela') || 'lista';
 // ?tela= desconhecido cai na tela padrão em vez de deixar o <main> vazio
 const tela = SCREENS[telaParam] ? telaParam : 'lista';
@@ -17,7 +18,11 @@ document.querySelectorAll('.nav-item').forEach(n => {
   if (k === tela || (tela === 'perfil' && k === 'lista')) n.classList.add('is-active');
 });
 
-SCREENS[tela]();
+Dados.iniciar(() => SCREENS[tela](), {
+  vitrine: screenEl,
+  mensagem: 'Carregando o painel do olheiro…',
+  erro: 'A lista de atletas não chegou.',
+});
 
 /* ---------------- LISTA ---------------- */
 function renderLista() {
@@ -37,6 +42,11 @@ function renderLista() {
   }
 
   function rowsHTML(data) {
+    // Estado vazio: uma linha que ocupa a tabela inteira e diz o que fazer —
+    // antes a busca sem resultado deixava só o cabeçalho, como se tivesse quebrado.
+    if (!data.length) return `<tr class="cursor-default hover:bg-transparent"><td colspan="10" class="p-0">
+      <div class="state-card"><p class="state-card__title">Nenhum atleta com esses filtros.</p><p class="state-card__text">Tente outro nome, outra posição ou outra região.</p><button type="button" class="btn btn--ghost btn--sm mt-2" data-clear-filters>Limpar filtros</button></div>
+    </td></tr>`;
     return data.map((a,idx)=>`<tr class="${a.favorite?'is-fav':''}" data-go="${a.id}">
       <td class="font-mono text-11 text-ink-mute">${String(idx+1).padStart(3,'0')}</td>
       <td><div class="flex items-center gap-2.5">${avatarHTML(a.name,{size:32,gold:a.favorite})}<div><div class="font-semibold">${a.name} ${a.favorite?'<span class="gold">★</span>':''}</div><div class="font-mono text-10 text-ink-soft">${a.foot} · ${a.height||'—'}cm · ${a.weight||'—'}kg</div></div></div></td>
@@ -58,6 +68,13 @@ function renderLista() {
     screenEl.querySelector('[data-rows]').innerHTML = rowsHTML(data);
     screenEl.querySelector('[data-count]').textContent = `${data.length} resultados`;
     screenEl.querySelectorAll('[data-go]').forEach(tr=>tr.onclick=()=>{ location.href='olheiro.html?tela=perfil&id='+tr.dataset.go; });
+    const clear = screenEl.querySelector('[data-clear-filters]');
+    if (clear) clear.onclick = () => {
+      Object.assign(filters, { position:'all', region:'all', q:'', favOnly:false, withVideo:false });
+      render();
+      screenEl.querySelector('#q').focus();
+      announce(`Filtros limpos. ${rows().length} atletas na lista`);
+    };
     if (announceResult) announce(`${data.length} atletas na lista`);
   }
 
@@ -152,7 +169,7 @@ function renderPerfil() {
               ${tagHTML(MOCK.posLabel(a).toUpperCase(),'accent')}
               <h1 class="display text-24 mt-2 mb-0 mx-0 tracking-display">${a.name}</h1>
               <div class="font-mono text-11 text-ink-soft mt-1">${a.age} anos · ${a.city}/${a.state}</div>
-              <div class="flex gap-1.5 mt-2.5"><button class="btn ${a.favorite?'btn--gold':'btn--ghost'} btn--sm" id="fav">★ ${a.favorite?'Favorito':'Favoritar'}</button></div>
+              <div class="flex gap-1.5 mt-2.5 flex-wrap"><button class="btn ${a.favorite?'btn--gold':'btn--ghost'} btn--sm" id="fav">★ ${a.favorite?'Favorito':'Favoritar'}</button><a class="btn btn--ghost btn--sm" href="olheiro.html?tela=mensagens&id=${esc(a.id)}">✉ Mensagem</a></div>
             </div>
           </div>
           <div class="g g-4 border-t border-t-line">
@@ -220,58 +237,92 @@ function renderCheckin() {
   // presença inicial vem do mock (determinística) — antes era Math.random(),
   // o que mudava a taxa de comparecimento a cada reload
   let list = MOCK.ATHLETES.filter(a=>a.status==='convocado').map(a=>({...a, present: !!a.present}));
+  let q = '';
 
-  function render() {
-    const present = list.filter(a=>a.present).length;
-    screenEl.innerHTML = `
-      <div class="page-head items-start">
-        <div><div class="kicker uppercase">Dia da peneira · 15·JUN·2026</div><h1 class="display h-panel my-1 mx-0">Check-in</h1></div>
+  /* A moldura é montada uma vez; paint() troca só as linhas e os números.
+     Assim a busca não perde o cursor e a marcação de presença não derruba o
+     foco do teclado (as linhas eram recriadas junto com o campo). */
+  screenEl.innerHTML = `
+    <div class="page-head items-start">
+      <div><div class="kicker uppercase">Dia da peneira · 15·JUN·2026</div><h1 class="display h-panel my-1 mx-0">Check-in</h1></div>
+    </div>
+    <div class="g g-panel-sm pad gap-6 items-start">
+      <div class="card card--flush">
+        <div class="py-4 px-5 border-b border-b-line flex items-center justify-between">
+          <label class="sr-only" for="ci-q">Buscar atleta por nome</label>
+          <input class="input h-10 w-70" id="ci-q" placeholder="Buscar nome…">
+          <span class="font-mono text-11 text-ink-soft" data-ci-count></span>
+        </div>
+        <div data-ci-rows></div>
       </div>
-      <div class="g g-panel-sm pad gap-6 items-start">
-        <div class="card card--flush">
-          <div class="py-4 px-5 border-b border-b-line flex items-center justify-between">
-            <label class="sr-only" for="ci-q">Buscar atleta por nome</label>
-            <input class="input h-10 w-70" id="ci-q" placeholder="Buscar nome…">
-            <span class="font-mono text-11 text-ink-soft">${present} de ${list.length} presentes</span>
-          </div>
-          ${list.map((a,i)=>`<div class="ci-row ${i?'border-t border-line-soft':''} ${a.present?'bg-accent-soft':'bg-transparent'}" data-id="${a.id}">
-            <div class="w-7 h-7 border-2 border-ink flex items-center justify-center text-accent-ink font-display font-black text-16 ${a.present?'bg-accent':'bg-transparent'}">${a.present?'✓':''}</div>
-            ${avatarHTML(a.name,{size:32})}
-            <div><div class="font-semibold text-14">${a.name}</div><div class="font-mono text-10 text-ink-soft">${MOCK.posLabel(a)} · ${a.city}/${a.state}</div></div>
-            <div class="display text-18">${a.score}</div>
-            ${tagHTML(a.present?'PRES':'AGUARD', a.present?'accent':'outline')}
-            <span class="font-mono text-10 text-ink-mute">#${String(i+1).padStart(3,'0')}</span>
-          </div>`).join('')}
+      <div class="sticky top-6 flex flex-col gap-4">
+        <div class="card--dark p-5" data-ci-side></div>
+        <div class="card p-4">
+          <div class="kicker uppercase">QR Code presença</div>
+          <div class="qr-pattern mt-2.5 border border-line"></div>
+          <div class="font-mono text-10 text-ink-soft mt-2 text-center">Inscritos podem fazer check-in com o celular.</div>
         </div>
-        <div class="sticky top-6 flex flex-col gap-4">
-          <div class="card--dark p-5">
-            <div class="kicker text-ink/55">Comparecimento</div>
-            <div class="display text-72 leading-display-xtight mt-2">${Math.round(present/list.length*100)}<span class="text-32">%</span></div>
-            <div class="mt-3.5"><div class="progress progress--sm"><div class="progress__fill" style="width:${present/list.length*100}%"></div></div></div>
-            <div class="flex justify-between mt-2 font-mono text-11 opacity-70"><span>${present} presentes</span><span>${list.length-present} aguardando</span></div>
-          </div>
-          <div class="card p-4">
-            <div class="kicker uppercase">QR Code presença</div>
-            <div class="qr-pattern mt-2.5 border border-line"></div>
-            <div class="font-mono text-10 text-ink-soft mt-2 text-center">Inscritos podem fazer check-in com o celular.</div>
-          </div>
-          <button class="btn btn--primary btn--full">Encerrar check-in</button>
-        </div>
-      </div>`;
-    screenEl.querySelectorAll('.ci-row').forEach(row=>row.onclick=()=>{
-      const a=list.find(x=>x.id===row.dataset.id);
-      a.present=!a.present;
-      render();
-      announce(`${a.name}: ${a.present?'presente':'aguardando'}. ${list.filter(x=>x.present).length} de ${list.length} presentes.`);
-    });
+        <button class="btn btn--primary btn--full">Encerrar check-in</button>
+      </div>
+    </div>`;
+
+  function paint() {
+    const present = list.filter(a=>a.present).length;
+    const shown = list.filter(a => !q || a.name.toLowerCase().includes(q.toLowerCase()));
+    screenEl.querySelector('[data-ci-count]').textContent = `${present} de ${list.length} presentes`;
+    // Linha = alternância de presença: role="button" + aria-pressed + Tab/Enter/Espaço
+    screenEl.querySelector('[data-ci-rows]').innerHTML = shown.length ? shown.map((a,i)=>`<div class="ci-row focus-visible:-outline-offset-3 ${i?'border-t border-line-soft':''} ${a.present?'bg-accent-soft':'bg-transparent'}" data-id="${a.id}" role="button" tabindex="0" aria-pressed="${a.present}">
+        <div class="w-7 h-7 border-2 border-ink flex items-center justify-center text-accent-ink font-display font-black text-16 ${a.present?'bg-accent':'bg-transparent'}" aria-hidden="true">${a.present?'✓':''}</div>
+        ${avatarHTML(a.name,{size:32})}
+        <div><div class="font-semibold text-14">${a.name}</div><div class="font-mono text-10 text-ink-soft">${MOCK.posLabel(a)} · ${a.city}/${a.state}</div></div>
+        <div class="display text-18">${a.score}</div>
+        ${tagHTML(a.present?'PRES':'AGUARD', a.present?'accent':'outline')}
+        <span class="font-mono text-10 text-ink-mute">#${String(list.indexOf(a)+1).padStart(3,'0')}</span>
+      </div>`).join('')
+      : `<div class="state-card"><p class="state-card__title">Ninguém com esse nome.</p><p class="state-card__text">A busca vale só para os convocados desta peneira.</p><button type="button" class="btn btn--ghost btn--sm mt-2" data-ci-clear>Limpar busca</button></div>`;
+    screenEl.querySelector('[data-ci-side]').innerHTML = `
+      <div class="kicker text-ink/55">Comparecimento</div>
+      <div class="display text-72 leading-display-xtight mt-2">${Math.round(present/list.length*100)}<span class="text-32">%</span></div>
+      <div class="mt-3.5"><div class="progress progress--sm"><div class="progress__fill" style="width:${present/list.length*100}%"></div></div></div>
+      <div class="flex justify-between mt-2 font-mono text-11 opacity-70"><span>${present} presentes</span><span>${list.length-present} aguardando</span></div>`;
+    const clear = screenEl.querySelector('[data-ci-clear]');
+    if (clear) clear.onclick = () => { q = ''; input.value = ''; paint(); input.focus(); announce(`${list.length} convocados na lista`); };
   }
-  render();
+
+  const toggle = row => {
+    const a = list.find(x=>x.id===row.dataset.id);
+    a.present = !a.present;
+    paint();
+    const again = screenEl.querySelector(`.ci-row[data-id="${a.id}"]`);
+    if (again) again.focus();
+    announce(`${a.name}: ${a.present?'presente':'aguardando'}. ${list.filter(x=>x.present).length} de ${list.length} presentes.`);
+  };
+  const rowsEl = screenEl.querySelector('[data-ci-rows]');
+  rowsEl.addEventListener('click', e => { const row = e.target.closest('.ci-row'); if (row) toggle(row); });
+  rowsEl.addEventListener('keydown', e => {
+    const row = e.target.closest('.ci-row');
+    if (!row || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    toggle(row);
+  });
+  const input = screenEl.querySelector('#ci-q');
+  const announceCount = UI.debounce(() => {
+    const n = list.filter(a => !q || a.name.toLowerCase().includes(q.toLowerCase())).length;
+    announce(n ? `${n} convocado${n === 1 ? '' : 's'} na lista` : 'Ninguém com esse nome');
+  }, 500);
+  input.addEventListener('input', () => { q = input.value.trim(); paint(); announceCount(); });
+  paint();
 }
 
 /* ---------------- AVALIAÇÃO ---------------- */
 function renderAvaliacao() {
   const list = MOCK.ATHLETES.filter(a=>a.status==='convocado').slice(0,8);
   const evalState = {};
+  if (!list.length) {
+    screenEl.innerHTML = `<div class="page-head items-start"><div><div class="kicker uppercase">Pós-peneira</div><h1 class="display h-panel my-1 mx-0">Avaliação no campo</h1></div></div>
+      <div class="pad"><div class="card state-card"><p class="state-card__title">Ninguém para avaliar ainda.</p><p class="state-card__text">A lista aparece quando houver convocados com check-in nesta peneira.</p><a href="olheiro.html?tela=checkin" class="btn btn--ghost btn--sm mt-2">Ir para o check-in</a></div></div>`;
+    return;
+  }
   let active = list[0].id;
 
   function render() {
@@ -329,4 +380,66 @@ function renderAvaliacao() {
     const cm = screenEl.querySelector('#comments'); if(cm) cm.oninput=()=>{ evalState[active]={...ev,comments:cm.value}; };
   }
   render();
+}
+
+/* ---------------- MENSAGENS ----------------
+   Por que dentro da área do olheiro (e não uma página própria): só um olheiro
+   credenciado inicia conversa, e sempre a partir de um atleta que ele está
+   avaliando — o botão "✉ Mensagem" do perfil traz o ?id=. Aqui a conversa
+   fica ao lado da lista, com a mesma barra lateral e o mesmo login. */
+function renderMensagens() {
+  const conversas = MOCK.CONVERSAS.slice();
+  // atleta aberto pelo perfil, ainda sem conversa: começa uma nova, só com o aviso
+  if (selId && !conversas.some(c => c.atleta === selId) && MOCK.ATHLETES.some(a => a.id === selId)) {
+    conversas.unshift({ id: 'c-' + selId, atleta: selId, olheiro: 'Carlos Mendes', mensagens: [
+      { de: 'sistema', texto: 'Conversa intermediada pela Peneiras On. O responsável legal do atleta pode acompanhar.', em: new Date().toISOString() },
+    ] });
+  }
+  const atleta = c => MOCK.ATHLETES.find(a => a.id === c.atleta);
+  let ativa = conversas.find(c => c.atleta === selId) || conversas[0];
+
+  screenEl.innerHTML = `
+    <div class="page-head">
+      <div><div class="kicker uppercase">Contato intermediado</div><h1 class="display h-panel my-1 mx-0">Mensagens</h1></div>
+    </div>
+    <div class="g g-aside-sm pad gap-6 items-start">
+      <nav class="card card--flush" aria-label="Conversas" data-convs></nav>
+      <div data-chat></div>
+    </div>`;
+  const nav = screenEl.querySelector('[data-convs]');
+  const host = screenEl.querySelector('[data-chat]');
+  if (!conversas.length) {
+    nav.hidden = true;
+    host.innerHTML = `<div class="card state-card"><p class="state-card__title">Nenhuma conversa ainda.</p><p class="state-card__text">Abra o perfil de um atleta e use "✉ Mensagem" para começar.</p><a href="olheiro.html?tela=lista" class="btn btn--ghost btn--sm mt-2">Ir para a lista</a></div>`;
+    return;
+  }
+
+  function paint() {
+    nav.innerHTML = conversas.map(c => {
+      const a = atleta(c);
+      const ultima = Chat.mensagens(c).filter(m => m.de !== 'sistema').pop();
+      return `<button type="button" class="conv-item" data-conv="${esc(c.id)}" ${c === ativa ? 'aria-current="true"' : ''}>
+        ${avatarHTML(a.name, { size: 32, gold: a.favorite })}
+        <span class="min-w-0"><span class="block font-semibold text-13 truncate">${esc(a.name)}</span><span class="block font-mono text-10 text-ink-mute truncate">${ultima ? esc(ultima.texto) : 'Sem mensagens'}</span></span>
+      </button>`;
+    }).join('');
+    const a = atleta(ativa);
+    Chat.montar(host, {
+      persona: 'olheiro',
+      conversa: ativa,
+      menor: a.age < 18,
+      outro: { nome: a.name, sub: `${MOCK.posLabel(a)} · ${a.age} anos · ${a.city}/${a.state}${a.age < 18 ? ' · menor de idade' : ''}` },
+    });
+  }
+  nav.addEventListener('click', e => {
+    const b = e.target.closest('[data-conv]');
+    if (!b) return;
+    ativa = conversas.find(c => c.id === b.dataset.conv);
+    // o endereço acompanha a conversa aberta (dá para voltar a ela pelo link)
+    history.replaceState(null, '', 'olheiro.html?tela=mensagens&id=' + encodeURIComponent(ativa.atleta));
+    paint();
+    nav.querySelector(`[data-conv="${ativa.id}"]`).focus();
+    announce(`Conversa com ${atleta(ativa).name} aberta.`);
+  });
+  paint();
 }

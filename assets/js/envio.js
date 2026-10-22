@@ -4,8 +4,15 @@
    Script) — é a "porta de entrada" do MVP concierge. A equipe baixa a
    planilha e processa no CLI em Python (python/).
      · Envio.inscricao(form, evento) → Promise<'enviado' | 'na-fila'>
+     · Envio.enviar(form, evento) → Promise<{ situacao, codigo }> (Sprint 4:
+       o mesmo envio, devolvendo também o código que a pessoa deve guardar)
      · se a rede falhar, guarda no localStorage e reenvia sozinho depois
        (ao abrir o site de novo ou quando a internet voltar)
+     · Envio.reenviarAgora() → Promise<{ enviados, pendentes }> e o evento
+       'peneiras:fila' na window a cada tentativa, para a tela de confirmação
+       saber quando o que estava guardado finalmente chegou à planilha
+     · Envio.PRAZO_DIAS_UTEIS: prazo de resposta comunicado ao usuário — a
+       triagem é humana (MVP concierge), então o prazo vem em dias úteis
    Contrato das colunas: python/CONTRATO.md
    Depende de ui.js (UI.storage). Carregar ANTES de cadastro.js.
    ============================================================ */
@@ -62,28 +69,52 @@ const Envio = (() => {
   const lerFila = () => UI.storage.get(CHAVE_FILA, []);
   const salvarFila = fila => UI.storage.set(CHAVE_FILA, fila);
 
-  async function inscricao(form, evento) {
+  /* Prazo de resposta da equipe. Fonte única: o formulário e a tela de
+     confirmação leem daqui, então o que se promete é o mesmo nos dois. */
+  const PRAZO_DIAS_UTEIS = 2;
+
+  async function enviar(form, evento) {
     const linha = montarLinha(form, evento);
     try {
       await postar(linha);
-      return 'enviado';
+      return { situacao: 'enviado', codigo: linha.codigo };
     } catch (erro) {
       salvarFila(lerFila().concat([linha]));
-      return 'na-fila';
+      return { situacao: 'na-fila', codigo: linha.codigo };
     }
   }
 
-  /* Tenta mandar o que ficou guardado. Quem falhar de novo continua na fila. */
-  async function reenviarFila() {
-    const pendentes = [];
-    for (const linha of lerFila()) {
-      try { await postar(linha); } catch (erro) { pendentes.push(linha); }
-    }
-    salvarFila(pendentes);
+  // Forma original (Sprint 3), mantida para quem só precisa da situação.
+  async function inscricao(form, evento) {
+    return (await enviar(form, evento)).situacao;
+  }
+
+  /* Tenta mandar o que ficou guardado. Quem falhar de novo continua na fila.
+     Avisa a página pelo evento 'peneiras:fila' com os códigos que chegaram. */
+  let reenviando = null;
+  function reenviarFila() {
+    // duas chamadas ao mesmo tempo (abrir o site + evento online) mandariam a
+    // mesma linha duas vezes: a segunda espera a primeira terminar
+    if (reenviando) return reenviando;
+    reenviando = (async () => {
+      const fila = lerFila();
+      const pendentes = [], enviados = [];
+      for (const linha of fila) {
+        try { await postar(linha); enviados.push(linha.codigo); } catch (erro) { pendentes.push(linha); }
+      }
+      // o que entrou na fila DURANTE o reenvio (outra inscrição sem rede) não
+      // estava na leitura inicial: regravar só `pendentes` apagaria essa linha
+      const lidos = new Set(fila.map(l => l.codigo));
+      salvarFila(pendentes.concat(lerFila().filter(l => !lidos.has(l.codigo))));
+      const resultado = { enviados, pendentes: pendentes.map(l => l.codigo) };
+      window.dispatchEvent(new CustomEvent('peneiras:fila', { detail: resultado }));
+      return resultado;
+    })().finally(() => { reenviando = null; });
+    return reenviando;
   }
 
   reenviarFila();
   window.addEventListener('online', reenviarFila);
 
-  return { inscricao };
+  return { inscricao, enviar, reenviarAgora: reenviarFila, PRAZO_DIAS_UTEIS };
 })();

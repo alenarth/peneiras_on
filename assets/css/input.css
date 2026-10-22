@@ -343,6 +343,9 @@
   .btn--sm { @apply h-8 px-3.5 text-12; }
   .btn--lg { @apply h-14 px-7 text-15; }
   .btn--full { @apply w-full; }
+  /* Ocupado (Sprint 4): o botão que disparou uma espera fica travado, mas
+     legível — com 40% de opacidade "Enviando…" parecia só desabilitado. */
+  .btn.is-busy:disabled { @apply opacity-80 cursor-wait; }
   /* Sobre foto/vidro (hero, rodapé): fantasma com borda clara em vez de cinza */
   .btn--on-dark { @apply bg-transparent text-ink border-ink/45; }
   .btn--on-dark:not(:disabled):hover { @apply bg-ink/10 text-ink border-ink; }
@@ -438,6 +441,9 @@
   }
   .textarea { @apply w-full min-h-[90px] p-3 bg-card text-ink border border-line rounded resize-y font-body text-13 leading-normal outline-none transition-[border-color,box-shadow] duration-150 hover:border-ink/45 focus-visible:border-ink/60; }
   .input--error, .input[aria-invalid="true"], .select[aria-invalid="true"], .textarea[aria-invalid="true"] { @apply border-danger bg-danger-soft; }
+  /* Desabilitado (Sprint 4): campo travado enquanto algo carrega ou envia.
+     Opacidade + cursor, nunca só cor; sem hover para não parecer clicável. */
+  .input:disabled, .select:disabled, .textarea:disabled { @apply opacity-50 cursor-not-allowed hover:border-line; }
   .choice { @apply h-13 bg-card text-ink border border-line rounded cursor-pointer font-display font-extrabold text-13 uppercase tracking-btn transition-[background-color,border-color,transform,color] duration-150 hover:bg-bg-alt hover:border-ink/45 hover:-translate-y-px active:translate-y-0 active:scale-[.98]; }
   .choice.is-active { @apply bg-ink text-bg border-ink motion-safe:animate-pop; }
   .choice--accent.is-active { @apply bg-accent text-accent-ink; }
@@ -835,6 +841,119 @@
    .vote-control { @apply inline-flex items-center gap-1; }
    .vote-control .btn { @apply size-8 p-0; }
    .vote-control__count { @apply min-w-8 text-center font-display font-extrabold text-13; }
+
+  /* --- cronômetro de encerramento no card de peneira (components.js: EventTimers) ---
+     Últimas 24 h: borda e número em laranja, fundo laranja translúcido. Sem
+     animação nenhuma — urgência é cor e rótulo, nunca piscar. */
+  .event-timer { @apply flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 mt-4 py-2.5 px-3 rounded-md bg-bg-alt border border-line-soft font-mono text-11; }
+  .event-timer__label { @apply uppercase tracking-label text-ink-mute; }
+  .event-timer__value { @apply font-semibold text-13 text-ink tabular-nums; }
+  .event-timer__note { @apply basis-full text-10 leading-relaxed text-ink-mute; }
+  .event-timer--closed { @apply justify-center; }
+  .card--urgent { @apply border-accent; }
+  .card--urgent .event-timer { @apply bg-accent-soft border-accent/50; }
+  .card--urgent .event-timer__value { @apply text-accent-text; }                         /* 6,6:1 sobre --accent-soft */
+
+  /* --- foto com pré-visualização (foto.js, FileReader) ---
+     O input de arquivo é o NATIVO: só o botão interno (::file-selector-button,
+     variante file:) ganha a cara de .btn--ghost. Assim ele segue no Tab, com
+     rótulo e anel de foco, sem truque de input escondido. */
+  .foto__area { @apply grid grid-cols-[96px_minmax(0,1fr)] gap-4 items-center max-sm:grid-cols-[1fr]; }
+  .foto__preview { @apply relative flex items-center justify-center size-24 rounded-xl overflow-hidden bg-bg-alt border border-dashed border-line text-center; }
+  .foto__preview .loading { @apply flex-col gap-1.5 px-1 text-10 tracking-normal; }
+  .foto__vazia { @apply font-mono text-10 uppercase tracking-label text-ink-mute; }
+  .foto__img { @apply block size-full object-cover; }
+  .foto--grande .foto__area { @apply grid-cols-[1fr]; }
+  .foto--grande .foto__preview { @apply size-auto w-full h-75; }
+  .file-input { @apply block w-full min-w-0 rounded font-mono text-11 text-ink-soft cursor-pointer
+      file:mr-3 file:h-9 file:px-4 file:rounded file:border file:border-solid file:border-line file:bg-card file:text-ink
+      file:font-display file:font-extrabold file:text-12 file:uppercase file:tracking-btn file:cursor-pointer
+      hover:file:bg-bg-alt focus-visible:outline-solid focus-visible:outline-3 focus-visible:outline-focus focus-visible:outline-offset-2
+      disabled:opacity-50 disabled:cursor-not-allowed; }
+  .file-input[aria-invalid="true"] { @apply file:border-danger file:bg-danger-soft; }
+
+  /* --- chat intermediado (chat.js) ---
+     Lista com rolagem própria (tabindex=0 para rolar pelo teclado), bolhas
+     com quem disse em texto oculto para leitor de tela, aviso de bloqueio
+     neutro com filete vermelho: é erro de envio, não acusação. */
+  .chat { @apply flex flex-col; }
+  .chat__head { @apply flex items-center gap-3 flex-wrap px-5 py-4 border-b border-line; }
+  .chat__regra { @apply m-0 px-5 py-3 bg-bg-alt border-b border-line-soft font-mono text-11 leading-relaxed text-ink-soft; }
+  .chat__lista { @apply list-none m-0 p-5 flex flex-col gap-3 min-h-60 max-h-[52vh] overflow-y-auto focus-visible:-outline-offset-3; }
+  .chat__msg { @apply flex flex-col gap-1 max-w-[85%] max-sm:max-w-full; }
+  .chat__msg--minha { @apply self-end items-end; }
+  .chat__msg--outro { @apply self-start items-start; }
+  .chat__texto { @apply m-0 px-4 py-2.5 rounded-xl text-14 leading-copy whitespace-pre-wrap break-words; }
+  .chat__msg--minha .chat__texto { @apply bg-accent text-accent-ink rounded-br-md; }                 /* 6,9:1 */
+  .chat__msg--outro .chat__texto { @apply bg-bg-alt text-ink border border-line-soft rounded-bl-md; }
+  .chat__meta { @apply font-mono text-10 text-ink-mute; }
+  .chat__sys { @apply self-center max-w-copy-sm text-center font-mono text-10 leading-relaxed text-ink-mute px-3 py-1.5 rounded-md border border-dashed border-line; }
+  .chat__form { @apply flex flex-col gap-3 p-5 border-t border-line; }
+  .chat__alerta { @apply p-4 rounded-lg bg-bg-alt border border-line border-l-4 border-l-danger text-13 leading-copy text-ink; }
+  .conv-item { @apply grid grid-cols-[32px_minmax(0,1fr)] gap-3 items-center w-full px-4 py-3 text-left cursor-pointer bg-transparent text-ink border-0 border-t border-line-soft first:border-t-0 transition-colors duration-150 hover:bg-bg-alt focus-visible:-outline-offset-3; }
+  .conv-item[aria-current="true"] { @apply bg-accent-soft; }
+
+  /* --- estado de carregando (ui.js: UI.loadingHTML / UI.busy / UI.busyButton) ---
+     O container que espera recebe aria-busy="true" e o texto vai para a região
+     aria-live. O giro é só reforço: sob prefers-reduced-motion ele some e fica
+     o texto, que sempre diz o que está acontecendo. */
+  .loading { @apply flex items-center gap-3 font-mono text-11 uppercase tracking-label text-ink-soft; }
+  .loading--block { @apply justify-center py-12 px-6 text-center; }
+  .loading__spinner { @apply inline-block shrink-0 size-4 rounded-full border-2 border-ink/25 border-t-accent motion-safe:animate-spin motion-reduce:hidden; }
+
+  /* --- estados de tela: vazio / erro (cards que ocupam a área da lista) --- */
+  .state-card { @apply flex flex-col items-center gap-2 text-center py-10 px-6; }
+  .state-card__title { @apply font-display font-black uppercase tracking-display text-22 m-0; }
+  .state-card__text { @apply text-14 leading-copy text-ink-soft max-w-copy-sm m-0; }
+  .state-card--error { @apply border-danger/60; }
+  .state-card--error .state-card__title::before { content: "⚠ " / ""; @apply text-danger; }
+
+  /* --- styleguide (design-system.html) ---
+     As classes ds-* existem só na página do styleguide: fixam um estado de
+     interação (hover, focus, active) para ele aparecer sem mouse nem teclado.
+     Cada regra repete o que o estado REAL do componente faz, declarado acima —
+     mudou lá, muda aqui. Nenhum componente do site usa ds-*. */
+  .ds-states { @apply grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3; }
+  /* célula em --bg (o fundo real das telas): em --bg-alt o hover de quem pinta
+     --bg-alt (fantasma, nav-item, attr-tag, choice) ficava invisível */
+  .ds-state { @apply flex flex-col gap-3 min-w-0 p-4 rounded-lg bg-bg border border-line; }
+  .ds-state__stage { @apply flex items-center min-h-12 min-w-0; }
+  .ds-state__label { @apply font-mono text-10 uppercase tracking-label text-ink-mute; }
+  .ds-state__label strong { @apply text-ink font-semibold; }
+  .ds-focus { @apply outline-solid outline-3 outline-focus outline-offset-2; }            /* = anel de foco global (base) */
+  .btn.ds-hover { @apply -translate-y-px scale-[1.03] shadow-btn bg-ink-hover border-ink-hover; }
+  .btn--primary.ds-hover { @apply bg-ink-hover border-ink-hover; }
+  .btn--accent.ds-hover { @apply bg-accent-hover border-accent-hover; }
+  .btn--gold.ds-hover { @apply bg-gold-hover border-gold-hover; }
+  .btn--ghost.ds-hover { @apply bg-bg-alt text-ink border-line; }
+  .btn--danger.ds-hover { @apply bg-danger-hover border-danger-hover; }
+  .btn--on-dark.ds-hover { @apply bg-ink/10 text-ink border-ink; }
+  .btn.ds-active { @apply translate-y-px scale-[.98] shadow-none; }                       /* pressionado = hover + active */
+  .input.ds-hover, .select.ds-hover, .textarea.ds-hover { @apply border-ink/45; }
+  .input.ds-focus, .select.ds-focus, .textarea.ds-focus { @apply border-ink/60; }
+  .choice.ds-hover { @apply bg-bg-alt border-ink/45 -translate-y-px; }
+  .choice.ds-active { @apply translate-y-0 scale-[.98]; }
+  .attr-tag.ds-hover { @apply bg-bg-alt -translate-y-px; }
+  .attr-tag[aria-pressed="true"].ds-hover { @apply bg-accent-hover; }
+  .attr-tag.ds-active { @apply translate-y-0 scale-95; }
+  .tag--section.ds-hover { @apply bg-accent text-accent-ink border-accent; }
+  .card--hover.ds-hover { @apply -translate-y-1 shadow-menu border-ink/40; }
+  .ftoggle.ds-hover { @apply -translate-y-px bg-bg-alt; }
+  .site-nav a.ds-hover { @apply text-ink; }
+  .site-nav a.ds-hover::before { @apply scale-x-100; }
+  .nav-item.ds-hover { @apply bg-bg-alt pl-6; }
+  .atleta-tab.ds-hover { @apply -translate-y-px bg-bg-alt border-line; }
+  /* Amostras de navegação: as regras reais de .site-nav escondem a barra no
+     celular (ela vira o menu do hambúrguer); aqui ela precisa aparecer sempre. */
+  .ds-nav.site-nav { @apply flex flex-wrap ml-0 gap-x-6 gap-y-3 max-md:flex-row max-md:mt-0 max-md:border-t-0; }
+  .ds-nav.site-nav a { @apply max-md:py-1 max-md:border-b-0; }
+  @media (min-width: 900px) and (max-width: 1120px) {
+    .ds-nav.site-nav { @apply flex flex-row mt-0 border-t-0; }
+    .ds-nav.site-nav a { @apply py-1 border-b-0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn.ds-hover, .btn.ds-active, .choice.ds-hover, .attr-tag.ds-hover { @apply translate-y-0 scale-100; }
+  }
 
   /* Movimento reduzido: hover mantém só a troca de cor — sem subir, sem sombra
      animada, sem giro do chevron. */

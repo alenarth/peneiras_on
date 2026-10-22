@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design System · Peneiras On</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fontes sem bloquear a renderização: entram como preload e viram folha de
+       estilo quando terminam de baixar; sem JavaScript, o <noscript> carrega igual. -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
+  <meta name="description" content="Styleguide do Peneiras On: tokens de cor, tipografia, espaçamento e breakpoints, e os componentes em todos os estados (default, hover, focus, active, disabled, error).">
+  <meta name="theme-color" content="#111417">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Peneiras On">
+  <meta property="og:title" content="Design System · Peneiras On">
+  <meta property="og:description" content="Styleguide do Peneiras On: tokens de cor, tipografia, espaçamento e breakpoints, e os componentes em todos os estados.">
+  <meta property="og:image" content="https://peneirason.vercel.app/assets/brand/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="assets/css/tailwind.css">
+</head>
+<body data-page="design-system.html">
+<!-- ============================================================
+     STYLEGUIDE — publicado dentro da aplicação (Sprint 4, FED).
+     Regras desta página:
+       · todo componente é o REAL: mesmas classes das telas (.btn, .input,
+         .tag, .card…), compiladas do mesmo input.css;
+       · hover, focus e active aparecem forçados pelas classes ds-*, que só
+         existem aqui (input.css, bloco "styleguide") e repetem o que o estado
+         real faz; disabled e error usam os atributos reais (disabled,
+         aria-invalid="true");
+       · a primeira amostra de cada linha (Default) é interativa — dá para
+         comparar com o mouse e com o Tab; as forçadas ficam fora da ordem de
+         tabulação (tabindex="-1") para o teclado não passar por 60 cópias.
+     ============================================================ -->
+
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div data-site-header></div>
+
+  <main id="conteudo" tabindex="-1">
+
+  <!-- ABERTURA -->
+  <section class="section">
+    <div class="wrap pt-16 pb-12">
+      <span class="tag tag--outline tag--section">Styleguide · Sprint 4</span>
+      <h1 class="display text-fluid-hero leading-display-tight tracking-tighter mt-4 mb-0 mx-0">Design<br><span class="mark inline-block leading-display-loose">system.</span></h1>
+      <p class="lead mt-5 mb-0 max-w-copy">Os tokens e os componentes que montam o Peneiras On, publicados dentro da própria aplicação. Nada aqui é desenho: cada amostra usa as mesmas classes das telas, então o que muda no código muda nesta página.</p>
+      <nav aria-label="Seções do styleguide" class="flex flex-wrap gap-2 mt-8">
+        <a class="btn btn--ghost btn--sm" href="#cores">Cores</a>
+        <a class="btn btn--ghost btn--sm" href="#tipografia">Tipografia</a>
+        <a class="btn btn--ghost btn--sm" href="#espacos">Espaços e breakpoints</a>
+        <a class="btn btn--ghost btn--sm" href="#componentes">Componentes</a>
+        <a class="btn btn--ghost btn--sm" href="#estados-de-tela">Estados de tela</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============================== CORES ============================== -->
+  <section class="section" id="cores" aria-labelledby="t-cores">
+    <div class="wrap section__pad flex flex-col gap-12">
+      <div class="grid-2 items-end">
+        <div>
+          <span class="tag tag--outline tag--section">Tokens · @theme</span>
+          <h2 class="display h2 mt-3 mb-0" id="t-cores">Cores.</h2>
+        </div>
+        <p class="text-15 leading-copy text-ink-soft m-0">Tema escuro único, laranja como marca. Cada token é uma variável <code class="font-mono text-13 text-ink">--color-*</code> do bloco <code class="font-mono text-13 text-ink">@theme</code> em <code class="font-mono text-13 text-ink">assets/css/input.css</code>. A razão de contraste é medida (fórmula WCAG 2.1) contra o fundo em que o token é usado de fato. AAA ≥ 7:1 · AA ≥ 4,5:1 · componente/foco ≥ 3:1.</p>
+      </div>
+
+      <!-- Superfícies -->
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Superfícies</h3><span class="section-label__action font-mono text-11 text-ink-mute">o texto --ink sobre cada uma</span></div>
+        <ul class="list-none p-0 m-0 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-bg border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-bg</code><span class="font-mono text-11 text-ink-mute">#111417</span><p class="text-13 leading-copy text-ink-soft m-0">Fundo da página.</p><span class="font-mono text-11 text-success mt-1">17,7:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-bg-alt border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-bg-alt</code><span class="font-mono text-11 text-ink-mute">#1A1D22</span><p class="text-13 leading-copy text-ink-soft m-0">Faixas, células, trilho de barra.</p><span class="font-mono text-11 text-success mt-1">16,2:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-surface border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-surface</code><span class="font-mono text-11 text-ink-mute">#151A1F</span><p class="text-13 leading-copy text-ink-soft m-0">Rodapé.</p><span class="font-mono text-11 text-success mt-1">16,7:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-surface-alt border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-surface-alt</code><span class="font-mono text-11 text-ink-mute">#1C2128</span><p class="text-13 leading-copy text-ink-soft m-0">Superfície intermediária.</p><span class="font-mono text-11 text-success mt-1">15,5:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-card border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-card</code><span class="font-mono text-11 text-ink-mute">#20252D</span><p class="text-13 leading-copy text-ink-soft m-0">Cards, campos, botão fantasma.</p><span class="font-mono text-11 text-success mt-1">14,7:1 · AAA</span></div></li>
+        </ul>
+      </div>
+
+      <!-- Texto -->
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Texto</h3></div>
+        <ul class="list-none p-0 m-0 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-ink border-b border-line-soft"></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-ink</code><span class="font-mono text-11 text-ink-mute">#F8FAFC</span><p class="text-13 leading-copy text-ink-soft m-0">Texto principal; preenchimento do botão primário (com texto --bg).</p><span class="font-mono text-11 text-success mt-1">17,7:1 sobre --bg · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-ink-soft border-b border-line-soft"></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-ink-soft</code><span class="font-mono text-11 text-ink-mute">#CBD5E1</span><p class="text-13 leading-copy text-ink-soft m-0">Texto secundário, parágrafos de apoio.</p><span class="font-mono text-11 text-success mt-1">10,4:1 sobre --card · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-ink-mute border-b border-line-soft"></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-ink-mute</code><span class="font-mono text-11 text-ink-mute">#A3ADBA</span><p class="text-13 leading-copy text-ink-soft m-0">Rótulos mono, dicas, contadores.</p><span class="font-mono text-11 text-ink mt-1">6,8:1 sobre --card · AA</span></div></li>
+        </ul>
+      </div>
+
+      <!-- Marca -->
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Marca</h3><span class="section-label__action font-mono text-11 text-ink-mute">preenchimentos — o texto vai por cima</span></div>
+        <ul class="list-none p-0 m-0 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-accent border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-accent-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-accent</code><span class="font-mono text-11 text-ink-mute">#F97316</span><p class="text-13 leading-copy text-ink-soft m-0">CTA, destaque, barra de progresso. Carrega texto --accent-ink.</p><span class="font-mono text-11 text-ink mt-1">texto 6,9:1 · AA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-accent-ink border-b border-line-soft"></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-accent-ink</code><span class="font-mono text-11 text-ink-mute">#120E0B</span><p class="text-13 leading-copy text-ink-soft m-0">Texto sobre laranja.</p><span class="font-mono text-11 text-ink mt-1">6,9:1 sobre --accent · AA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-accent-soft border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-accent-soft</code><span class="font-mono text-11 text-ink-mute">rgba(249,115,22,.16)</span><p class="text-13 leading-copy text-ink-soft m-0">Fundo de aviso e de linha favorita.</p><span class="font-mono text-11 text-success mt-1">--ink 14,2:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-gold border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-gold-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-gold</code><span class="font-mono text-11 text-ink-mute">#FB923C</span><p class="text-13 leading-copy text-ink-soft m-0">Legado Pelé, plano Premium. Carrega --gold-ink.</p><span class="font-mono text-11 text-success mt-1">texto 8,5:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-gold-ink border-b border-line-soft"></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-gold-ink</code><span class="font-mono text-11 text-ink-mute">#120E0B</span><p class="text-13 leading-copy text-ink-soft m-0">Texto sobre dourado.</p><span class="font-mono text-11 text-success mt-1">8,5:1 sobre --gold · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-gold-soft border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-gold-deep">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-gold-soft</code><span class="font-mono text-11 text-ink-mute">rgba(251,146,60,.18)</span><p class="text-13 leading-copy text-ink-soft m-0">Fundo da tag dourada.</p><span class="font-mono text-11 text-ink mt-1">--gold-deep 6,6:1 · AA</span></div></li>
+        </ul>
+      </div>
+
+      <!-- Semânticos -->
+      <div class="card border-accent p-6 max-md:p-5">
+        <div class="section-label"><h3 class="section-label__title m-0">Tokens semânticos</h3><span class="section-label__action font-mono text-11 text-accent-text">decisão de acessibilidade</span></div>
+        <p class="text-15 leading-copy text-ink-soft mt-0 mb-6 max-w-copy">Estes tokens <strong class="text-ink">existem por decisão de acessibilidade</strong>, não de estética. Cor de marca e cor de texto têm papéis separados: o laranja que preenche um botão não é o mesmo laranja que vira letra, e erro nunca é laranja — laranja é chamada para ação e não pode significar "problema" ao mesmo tempo. Cor também nunca vai sozinha: erro leva ícone e texto, foco leva anel, status leva rótulo.</p>
+        <ul class="list-none p-0 m-0 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <li class="flex flex-col gap-1 p-4 rounded-lg bg-bg-alt border border-line-soft"><div class="flex items-center gap-3 mb-2"><span class="size-10 rounded-md bg-accent-text"></span><span class="inline-flex items-center justify-center size-10 rounded-md bg-card border border-line-soft font-display font-black text-16 text-accent-text">Aa</span></div><code class="font-mono text-12 text-ink">--color-accent-text</code><span class="font-mono text-11 text-ink-mute">#FB923C</span><p class="text-13 leading-copy text-ink-soft m-0">Laranja <em>de texto</em> (rótulos, números, links de destaque). Um tom mais claro que --accent: 6,8:1 no card contra 5,5:1 do laranja de preenchimento.</p><span class="font-mono text-11 text-ink mt-1">6,8:1 sobre --card · AA</span></li>
+          <li class="flex flex-col gap-1 p-4 rounded-lg bg-bg-alt border border-line-soft"><div class="flex items-center gap-3 mb-2"><span class="size-10 rounded-md bg-gold-deep"></span><span class="inline-flex items-center justify-center size-10 rounded-md bg-card border border-line-soft font-display font-black text-16 text-gold-deep">Aa</span></div><code class="font-mono text-12 text-ink">--color-gold-deep</code><span class="font-mono text-11 text-ink-mute">#FBBF24</span><p class="text-13 leading-copy text-ink-soft m-0">Dourado <em>de texto</em> (Premium, favorito). O dourado de preenchimento não serve como letra.</p><span class="font-mono text-11 text-success mt-1">9,2:1 sobre --card · AAA</span></li>
+          <li class="flex flex-col gap-1 p-4 rounded-lg bg-bg-alt border border-line-soft"><div class="flex items-center gap-3 mb-2"><span class="size-10 rounded-md bg-danger"></span><span class="inline-flex items-center justify-center size-10 rounded-md bg-card border border-line-soft font-display font-black text-16 text-danger">⚠</span></div><code class="font-mono text-12 text-ink">--color-danger</code><span class="font-mono text-11 text-ink-mute">#F87171</span><p class="text-13 leading-copy text-ink-soft m-0">Erro, sempre com ícone ⚠ e mensagem. Vermelho, nunca laranja.</p><span class="font-mono text-11 text-ink mt-1">5,6:1 sobre --card · AA</span></li>
+          <li class="flex flex-col gap-1 p-4 rounded-lg bg-bg-alt border border-line-soft"><div class="flex items-center gap-3 mb-2"><span class="size-10 rounded-md bg-danger-soft border border-danger"></span><span class="inline-flex items-center justify-center size-10 rounded-md bg-danger-soft border border-danger font-display font-black text-16 text-ink">Aa</span></div><code class="font-mono text-12 text-ink">--color-danger-soft</code><span class="font-mono text-11 text-ink-mute">rgba(248,113,113,.14)</span><p class="text-13 leading-copy text-ink-soft m-0">Fundo do campo com erro (junto da borda --danger).</p><span class="font-mono text-11 text-success mt-1">--ink 11,9:1 · AAA</span></li>
+          <li class="flex flex-col gap-1 p-4 rounded-lg bg-bg-alt border border-line-soft"><div class="flex items-center gap-3 mb-2"><span class="size-10 rounded-md bg-success"></span><span class="inline-flex items-center justify-center size-10 rounded-md bg-card border border-line-soft font-display font-black text-16 text-success">✓</span></div><code class="font-mono text-12 text-ink">--color-success</code><span class="font-mono text-11 text-ink-mute">#22C55E</span><p class="text-13 leading-copy text-ink-soft m-0">Confirmação, status "aberta", delta positivo.</p><span class="font-mono text-11 text-ink mt-1">6,8:1 sobre --card · AA</span></li>
+          <li class="flex flex-col gap-1 p-4 rounded-lg bg-bg-alt border border-line-soft"><div class="flex items-center gap-3 mb-2"><span class="size-10 rounded-md bg-focus"></span><span class="inline-flex items-center justify-center size-10 rounded-md bg-card border border-line-soft outline-solid outline-3 outline-focus outline-offset-2 font-mono text-10 text-ink">Tab</span></div><code class="font-mono text-12 text-ink">--color-focus</code><span class="font-mono text-11 text-ink-mute">#FBBF24</span><p class="text-13 leading-copy text-ink-soft m-0">Anel de foco de 3px. Âmbar, distinto da marca, para nunca ser confundido com seleção.</p><span class="font-mono text-11 text-success mt-1">11,1:1 sobre --bg · mín. 3:1</span></li>
+        </ul>
+      </div>
+
+      <!-- Hover -->
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Estados de hover</h3><span class="section-label__action font-mono text-11 text-ink-mute">cada um medido contra o texto que carrega</span></div>
+        <ul class="list-none p-0 m-0 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-ink-hover border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-bg">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-ink-hover</code><span class="font-mono text-11 text-ink-mute">#E2E8F0</span><p class="text-13 leading-copy text-ink-soft m-0">Botão primário em hover.</p><span class="font-mono text-11 text-success mt-1">texto --bg 15,0:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-accent-hover border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-accent-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-accent-hover</code><span class="font-mono text-11 text-ink-mute">#EA580C</span><p class="text-13 leading-copy text-ink-soft m-0">CTA laranja em hover.</p><span class="font-mono text-11 text-ink mt-1">texto --accent-ink 5,4:1 · AA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-gold-hover border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-gold-ink">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-gold-hover</code><span class="font-mono text-11 text-ink-mute">#F59E0B</span><p class="text-13 leading-copy text-ink-soft m-0">Botão dourado em hover.</p><span class="font-mono text-11 text-success mt-1">texto --gold-ink 8,9:1 · AAA</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-danger-hover border-b border-line-soft flex items-center px-4"><span class="font-display font-black text-20 text-bg">Aa</span></div><div class="p-4 flex flex-col gap-1"><code class="font-mono text-12 text-ink">--color-danger-hover</code><span class="font-mono text-11 text-ink-mute">#EF4444</span><p class="text-13 leading-copy text-ink-soft m-0">Botão de perigo em hover.</p><span class="font-mono text-11 text-ink mt-1">texto --bg 4,9:1 · AA</span></div></li>
+        </ul>
+      </div>
+
+      <!-- Linhas -->
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Linhas</h3></div>
+        <ul class="list-none p-0 m-0 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-bg flex items-center px-4"><span class="block h-0.5 w-full bg-line"></span></div><div class="p-4 flex flex-col gap-1 border-t border-line-soft"><code class="font-mono text-12 text-ink">--color-line</code><span class="font-mono text-11 text-ink-mute">#374151</span><p class="text-13 leading-copy text-ink-soft m-0">Divisórias e contornos. Nunca é o único sinal de estado: foco usa o anel âmbar, erro usa ícone e texto.</p><span class="font-mono text-11 text-ink-mute mt-1">1,8:1 sobre --bg · divisória</span></div></li>
+          <li class="card card--flush flex flex-col"><div class="h-16 bg-card flex items-center px-4"><span class="block h-0.5 w-full bg-line-soft"></span></div><div class="p-4 flex flex-col gap-1 border-t border-line-soft"><code class="font-mono text-12 text-ink">--color-line-soft</code><span class="font-mono text-11 text-ink-mute">rgba(255,255,255,.14)</span><p class="text-13 leading-copy text-ink-soft m-0">Divisória interna de cards e listas.</p><span class="font-mono text-11 text-ink-mute mt-1">1,6:1 sobre --card · divisória</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== TIPOGRAFIA ============================== -->
+  <section class="section" id="tipografia" aria-labelledby="t-tipo">
+    <div class="wrap section__pad flex flex-col gap-12">
+      <div class="grid-2 items-end">
+        <div>
+          <span class="tag tag--outline tag--section">Tokens · --font-* · --text-*</span>
+          <h2 class="display h2 mt-3 mb-0" id="t-tipo">Tipografia.</h2>
+        </div>
+        <p class="text-15 leading-copy text-ink-soft m-0">Três famílias com papéis fixos, carregadas do Google Fonts sem bloquear a renderização (<code class="font-mono text-13 text-ink">display=swap</code>, com fallback em cada pilha). Escala em px — só os tamanhos que as telas usam.</p>
+      </div>
+
+      <div class="g g-3 gap-4">
+        <div class="card flex flex-col gap-3">
+          <div class="kicker">--font-display</div>
+          <div class="font-display font-black uppercase tracking-display-lg text-48 leading-display">Archivo</div>
+          <p class="text-13 leading-copy text-ink-soft m-0">Títulos, botões, números grandes. Sempre em caixa alta, pesos 800 (<code class="font-mono text-12 text-ink">font-extrabold</code>) e 900 (<code class="font-mono text-12 text-ink">font-black</code>).</p>
+          <div class="flex gap-4 items-baseline font-display uppercase text-22"><span class="font-extrabold">800 Peneira</span><span class="font-black">900 Gol</span></div>
+        </div>
+        <div class="card flex flex-col gap-3">
+          <div class="kicker">--font-body</div>
+          <div class="font-body font-semibold text-48 leading-display tracking-display">Inter</div>
+          <p class="text-13 leading-copy text-ink-soft m-0">Corpo de texto, campos, tabelas. Pesos 400 a 700.</p>
+          <p class="text-15 leading-copy m-0">Onde o talento encontra o jogo, independentemente de onde estiver.</p>
+        </div>
+        <div class="card flex flex-col gap-3">
+          <div class="kicker">--font-mono</div>
+          <div class="font-mono font-semibold text-40 leading-display">JetBrains</div>
+          <p class="text-13 leading-copy text-ink-soft m-0">Rótulos, kickers, datas e contagens — os números têm a mesma largura, então contadores não "dançam".</p>
+          <div class="font-mono text-11 uppercase tracking-label text-ink-soft">15·JUN·2026 · 487 inscritos</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Estilos compostos</h3><span class="section-label__action font-mono text-11 text-ink-mute">classes de componente (input.css)</span></div>
+        <div class="flex flex-col">
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.display.h1</code><span class="display h1">Gol de placa.</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.display.h2</code><span class="display h2">Peneiras.</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.display.h3</code><span class="display h3">Próxima peneira</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.lead</code><span class="lead">O número em cima de cada estado é a quantidade de peneiras abertas.</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.section-kicker</code><span class="section-kicker accent m-0">Pronto para entrar em campo?</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.kicker</code><span class="kicker">Sua próxima peneira</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.mono</code><span class="mono">Passo 3/5 · Futebol</span></div>
+          <div class="g g-label-lg gap-4 py-4 border-t border-b border-line-soft items-baseline"><code class="font-mono text-12 text-accent-text">.mark</code><span class="display text-36"><span class="mark">convocado.</span></span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Escala</h3><span class="section-label__action font-mono text-11 text-ink-mute">--text-* em px · os que aparecem no código</span></div>
+        <div class="flex flex-col">
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">72 · text-72</code><span class="display text-72">Gol.</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">64 · text-64</code><span class="display text-64">Gol.</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">56 · text-56</code><span class="display text-56">Gol.</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">48 · text-48</code><span class="display text-48">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">44 · text-44</code><span class="display text-44">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">36 · text-36</code><span class="display text-36">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">32 · text-32</code><span class="display text-32">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">28 · text-28</code><span class="display text-28">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">26 · text-26</code><span class="display text-26">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">24 · text-24</code><span class="display text-24">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">22 · text-22</code><span class="display text-22">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">20 · text-20</code><span class="display text-20">Peneira</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">18 · text-18</code><span class="text-18">Texto de abertura (.lead)</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">16 · text-16</code><span class="text-16">Parágrafo de seção</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">15 · text-15</code><span class="text-15">Campo de formulário, FAQ</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">14 · text-14</code><span class="text-14">Texto de card</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">13 · text-13</code><span class="text-13">Botão, tabela, toast</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">12 · text-12</code><span class="font-mono text-12">Rótulo mono grande</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">11 · text-11</code><span class="font-mono text-11 uppercase tracking-label">Rótulo de campo, kicker</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">10 · text-10</code><span class="font-mono text-10 uppercase tracking-label">Tag, legenda de stat</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">9 · text-9</code><span class="font-mono text-9 uppercase tracking-widest">Eixo de gráfico</span></div>
+          <div class="g g-label gap-4 py-2 border-t border-b border-line-soft items-center"><code class="font-mono text-11 text-ink-mute">8 · text-8</code><span class="font-mono text-8 uppercase">Chevron do menu</span></div>
+        </div>
+        <p class="font-mono text-11 text-ink-mute mt-4 mb-0">Títulos fluidos (clamp): <code class="text-ink">text-fluid-hero</code> 34→72px · <code class="text-ink">text-fluid-h1</code> 56→96px · <code class="text-ink">text-fluid-lg</code> 28→80px · <code class="text-ink">text-fluid-md</code> 36→72px · <code class="text-ink">text-fluid-sm</code> 32→56px · <code class="text-ink">text-fluid-p</code> 28→56px.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== ESPAÇOS ============================== -->
+  <section class="section" id="espacos" aria-labelledby="t-espacos">
+    <div class="wrap section__pad flex flex-col gap-12">
+      <div class="grid-2 items-end">
+        <div>
+          <span class="tag tag--outline tag--section">Tokens · --spacing · --radius · --breakpoint-*</span>
+          <h2 class="display h2 mt-3 mb-0" id="t-espacos">Espaços, raios<br>e breakpoints.</h2>
+        </div>
+        <p class="text-15 leading-copy text-ink-soft m-0">Espaçamento em múltiplos de 4px (<code class="font-mono text-13 text-ink">--spacing: .25rem</code>): <code class="font-mono text-13 text-ink">p-4</code> = 16px, <code class="font-mono text-13 text-ink">gap-6</code> = 24px. Os passos abaixo são os que mais aparecem nas telas.</p>
+      </div>
+
+      <div class="g g-main gap-8 items-start">
+        <div>
+          <div class="section-label"><h3 class="section-label__title m-0">Espaçamento</h3></div>
+          <div class="flex flex-col gap-2.5" aria-label="Escala de espaçamento" role="list">
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">1 · 4px</code><span class="block h-3 w-1 bg-accent rounded-sm"></span><span></span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">2 · 8px</code><span class="block h-3 w-2 bg-accent rounded-sm"></span><span></span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">3 · 12px</code><span class="block h-3 w-3 bg-accent rounded-sm"></span><span></span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">4 · 16px</code><span class="block h-3 w-4 bg-accent rounded-sm"></span><span></span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">5 · 20px</code><span class="block h-3 w-5 bg-accent rounded-sm"></span><span class="font-mono text-10 text-ink-mute">margem lateral no celular</span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">6 · 24px</code><span class="block h-3 w-6 bg-accent rounded-sm"></span><span class="font-mono text-10 text-ink-mute">padding de card</span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">8 · 32px</code><span class="block h-3 w-8 bg-accent rounded-sm"></span><span class="font-mono text-10 text-ink-mute">margem lateral (.wrap)</span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">12 · 48px</code><span class="block h-3 w-12 bg-accent rounded-sm"></span><span></span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">16 · 64px</code><span class="block h-3 w-16 bg-accent rounded-sm"></span><span></span></div>
+            <div role="listitem" class="g g-row-hist gap-3 items-center"><code class="font-mono text-11 text-ink-mute">20 · 80px</code><span class="block h-3 w-20 bg-accent rounded-sm"></span><span class="font-mono text-10 text-ink-mute">respiro de seção</span></div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-8">
+          <div>
+            <div class="section-label"><h3 class="section-label__title m-0">Raios</h3></div>
+            <div class="g g-2 gap-4">
+              <div class="flex items-center gap-3"><span class="size-14 shrink-0 bg-card border-2 border-ink/40 rounded-md"></span><span class="font-mono text-11 text-ink-soft"><span class="text-ink">rounded-md · 6px</span><br>tags, avatares</span></div>
+              <div class="flex items-center gap-3"><span class="size-14 shrink-0 bg-card border-2 border-ink/40 rounded"></span><span class="font-mono text-11 text-ink-soft"><span class="text-ink">rounded · 8px</span><br>--radius: botões, campos</span></div>
+              <div class="flex items-center gap-3"><span class="size-14 shrink-0 bg-card border-2 border-ink/40 rounded-xl"></span><span class="font-mono text-11 text-ink-soft"><span class="text-ink">rounded-xl · 12px</span><br>cards, vidro, menus</span></div>
+              <div class="flex items-center gap-3"><span class="size-14 shrink-0 bg-card border-2 border-ink/40 rounded-full"></span><span class="font-mono text-11 text-ink-soft"><span class="text-ink">rounded-full</span><br>barras, pontos</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label"><h3 class="section-label__title m-0">Sombras</h3></div>
+            <div class="g g-3 gap-4">
+              <div class="flex flex-col gap-2"><span class="h-12 rounded bg-card shadow-btn"></span><code class="font-mono text-11 text-ink-soft">shadow-btn</code></div>
+              <div class="flex flex-col gap-2"><span class="h-12 rounded bg-card shadow-header"></span><code class="font-mono text-11 text-ink-soft">shadow-header</code></div>
+              <div class="flex flex-col gap-2"><span class="h-12 rounded bg-card shadow-menu"></span><code class="font-mono text-11 text-ink-soft">shadow-menu</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label"><h3 class="section-label__title m-0">Breakpoints</h3><span class="section-label__action font-mono text-11 text-ink-mute">usados como max-sm: / max-md: / max-lg:</span></div>
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-1"><div class="flex justify-between font-mono text-11"><span class="text-ink">sm · 560px</span><span class="text-ink-mute">grades viram 1 coluna</span></div><div class="h-3 rounded-full bg-bg-alt border border-line-soft"><div class="h-full w-[43.75%] rounded-full bg-ink/45"></div></div></div>
+          <div class="flex flex-col gap-1"><div class="flex justify-between font-mono text-11"><span class="text-ink">md · 900px</span><span class="text-ink-mute">menu hambúrguer, painéis empilham</span></div><div class="h-3 rounded-full bg-bg-alt border border-line-soft"><div class="h-full w-[70.3%] rounded-full bg-ink/70"></div></div></div>
+          <div class="flex flex-col gap-1"><div class="flex justify-between font-mono text-11"><span class="text-ink">lg · 1280px</span><span class="text-ink-mute">largura máxima da página (.wrap)</span></div><div class="h-3 rounded-full bg-bg-alt border border-line-soft"><div class="h-full w-full rounded-full bg-accent"></div></div></div>
+        </div>
+        <p class="font-mono text-11 text-ink-soft mt-4 mb-0 p-3 rounded-lg bg-bg-alt border border-line-soft">Esta janela agora:
+          <strong class="text-accent-text sm:hidden">abaixo de 560px — celular</strong>
+          <strong class="text-accent-text hidden sm:inline md:hidden">entre 560 e 899px — tablet em pé</strong>
+          <strong class="text-accent-text hidden md:inline lg:hidden">entre 900 e 1279px — tablet deitado / notebook</strong>
+          <strong class="text-accent-text hidden lg:inline">1280px ou mais — desktop</strong>
+          <span class="text-ink-mute">(a frase muda só com CSS, pelos mesmos breakpoints)</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== COMPONENTES ============================== -->
+  <!-- data-no-reveal: sem a revelação por rolagem aqui (ui.js), o deslocamento
+       dela brigaria com o estado forçado dos cards e botões. -->
+  <section class="section" id="componentes" aria-labelledby="t-comp" data-no-reveal>
+    <div class="wrap section__pad flex flex-col gap-14">
+      <div class="grid-2 items-end">
+        <div>
+          <span class="tag tag--outline tag--section">Componentes · @layer components</span>
+          <h2 class="display h2 mt-3 mb-0" id="t-comp">Componentes<br>e estados.</h2>
+        </div>
+        <div class="flex flex-col gap-3">
+          <p class="text-15 leading-copy text-ink-soft m-0">Cada linha mostra o mesmo componente em todos os estados, lado a lado. <strong class="text-ink">Hover, focus e active</strong> estão fixados por classes <code class="font-mono text-13 text-ink">ds-*</code> que só existem nesta página e repetem o estado real. <strong class="text-ink">Disabled e error</strong> usam os atributos de verdade (<code class="font-mono text-13 text-ink">disabled</code>, <code class="font-mono text-13 text-ink">aria-invalid</code>).</p>
+          <p class="font-mono text-11 text-ink-mute m-0">A amostra "Default" de cada linha é interativa: passe o mouse ou chegue nela com Tab para comparar.</p>
+        </div>
+      </div>
+
+      <!-- ---------- BOTÕES ---------- -->
+      <div class="flex flex-col gap-8" aria-labelledby="t-btn" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-btn">Botões</h3><span class="section-label__action font-mono text-11 text-ink-mute">hierarquia: accent &gt; primary &gt; ghost</span></div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.btn--accent <span class="text-ink-mute normal-case tracking-normal">· chamada principal (CTA)</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--accent">Inscrever</button></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--accent ds-hover" tabindex="-1">Inscrever</button></div><span class="ds-state__label"><strong>Hover</strong> · sobe 1px + sombra</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--accent ds-focus" tabindex="-1">Inscrever</button></div><span class="ds-state__label"><strong>Focus</strong> · anel 3px âmbar</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--accent ds-hover ds-active" tabindex="-1">Inscrever</button></div><span class="ds-state__label"><strong>Active</strong> · pressionado</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--accent" disabled>Inscrever</button></div><span class="ds-state__label"><strong>Disabled</strong> · 40%, sem reação</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--accent is-busy" disabled><span class="loading__spinner" aria-hidden="true"></span>Enviando…</button></div><span class="ds-state__label"><strong>Carregando</strong> · is-busy + disabled</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.btn--primary <span class="text-ink-mute normal-case tracking-normal">· ação principal neutra</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary">Próximo</button></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary ds-hover" tabindex="-1">Próximo</button></div><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary ds-focus" tabindex="-1">Próximo</button></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary ds-hover ds-active" tabindex="-1">Próximo</button></div><span class="ds-state__label"><strong>Active</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary" disabled>Próximo</button></div><span class="ds-state__label"><strong>Disabled</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary is-busy" disabled><span class="loading__spinner" aria-hidden="true"></span>Salvando…</button></div><span class="ds-state__label"><strong>Carregando</strong></span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.btn--ghost <span class="text-ink-mute normal-case tracking-normal">· ação secundária, filtros</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--ghost">Voltar</button></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--ghost ds-hover" tabindex="-1">Voltar</button></div><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--ghost ds-focus" tabindex="-1">Voltar</button></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--ghost ds-hover ds-active" tabindex="-1">Voltar</button></div><span class="ds-state__label"><strong>Active</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--ghost" disabled>Encerrada</button></div><span class="ds-state__label"><strong>Disabled</strong> · peneira encerrada</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--primary btn--sm" aria-pressed="true">Abertas</button></div><span class="ds-state__label"><strong>Selecionado</strong> · filtro com aria-pressed</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.btn--gold · .btn--danger · .btn--on-dark</h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--gold btn--sm">★ Favorito</button></div><span class="ds-state__label"><strong>Gold</strong> · default</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--gold btn--sm ds-hover" tabindex="-1">★ Favorito</button></div><span class="ds-state__label"><strong>Gold</strong> · hover</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--danger btn--sm">✗ Descartar</button></div><span class="ds-state__label"><strong>Danger</strong> · default</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="btn btn--danger btn--sm ds-hover" tabindex="-1">✗ Descartar</button></div><span class="ds-state__label"><strong>Danger</strong> · hover</span></div>
+            <div class="ds-state on-dark"><div class="ds-state__stage"><button type="button" class="btn btn--on-dark btn--sm">Já sou inscrito</button></div><span class="ds-state__label"><strong>On-dark</strong> · sobre foto</span></div>
+            <div class="ds-state on-dark"><div class="ds-state__stage"><button type="button" class="btn btn--on-dark btn--sm ds-hover" tabindex="-1">Já sou inscrito</button></div><span class="ds-state__label"><strong>On-dark</strong> · hover</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">Tamanhos</h4>
+          <div class="flex flex-wrap items-center gap-3 p-4 rounded-lg bg-bg-alt border border-line-soft">
+            <button type="button" class="btn btn--accent btn--sm">btn--sm · 32px</button>
+            <button type="button" class="btn btn--accent">btn · 44px</button>
+            <button type="button" class="btn btn--accent btn--lg">btn--lg · 56px</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- CAMPOS ---------- -->
+      <div class="flex flex-col gap-8" aria-labelledby="t-campos" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-campos">Campos de formulário</h3><span class="section-label__action font-mono text-11 text-ink-mute">.field · .input · .select · .textarea</span></div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">input</h4>
+          <div class="ds-states">
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Nome</span></div><input class="input" placeholder="Seu nome completo"></label><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Nome (hover)</span></div><input class="input ds-hover" placeholder="Seu nome completo" tabindex="-1"></label><span class="ds-state__label"><strong>Hover</strong> · borda clareia</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Nome (focus)</span></div><input class="input ds-focus" placeholder="Seu nome completo" tabindex="-1"></label><span class="ds-state__label"><strong>Focus</strong> · anel 3px</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Nome (active)</span></div><input class="input ds-focus" value="Lucas Olivei" tabindex="-1"></label><span class="ds-state__label"><strong>Active</strong> · digitando</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Nome (disabled)</span></div><input class="input" value="Lucas Oliveira" disabled></label><span class="ds-state__label"><strong>Disabled</strong> · travado ao enviar</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>CPF (erro)</span></div><input class="input" value="123.456" aria-invalid="true" aria-describedby="ds-err-cpf" tabindex="-1"><span class="field__error" id="ds-err-cpf">O CPF precisa ter 11 dígitos. Você digitou 6.</span></label><span class="ds-state__label"><strong>Error</strong> · ícone + texto + borda</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">select</h4>
+          <div class="ds-states">
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Estado</span></div><select class="select"><option>RJ</option><option>SP</option><option>MG</option></select></label><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Estado (hover)</span></div><select class="select ds-hover" tabindex="-1"><option>RJ</option></select></label><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Estado (focus)</span></div><select class="select ds-focus" tabindex="-1"><option>RJ</option></select></label><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Estado (active)</span></div><select class="select ds-focus ds-hover" tabindex="-1"><option>SP</option></select></label><span class="ds-state__label"><strong>Active</strong> · escolhendo</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Estado (disabled)</span></div><select class="select" disabled><option>RJ</option></select></label><span class="ds-state__label"><strong>Disabled</strong></span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Posição (erro)</span></div><select class="select" aria-invalid="true" aria-describedby="ds-err-pos" tabindex="-1"><option>Escolha…</option></select><span class="field__error" id="ds-err-pos">Escolha sua posição principal.</span></label><span class="ds-state__label"><strong>Error</strong></span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">textarea</h4>
+          <div class="ds-states">
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Observações</span><span class="field__optional">opcional</span></div><textarea class="textarea" placeholder="Pontos fortes…"></textarea></label><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Observações (hover)</span></div><textarea class="textarea ds-hover" placeholder="Pontos fortes…" tabindex="-1"></textarea></label><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Observações (focus)</span></div><textarea class="textarea ds-focus" placeholder="Pontos fortes…" tabindex="-1"></textarea></label><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Observações (active)</span></div><textarea class="textarea ds-focus" tabindex="-1">Drible curto, pé direito</textarea></label><span class="ds-state__label"><strong>Active</strong> · digitando</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Observações (disabled)</span></div><textarea class="textarea" disabled>Enviando…</textarea></label><span class="ds-state__label"><strong>Disabled</strong></span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Mensagem (erro)</span></div><textarea class="textarea" aria-invalid="true" aria-describedby="ds-err-msg" tabindex="-1">me chama no zap</textarea><span class="field__error" id="ds-err-msg">Contato fora da plataforma não pode ser enviado.</span></label><span class="ds-state__label"><strong>Error</strong></span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.file-input <span class="text-ink-mute normal-case tracking-normal">· foto com prévia (foto.js, FileReader) — input nativo, só o botão interno estilizado</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Foto</span></div><input type="file" class="file-input" accept="image/jpeg,image/png,image/webp"></label><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Foto (focus)</span></div><input type="file" class="file-input ds-focus" tabindex="-1"></label><span class="ds-state__label"><strong>Focus</strong> · anel 3px</span></div>
+            <div class="ds-state"><div class="field"><div class="foto__preview"><div class="loading"><span class="loading__spinner" aria-hidden="true"></span><span>Lendo a foto…</span></div></div></div><span class="ds-state__label"><strong>Carregando</strong> · lendo o arquivo (aria-busy na prévia)</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Foto (disabled)</span></div><input type="file" class="file-input" disabled></label><span class="ds-state__label"><strong>Disabled</strong> · durante a leitura</span></div>
+            <div class="ds-state"><label class="field"><div class="field__label"><span>Foto (erro)</span></div><input type="file" class="file-input" aria-invalid="true" aria-describedby="ds-err-foto" tabindex="-1"><span class="field__error" id="ds-err-foto">Essa foto tem 7,2 MB e o limite é 5 MB.</span></label><span class="ds-state__label"><strong>Error</strong> · tipo ou tamanho</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.choice <span class="text-ink-mute normal-case tracking-normal">· escolha única do cadastro (posição, pé)</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage w-full"><button type="button" class="choice w-full">Meia</button></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><button type="button" class="choice w-full ds-hover" tabindex="-1">Meia</button></div><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><button type="button" class="choice w-full ds-focus" tabindex="-1">Meia</button></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><button type="button" class="choice w-full ds-hover ds-active" tabindex="-1">Meia</button></div><span class="ds-state__label"><strong>Active</strong> · pressionando</span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><button type="button" class="choice w-full is-active" tabindex="-1">Meia</button></div><span class="ds-state__label"><strong>Selecionado</strong> · is-active</span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><button type="button" class="choice choice--accent w-full is-active" tabindex="-1">Direito</button></div><span class="ds-state__label"><strong>Selecionado</strong> · choice--accent</span></div>
+          </div>
+          <p class="font-mono text-11 text-ink-mute m-0">Sem estado disabled nem error próprios: o erro do grupo aparece na mensagem .field__error abaixo dele, como nos campos.</p>
+        </div>
+      </div>
+
+      <!-- ---------- TAGS ---------- -->
+      <div class="flex flex-col gap-8" aria-labelledby="t-tags" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-tags">Tags</h3><span class="section-label__action font-mono text-11 text-ink-mute">.tag é rótulo, não controle</span></div>
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">Variantes de .tag <span class="text-ink-mute normal-case tracking-normal">· sem hover/focus: não é clicável</span></h4>
+          <div class="flex flex-wrap gap-3 p-4 rounded-lg bg-bg-alt border border-line-soft">
+            <span class="tag">tag</span>
+            <span class="tag tag--accent">● inscrições</span>
+            <span class="tag tag--success">● aberta</span>
+            <span class="tag tag--outline">● encerrada</span>
+            <span class="tag tag--danger">⚠ erro</span>
+            <span class="tag tag--gold">Plano Premium</span>
+            <span class="tag tag--ink">Inscrito</span>
+            <span class="tag tag--outline-on-dark">Encerradas</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.tag--section <span class="text-ink-mute normal-case tracking-normal">· abre seção; acende quando o mouse entra nela</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><span class="tag tag--outline tag--section">Temporada 2026</span></div><span class="ds-state__label"><strong>Default</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><span class="tag tag--outline tag--section ds-hover">Temporada 2026</span></div><span class="ds-state__label"><strong>Hover</strong> · na seção</span></div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.attr-tag <span class="text-ink-mute normal-case tracking-normal">· tag clicável do feed (confirmar atributo)</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="attr-tag" aria-pressed="false" data-ds-toggle><span class="attr-tag__icon" aria-hidden="true">⚡</span><span>Velocidade</span><span class="attr-tag__count">108</span></button></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="attr-tag ds-hover" aria-pressed="false" tabindex="-1"><span class="attr-tag__icon" aria-hidden="true">⚡</span><span>Velocidade</span><span class="attr-tag__count">108</span></button></div><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="attr-tag ds-focus" aria-pressed="false" tabindex="-1"><span class="attr-tag__icon" aria-hidden="true">⚡</span><span>Velocidade</span><span class="attr-tag__count">108</span></button></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="attr-tag ds-hover ds-active" aria-pressed="false" tabindex="-1"><span class="attr-tag__icon" aria-hidden="true">⚡</span><span>Velocidade</span><span class="attr-tag__count">108</span></button></div><span class="ds-state__label"><strong>Active</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="attr-tag" aria-pressed="true" tabindex="-1"><span class="attr-tag__icon" aria-hidden="true">⚡</span><span>Velocidade</span><span class="attr-tag__count">109</span></button></div><span class="ds-state__label"><strong>Confirmada</strong> · aria-pressed</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><button type="button" class="ftoggle is-active" aria-pressed="true" tabindex="-1">Só favoritos</button></div><span class="ds-state__label"><strong>Filtro ligado</strong> · .ftoggle</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- CARDS ---------- -->
+      <div class="flex flex-col gap-8" aria-labelledby="t-cards" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-cards">Cards</h3><span class="section-label__action font-mono text-11 text-ink-mute">.card · .card--hover · .card--dark</span></div>
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+          <div class="flex flex-col gap-2">
+            <article class="card card--flush card--hover" aria-labelledby="ds-c1"><div class="py-3 px-4 border-b border-line flex justify-between items-center"><span class="tag tag--success">● aberta</span><span class="font-mono text-10 text-ink-mute">13 – 17 anos</span></div><div class="p-4"><div class="display text-24 tracking-display" id="ds-c1">Niterói</div><div class="font-mono text-11 text-ink-soft mt-1">RJ · 10 DE OUT. DE 2026</div></div><div class="p-3 border-t border-line-soft"><a href="peneiras.html" class="btn btn--primary btn--sm btn--full">Quero participar</a></div></article>
+            <span class="ds-state__label"><strong>Default</strong> · interativo</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <article class="card card--flush card--hover ds-hover" aria-labelledby="ds-c2"><div class="py-3 px-4 border-b border-line flex justify-between items-center"><span class="tag tag--success">● aberta</span><span class="font-mono text-10 text-ink-mute">13 – 17 anos</span></div><div class="p-4"><div class="display text-24 tracking-display" id="ds-c2">Niterói</div><div class="font-mono text-11 text-ink-soft mt-1">RJ · 10 DE OUT. DE 2026</div></div><div class="p-3 border-t border-line-soft"><a href="peneiras.html" class="btn btn--primary btn--sm btn--full" tabindex="-1">Quero participar</a></div></article>
+            <span class="ds-state__label"><strong>Hover</strong> · sobe 4px + sombra</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <article class="card card--flush" aria-labelledby="ds-c3"><div class="py-3 px-4 border-b border-line flex justify-between items-center"><span class="tag tag--success">● aberta</span><span class="font-mono text-10 text-ink-mute">13 – 17 anos</span></div><div class="p-4"><div class="display text-24 tracking-display" id="ds-c3">Niterói</div><div class="font-mono text-11 text-ink-soft mt-1">RJ · 10 DE OUT. DE 2026</div></div><div class="p-3 border-t border-line-soft"><a href="peneiras.html" class="btn btn--primary btn--sm btn--full ds-focus" tabindex="-1">Quero participar</a></div></article>
+            <span class="ds-state__label"><strong>Focus</strong> · no controle do card</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <article class="card card--flush" aria-labelledby="ds-c4"><div class="py-3 px-4 border-b border-line flex justify-between items-center"><span class="tag tag--outline">● encerrada</span><span class="font-mono text-10 text-ink-mute">13 – 17 anos</span></div><div class="p-4"><div class="display text-24 tracking-display" id="ds-c4">São Paulo</div><div class="font-mono text-11 text-ink-soft mt-1">SP · 08 DE MAI. DE 2026</div><div class="mt-3"><div class="progress progress--sm"><div class="progress__fill progress__fill--ink w-full"></div></div></div></div><div class="p-3 border-t border-line-soft"><button type="button" class="btn btn--ghost btn--sm btn--full" disabled>Encerrada</button></div></article>
+            <span class="ds-state__label"><strong>Disabled</strong> · peneira encerrada</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="card state-card state-card--error"><p class="state-card__title">Não carregou.</p><p class="state-card__text">A lista de peneiras não chegou.</p><button type="button" class="btn btn--ghost btn--sm mt-2">Tentar de novo</button></div>
+            <span class="ds-state__label"><strong>Error</strong> · .state-card--error</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="card--dark p-6 rounded-xl border border-line relative overflow-hidden"><div class="absolute top-0 right-0 w-30 h-30 glow-accent"></div><div class="relative"><div class="kicker text-ink/55">Sua próxima peneira</div><div class="display text-28 mt-2">Rio · Caxias</div><div class="font-mono text-11 text-accent mt-2">● ATIVA</div></div></div>
+            <span class="ds-state__label"><strong>Variante</strong> · .card--dark</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- CRONÔMETRO DE ENCERRAMENTO ---------- -->
+      <div class="flex flex-col gap-6" aria-labelledby="t-timer" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-timer">Cronômetro de encerramento</h3><span class="section-label__action font-mono text-11 text-ink-mute">.event-timer · EventTimers (components.js)</span></div>
+        <div class="ds-states">
+          <div class="ds-state"><div class="event-timer mt-0 w-full"><span class="event-timer__label">Inscrições encerram em</span><span class="event-timer__value">13d 23h 18min 29s</span></div><span class="ds-state__label"><strong>Default</strong> · conta a cada segundo</span></div>
+          <div class="ds-state card--urgent"><div class="event-timer mt-0 w-full"><span class="event-timer__label">Inscrições encerram em</span><span class="event-timer__value">02min 41s</span></div><span class="ds-state__label"><strong>Urgente</strong> · últimas 24 h, sem piscar</span></div>
+          <div class="ds-state"><div class="event-timer mt-0 w-full"><span class="event-timer__label">Inscrições encerram em</span><span class="event-timer__value">13d 23h 18min</span><span class="event-timer__note">Contagem pausada: seu sistema pede movimento reduzido.</span></div><span class="ds-state__label"><strong>Pausado</strong> · prefers-reduced-motion</span></div>
+          <div class="ds-state"><div class="event-timer event-timer--closed mt-0 w-full"><span class="event-timer__label">Inscrições encerradas</span></div><span class="ds-state__label"><strong>Disabled</strong> · zerou, sem recarregar</span></div>
+        </div>
+        <p class="font-mono text-11 text-ink-mute m-0">Ao zerar, o card troca a tag para "encerrada", desabilita o botão e anuncia na região aria-live. O intervalo só roda com o card na tela e é limpo quando a lista é refiltrada.</p>
+      </div>
+
+      <!-- ---------- PROGRESSO + AVATAR ---------- -->
+      <div class="g g-2 gap-10">
+        <div class="flex flex-col gap-6" aria-labelledby="t-prog" role="group">
+          <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-prog">Barra de progresso</h3><span class="section-label__action font-mono text-11 text-ink-mute">.progress</span></div>
+          <div class="flex flex-col gap-5 p-5 rounded-lg bg-bg-alt border border-line-soft">
+            <div><div class="progress-head"><span class="mono text-soft">Score de completude</span><span class="font-display font-extrabold text-14">62%</span></div><div class="progress"><div class="progress__fill w-[62%]"></div></div><span class="ds-state__label mt-2 block"><strong>Default</strong> · com cabeçalho</span></div>
+            <div><div class="progress"><div class="progress__fill w-0"></div></div><span class="ds-state__label mt-2 block"><strong>Vazia</strong> · 0%</span></div>
+            <div><div class="progress"><div class="progress__fill w-full"></div></div><span class="ds-state__label mt-2 block"><strong>Completa</strong> · 100%</span></div>
+            <div><div class="progress progress--sm"><div class="progress__fill progress__fill--ink w-[80%]"></div></div><span class="ds-state__label mt-2 block"><strong>Neutra</strong> · --ink, peneira encerrada</span></div>
+            <div><div class="progress progress--sm"><div class="progress__fill w-[45%]"></div></div><span class="ds-state__label mt-2 block"><strong>progress--sm</strong> · 4px, em cards</span></div>
+            <div><div class="progress progress--xs"><div class="progress__fill w-[81%]"></div></div><span class="ds-state__label mt-2 block"><strong>progress--xs</strong> · 3px, barra lateral</span></div>
+          </div>
+          <p class="font-mono text-11 text-ink-mute m-0">Não é controle: sem hover, focus nem disabled. O número sempre aparece em texto ao lado — a barra não carrega a informação sozinha.</p>
+        </div>
+
+        <div class="flex flex-col gap-6" aria-labelledby="t-avatar" role="group">
+          <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-avatar">Avatar</h3><span class="section-label__action font-mono text-11 text-ink-mute">.avatar · avatarHTML()</span></div>
+          <div class="flex flex-wrap items-end gap-6 p-5 rounded-lg bg-bg-alt border border-line-soft">
+            <div class="flex flex-col items-start gap-2"><span class="avatar w-8 h-8 text-12">LO</span><span class="ds-state__label">32px · lista</span></div>
+            <div class="flex flex-col items-start gap-2"><span class="avatar">MP</span><span class="ds-state__label"><strong>Default</strong> · 40px</span></div>
+            <div class="flex flex-col items-start gap-2"><span class="avatar avatar--gold">RA</span><span class="ds-state__label"><strong>Gold</strong> · Premium / favorito</span></div>
+            <div class="flex flex-col items-start gap-2"><span class="avatar w-18 h-18 text-26">DS</span><span class="ds-state__label">72px · avaliação</span></div>
+          </div>
+          <p class="font-mono text-11 text-ink-mute m-0">Iniciais com borda: identifica sem depender de foto. Também não é controle — quando está dentro de um link, o foco é o do link.</p>
+        </div>
+      </div>
+
+      <!-- ---------- NAVEGAÇÃO ---------- -->
+      <div class="flex flex-col gap-8" aria-labelledby="t-nav" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-nav">Navegação</h3><span class="section-label__action font-mono text-11 text-ink-mute">header público · painéis · área do atleta</span></div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.site-nav a <span class="text-ink-mute normal-case tracking-normal">· header público (sublinhado laranja cresce)</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><div class="site-nav ds-nav"><a href="peneiras.html">Peneiras</a></div></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><div class="site-nav ds-nav"><a href="peneiras.html" class="ds-hover" tabindex="-1">Peneiras</a></div></div><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><div class="site-nav ds-nav"><a href="peneiras.html" class="ds-focus" tabindex="-1">Peneiras</a></div></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><div class="site-nav ds-nav"><a href="peneiras.html" class="is-active" tabindex="-1">Peneiras</a></div></div><span class="ds-state__label"><strong>Active</strong> · página atual (aria-current)</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.nav-item <span class="text-ink-mute normal-case tracking-normal">· barra lateral do olheiro e da gestora</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage w-full"><a class="nav-item" href="olheiro.html?tela=lista"><span class="text-14" aria-hidden="true">☰</span><span class="flex-1">Inscritos</span><span class="nav-item__count">487</span></a></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><a class="nav-item ds-hover" href="olheiro.html?tela=lista" tabindex="-1"><span class="text-14" aria-hidden="true">☰</span><span class="flex-1">Inscritos</span><span class="nav-item__count">487</span></a></div><span class="ds-state__label"><strong>Hover</strong> · recua 4px</span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><a class="nav-item ds-focus" href="olheiro.html?tela=lista" tabindex="-1"><span class="text-14" aria-hidden="true">☰</span><span class="flex-1">Inscritos</span><span class="nav-item__count">487</span></a></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><a class="nav-item is-active" href="olheiro.html?tela=lista" tabindex="-1"><span class="text-14" aria-hidden="true">☰</span><span class="flex-1">Inscritos</span><span class="nav-item__count">487</span></a></div><span class="ds-state__label"><strong>Active</strong> · tela atual</span></div>
+            <div class="ds-state"><div class="ds-state__stage w-full"><span class="nav-item nav-item--soon" aria-disabled="true"><span class="text-14" aria-hidden="true">⚙</span><span class="flex-1">Pesos</span><span class="nav-item__count">em breve</span></span></div><span class="ds-state__label"><strong>Disabled</strong> · em breve, fora do Tab</span></div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h4 class="font-mono text-12 uppercase tracking-label text-ink m-0">.atleta-tab <span class="text-ink-mute normal-case tracking-normal">· abas da área do atleta</span></h4>
+          <div class="ds-states">
+            <div class="ds-state"><div class="ds-state__stage"><a class="atleta-tab" href="atleta.html?tela=perfil"><span class="text-14" aria-hidden="true">✦</span> Perfil</a></div><span class="ds-state__label"><strong>Default</strong> · interativo</span></div>
+            <div class="ds-state"><div class="ds-state__stage"><a class="atleta-tab ds-hover" href="atleta.html?tela=perfil" tabindex="-1"><span class="text-14" aria-hidden="true">✦</span> Perfil</a></div><span class="ds-state__label"><strong>Hover</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><a class="atleta-tab ds-focus" href="atleta.html?tela=perfil" tabindex="-1"><span class="text-14" aria-hidden="true">✦</span> Perfil</a></div><span class="ds-state__label"><strong>Focus</strong></span></div>
+            <div class="ds-state"><div class="ds-state__stage"><a class="atleta-tab is-active" href="atleta.html?tela=perfil" tabindex="-1"><span class="text-14" aria-hidden="true">✦</span> Perfil</a></div><span class="ds-state__label"><strong>Active</strong> · aba atual</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- CHAT ---------- -->
+      <div class="flex flex-col gap-6" aria-labelledby="t-chat" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-chat">Chat intermediado</h3><span class="section-label__action font-mono text-11 text-ink-mute">.chat · chat.js</span></div>
+        <div class="g g-2 gap-6 items-start">
+          <ol class="list-none m-0 p-5 flex flex-col gap-3 rounded-lg bg-bg border border-line" aria-label="Exemplo de mensagens">
+            <li class="chat__sys">Conversa intermediada pela Peneiras On. O responsável legal do atleta pode acompanhar.</li>
+            <li class="chat__msg chat__msg--outro"><p class="chat__texto">Valeu, professor! Ganhamos de 2x1 no fim.</p><span class="chat__meta">Lucas Oliveira · 18/10, 19:40</span></li>
+            <li class="chat__msg chat__msg--minha"><p class="chat__texto">Você costuma jogar mais aberto ou por dentro?</p><span class="chat__meta">Você · 19/10, 09:15</span></li>
+          </ol>
+          <div class="flex flex-col gap-3">
+            <div class="chat__alerta"><p class="font-display font-extrabold text-14 uppercase m-0">Esta mensagem não foi enviada</p><p class="m-0 mt-1.5">Ela tem um número de telefone: <span class="font-mono">«(21) 98765-4321»</span>.</p><p class="m-0 mt-1.5"><strong>O que fazer:</strong> apague o contato e envie o resto. A Academia faz a ponte com o responsável.</p></div>
+            <span class="ds-state__label"><strong>Error</strong> · bloqueio de contato: role="alert" + aria-invalid no campo + toast</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- AVISOS ---------- -->
+      <div class="flex flex-col gap-6" aria-labelledby="t-toast" role="group">
+        <div class="section-label m-0"><h3 class="section-label__title m-0" id="t-toast">Avisos (toast)</h3><span class="section-label__action font-mono text-11 text-ink-mute">ui.js · toast()</span></div>
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
+          <div class="toast toast--success"><span class="toast__icon" aria-hidden="true">✓</span><span class="toast__body">Inscrição recebida. Resposta da equipe em até 2 dias úteis.</span></div>
+          <div class="toast toast--info"><span class="toast__icon" aria-hidden="true">ℹ</span><span class="toast__body">Sem conexão: a inscrição ficou guardada neste aparelho.</span></div>
+          <div class="toast toast--error"><span class="toast__icon" aria-hidden="true">⚠</span><span class="toast__body">Esta mensagem não foi enviada: ela tem um número de telefone.</span></div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-mono text-11 text-ink-mute mr-2">Disparar um de verdade (região aria-live):</span>
+          <button type="button" class="btn btn--ghost btn--sm" data-ds-toast="success">Sucesso</button>
+          <button type="button" class="btn btn--ghost btn--sm" data-ds-toast="info">Informação</button>
+          <button type="button" class="btn btn--ghost btn--sm" data-ds-toast="error">Erro</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== ESTADOS DE TELA ============================== -->
+  <section class="section" id="estados-de-tela" aria-labelledby="t-telas" data-no-reveal>
+    <div class="wrap section__pad flex flex-col gap-8">
+      <div class="grid-2 items-end">
+        <div>
+          <span class="tag tag--outline tag--section">Padrão · Sprint 4</span>
+          <h2 class="display h2 mt-3 mb-0" id="t-telas">Estados<br>de tela.</h2>
+        </div>
+        <p class="text-15 leading-copy text-ink-soft m-0">Toda tela que lista ou envia algo tem os quatro. Carregando: o container recebe <code class="font-mono text-13 text-ink">aria-busy="true"</code>, a frase vai para a região <code class="font-mono text-13 text-ink">aria-live</code> e o controle trava. Sob movimento reduzido, o giro some e fica só o texto.</p>
+      </div>
+      <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+        <div class="flex flex-col gap-2"><div class="card min-h-50 flex items-center justify-center" aria-hidden="true"><div class="loading loading--block"><span class="loading__spinner" aria-hidden="true"></span><span>Carregando peneiras…</span></div></div><span class="ds-state__label"><strong>Carregando</strong> · UI.busy()</span></div>
+        <div class="flex flex-col gap-2"><div class="card state-card min-h-50 justify-center"><p class="state-card__title">Nenhuma peneira com esses filtros.</p><p class="state-card__text">Tente outro status ou outro estado.</p><button type="button" class="btn btn--ghost btn--sm mt-2">Limpar filtros</button></div><span class="ds-state__label"><strong>Vazio</strong> · diz o que fazer</span></div>
+        <div class="flex flex-col gap-2"><div class="card state-card state-card--error min-h-50 justify-center"><p class="state-card__title">Não deu para carregar.</p><p class="state-card__text">Confira sua conexão e tente de novo.</p><button type="button" class="btn btn--ghost btn--sm mt-2">Tentar de novo</button></div><span class="ds-state__label"><strong>Erro</strong> · com saída</span></div>
+        <div class="flex flex-col gap-2"><div class="card state-card min-h-50 justify-center"><span class="tag tag--success">✓ Inscrição recebida</span><p class="state-card__title mt-2">Recebemos sua inscrição.</p><p class="state-card__text">Resposta em até 2 dias úteis.</p></div><span class="ds-state__label"><strong>Sucesso</strong> · diz o que vem</span></div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <div data-site-footer></div>
+
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script>
+    mountSiteHeader('design-system.html');
+    mountSiteFooter();
+
+    // A amostra "Default" da tag de atributo alterna de verdade, como no feed.
+    document.querySelectorAll('[data-ds-toggle]').forEach(b => b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      UI.setPressed(b, on);
+      b.querySelector('.attr-tag__count').textContent = on ? '109' : '108';
+    }));
+    // Botões de demonstração dos avisos: o toast real, com a região aria-live.
+    const DS_TOASTS = {
+      success: 'Exemplo de sucesso: a ação deu certo.',
+      info: 'Exemplo de informação: algo mudou na tela.',
+      error: 'Exemplo de erro: explica o que houve e o que fazer.',
+    };
+    document.querySelectorAll('[data-ds-toast]').forEach(b => b.addEventListener('click', () => {
+      toast(DS_TOASTS[b.dataset.dsToast], { type: b.dataset.dsToast });
+    }));
+  </script>
+</body>
+</html>

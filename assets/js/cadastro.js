@@ -39,13 +39,18 @@ const params = new URLSearchParams(location.search);
 
 // ?evento=<id> vindo de peneiras.html → login → aqui. Id inválido ou ausente
 // cai no cadastro normal; o passo 2 então mostra a peneira mais próxima.
-const evento = MOCK.EVENTS.find(e => e.id === params.get('evento')) || null;
-const nearest = evento || MOCK.SEASON.nextEvent;
+// Preenchidos quando os dados chegam (data.js → fetch), antes do 1º passo.
+let evento = null, nearest = null;
+// peneira escolhida cujas inscrições encerraram (o cronômetro do card pode ter
+// zerado no caminho até aqui): a pessoa é avisada e segue no cadastro normal
+let eventoEncerrado = null;
 
 function renderCadastro() {
   const STEPS = ['Identificação','Origem','Futebol','Mídias','Responsável'];
   const form = { name:'',dob:'',cpf:'',state:'RJ',city:'',position:'',foot:'',height:'',weight:'',club:'',years:'',videos:'',photo:false,consent:false,responsible:'',responsiblePhone:'' };
   let step = 1;
+  let fotoPreview = null;   // dataURL da prévia (foto.js); nunca sai desta página
+  const FOTO_ALT = 'Pré-visualização da sua foto de rosto';
 
   function score() {
     let s=0;
@@ -112,6 +117,7 @@ function renderCadastro() {
             ${tagHTML('PASSO '+step+'/5 · '+STEPS[step-1],'outline')}
           </div>
           ${evento ? `<p class="mono m-0 py-2.5 px-3.5 bg-accent-soft border border-line-soft text-12 normal-case tracking-normal" data-event-context>Você está se inscrevendo em ${esc(evento.name)} · ${fmtDotDate(evento.date, 'full')}</p>` : ''}
+          ${eventoEncerrado && step === 1 ? `<p class="mono m-0 py-2.5 px-3.5 bg-bg-alt border border-line text-12 normal-case tracking-normal" data-event-closed>As inscrições para ${esc(eventoEncerrado.name)} encerraram. Seu cadastro segue normalmente e a equipe indica a peneira mais próxima com vaga.</p>` : ''}
           <div data-score>${scoreBlockHTML()}</div>
         </div>
       </div>
@@ -119,6 +125,7 @@ function renderCadastro() {
       <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-30 px-8">
         <h1 class="display text-fluid-sm mt-0 mb-8 mx-0">${stepTitle()}</h1>
         <div class="flex flex-col gap-5 max-w-copy">${stepFields()}</div>
+        <p class="font-mono text-11 leading-relaxed text-ink-mute max-w-copy mt-8 mb-0" data-triagem>◆ Quem analisa sua inscrição é uma pessoa da nossa equipe, não um sistema automático. A resposta sai em até ${Envio.PRAZO_DIAS_UTEIS} dias úteis.</p>
       </div>
 
       <div class="cad-footer">
@@ -156,12 +163,18 @@ function renderCadastro() {
     };
     const validator = Validation.bind(null, (stepRules[step] || []).filter(f => f.el));
     if(next) next.onclick=()=>{ if (validator.validateAll(true)) { step++; render(); } };
-    // Envia para a planilha da equipe (envio.js). O botão trava enquanto envia
-    // para um clique duplo não gerar duas inscrições.
+    // Envia para a planilha da equipe (envio.js). Estado de carregando (ui.js):
+    // o <main> fica aria-busy, a frase vai para a região aria-live e os dois
+    // botões travam — um clique duplo geraria duas inscrições. A rede de evento
+    // é lenta (o envio espera até 15 s), então a espera é real e precisa aparecer.
     if(finish) finish.onclick=async()=>{
       if (!validator.validateAll(true)) return;
-      finish.disabled=true; finish.textContent='Enviando…';
-      renderDone(await Envio.inscricao(form, evento));
+      const restore = UI.busyButton(finish, 'Enviando…');
+      const done = UI.busy(screenEl, 'Enviando sua inscrição para a equipe. Aguarde.', { controls: [back] });
+      const resultado = await Envio.enviar(form, evento);
+      done();
+      restore();
+      renderDone(resultado);
     };
 
     function stepTitle() {
@@ -178,7 +191,7 @@ function renderCadastro() {
         <div class="bg-bg-alt p-4 border border-line-soft">
           <div class="kicker uppercase mb-1.5">${evento ? 'Peneira escolhida' : 'Peneira mais próxima'}</div>
           <div class="flex items-baseline justify-between"><span class="display text-18">${eventShortName(nearest)}</span><span class="font-mono text-12">${fmtDotDate(nearest.date)}</span></div>
-          <div class="mt-1 font-mono text-11 text-ink-soft">${evento ? nearest.city + '/' + nearest.state : '0 km de você · alocação automática'}</div>
+          <div class="mt-1 font-mono text-11 text-ink-soft">${nearest.city}/${nearest.state}${evento ? '' : ' · a equipe confirma sua peneira na análise'}</div>
         </div>`;
       if(step===3) return `
         ${field('Posição principal',`<div class="g g-2 gap-2" id="f-pos">${['Goleiro','Zagueiro','Lateral','Volante','Meia','Ponta','Atacante'].map(p=>`<button type="button" class="choice ${form.position===p?'is-active':''}" data-pos="${p}">${p}</button>`).join('')}</div>`)}
@@ -195,7 +208,7 @@ function renderCadastro() {
           <div><div class="font-display font-extrabold text-14 uppercase">Vídeos aumentam seu score</div><div class="font-mono text-11">até 25 pontos no ranking do olheiro</div></div>
         </div>
         ${field('Link do Instagram com vídeos',`<input class="input" id="f-videos" placeholder="instagram.com/seu.usuario" value="${esc(form.videos)}">`,'@usuario ou link direto',null,true)}
-        ${field('Foto de rosto',`<button type="button" id="f-photo" class="h-30 w-full bg-bg-alt border border-dashed border-line cursor-pointer flex flex-col items-center justify-center gap-1.5 text-ink">${form.photo?'<span class="display text-20">✓ Foto adicionada</span><span class="font-mono text-11 text-ink-soft">clique para remover</span>':'<span class="display text-20">+ enviar</span><span class="font-mono text-11 text-ink-soft">jpg, png · até 5MB</span>'}</button>`,'',null,true)}`;
+        ${Foto.campoHTML({ id: 'f-photo', rotulo: 'Foto de rosto', opcional: true, previa: fotoPreview, alt: FOTO_ALT })}`;
       // step 5
       if(needs) return `
         ${field('Nome do responsável legal',`<input class="input" id="f-resp" placeholder="Nome completo do responsável" value="${esc(form.responsible)}">`)}
@@ -233,46 +246,147 @@ function renderCadastro() {
       const [id,key]=pair.split(':'); const e=screenEl.querySelector('#'+id);
       if(e) e.oninput=()=>{ form[key]=e.value; updateLive(); };
     });
-    const photo=screenEl.querySelector('#f-photo'); if(photo) photo.onclick=()=>{ form.photo=!form.photo; render(); };
+    // FileReader (foto.js): prévia na hora, sem servidor. Para a planilha vai
+    // só "foto: S/N" — a imagem fica nesta página (contrato em python/CONTRATO.md).
+    Foto.ligar(screenEl, { id: 'f-photo', alt: FOTO_ALT, aoMudar: url => { fotoPreview = url; form.photo = !!url; updateLive(); } });
     const cons=screenEl.querySelector('#f-consent'); if(cons) cons.onclick=()=>{ form.consent=!form.consent; render(); };
   }
-  /* Conclusão: confirma antes de mandar para o login — sem isto a pessoa
-     preenchia cinco passos e caía num formulário de entrada, como se tivesse
-     dado errado. Sem bloco sticky nem barra fixa. */
+  /* ---------- Confirmação (MVP concierge) ----------
+     O envio grava uma linha na planilha; quem lê, confere e responde é uma
+     pessoa da equipe (CLI em Python). A tela diz exatamente isso:
+       1. o que acabou de acontecer, em uma frase;
+       2. o que vem a seguir e em quanto tempo — em dias úteis, com a data;
+       3. por onde a pessoa será procurada;
+       4. o que fazer se não houver retorno;
+       5. o código da inscrição (gerado em envio.js), para guardar.
+     Se o envio caiu na fila offline, a tela NÃO finge que chegou: diz que
+     está guardado no aparelho, que o prazo só começa quando chegar, e troca
+     sozinha para a versão "recebida" quando o reenvio der certo. */
   function renderDone(envio) {
     const sc = score();
-    // Concierge: a análise é feita pela equipe, então o prazo é dito com honestidade.
-    const aviso = envio === 'enviado'
-      ? 'Nossa equipe analisa cada inscrição e calcula sua alocação e seu ranking em até 48 horas.'
-      : 'Sua internet oscilou: a inscrição ficou guardada neste aparelho e será enviada sozinha quando a conexão voltar. Mantenha esta página no navegador.';
-    const loginHref = 'login.html?tipo=jogador' + (evento ? '&evento=' + encodeURIComponent(evento.id) : '');
+    const codigo = envio.codigo;
+    const naFila = envio.situacao !== 'enviado';
+    const prazo = Envio.PRAZO_DIAS_UTEIS;
+    const ate = fmtDiaUtil(addDiasUteis(new Date(), prazo));
+    const menor = !!form.responsible;
+    const fimTel = form.responsiblePhone.replace(/\D/g, '').slice(-4);
+    const peneira = evento ? `${esc(evento.name)} (${fmtDotDate(evento.date, 'full')})` : '';
+
+    const contato = menor
+      ? `No celular do responsável, ${esc(form.responsible.split(' ')[0])}, terminado em <strong>${fimTel}</strong>. É também por ele que chega a convocação, com local e horário.`
+      : `Para quem tem 18 anos ou mais este cadastro ainda não pede telefone, então a equipe não tem como avisar você sozinha. Depois do prazo, procure a equipe pelo <a href="sobre.html#contato" class="text-ink underline underline-offset-3">Fale com a gente</a> informando o código abaixo.`;
+
+    // cada passo: [rótulo, título, texto]
+    const passos = naFila ? [
+      ['Agora', 'Guardada neste aparelho', 'Ela ainda não chegou à equipe. O envio é automático assim que a internet voltar: basta abrir o site de novo neste mesmo navegador. Se limpar os dados do navegador antes disso, ela se perde.'],
+      ['Prazo', `${prazo} dias úteis a partir do envio`, 'O prazo só começa a contar quando a inscrição chegar à equipe. Esta tela muda sozinha quando isso acontecer.'],
+      ['Contato', 'Depois que chegar', contato],
+      ['Sem retorno?', 'Fale com a equipe', 'Se a conexão voltou e nada mudou aqui, use o botão "Tentar enviar agora". Não preencha de novo: isso criaria uma inscrição duplicada.'],
+    ] : [
+      ['Análise', 'Uma pessoa da equipe confere seus dados', `Não é um sistema automático: alguém da Peneiras On lê cada inscrição${evento ? ', confirma sua vaga na peneira escolhida' : ', escolhe a peneira mais próxima com vaga'} e calcula seu ranking.`],
+      ['Prazo', `Até ${prazo} dias úteis · ${ate}`, 'Dias úteis contam de segunda a sexta; feriados podem somar um dia.'],
+      ['Contato', menor ? 'Por SMS' : 'Você procura a equipe', contato],
+      ['Sem retorno?', `Se nada chegar até ${ate}`, `Escreva pelo <a href="sobre.html#contato" class="text-ink underline underline-offset-3">Fale com a gente</a> com o código abaixo. Não se inscreva de novo: isso criaria uma inscrição duplicada e atrasaria a análise.`],
+    ];
+
     document.documentElement.style.setProperty('--cad-head-h', '0px');
     screenEl.innerHTML = `
-      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8">
-        ${tagHTML('Inscrição enviada', 'accent')}
-        <h1 class="display text-fluid-sm mt-4 mb-3 mx-0" tabindex="-1" data-done-title>Perfil criado.<br>Você está no jogo.</h1>
-        <p class="text-16 leading-copy text-ink-soft max-w-copy-sm mt-0 mb-8 mx-0">${evento
-          ? `Sua inscrição em <strong>${esc(evento.name)}</strong> (${fmtDotDate(evento.date, 'full')}) foi registrada. Você recebe SMS com a confirmação e, se for convocado, com local e horário.`
-          : 'Seu perfil foi registrado. Você recebe SMS com a confirmação e será alocado na peneira mais próxima com vaga.'}</p>
-        <p class="text-14 leading-copy text-ink-soft max-w-copy-sm -mt-4 mb-8 mx-0" data-envio-aviso>${aviso}</p>
-        <div class="card max-w-copy-sm">
-          <div class="g g-2 gap-4 mb-5">
-            ${statHTML('Score de completude', sc + '%', { sub: sc >= 80 ? 'alto' : sc >= 60 ? 'bom' : 'inicial' })}
-            ${statHTML('Passos concluídos', '5/5', { sub: STEPS.length + ' etapas' })}
+      <div class="cad-body w-full max-w-narrow my-0 mx-auto pt-10 pb-16 px-8" data-done>
+        ${naFila ? tagHTML('⏸ Guardada no aparelho', 'outline') : tagHTML('✓ Inscrição recebida', 'success')}
+        <h1 class="display text-fluid-sm mt-4 mb-3 mx-0" tabindex="-1" data-done-title>${naFila ? 'Sua inscrição<br>ainda não foi enviada.' : 'Recebemos sua<br>inscrição.'}</h1>
+        <p class="lead max-w-copy-sm mt-0 mb-8 mx-0">${naFila
+          ? 'A internet caiu na hora do envio: seus dados ficaram guardados neste aparelho e seguem para a equipe sozinhos quando a conexão voltar.'
+          : `Ela já está na fila da nossa equipe${peneira ? ` para a ${peneira}` : ''}.`}</p>
+
+        <div class="g g-main gap-6 items-start">
+          <section class="card p-6" aria-labelledby="done-next">
+            <h2 class="section-label m-0 mb-1" id="done-next"><span class="section-label__title">O que acontece agora</span></h2>
+            <ol class="list-none m-0 p-0">
+              ${passos.map((p, i) => `<li class="g g-label gap-x-4 gap-y-1 py-4 ${i ? 'border-t border-line-soft' : ''}">
+                <span class="font-mono text-10 uppercase tracking-kicker text-ink-mute pt-0.5">${p[0]}</span>
+                <div><div class="font-display font-extrabold text-15 uppercase tracking-display-sm">${p[1]}</div><p class="text-14 leading-copy text-ink-soft mt-1 mb-0">${p[2]}</p></div>
+              </li>`).join('')}
+            </ol>
+            ${naFila ? `<div class="mt-2 pt-4 border-t border-line-soft flex items-center gap-3 flex-wrap" data-fila>
+              <button type="button" class="btn btn--primary btn--sm" data-reenviar>Tentar enviar agora</button>
+              <span class="font-mono text-11 text-ink-mute" data-fila-status>${navigator.onLine === false ? 'Sem conexão neste momento.' : ''}</span>
+            </div>` : ''}
+          </section>
+
+          <div class="flex flex-col gap-4">
+            <section class="card p-6" aria-labelledby="done-code">
+              <div class="kicker uppercase" id="done-code">Código da inscrição</div>
+              <p class="font-mono text-15 font-semibold text-ink break-all mt-2 mb-0 select-all" data-codigo>${esc(codigo)}</p>
+              <p class="text-13 leading-copy text-ink-soft mt-3 mb-4">Anote ou copie. É por ele que a equipe encontra sua inscrição sem precisar do seu CPF. Se pedirem, os 8 primeiros caracteres bastam: <strong class="font-mono text-ink">${esc(codigo.slice(0, 8).toUpperCase())}</strong>.</p>
+              <button type="button" class="btn btn--ghost btn--sm" data-copiar>Copiar código</button>
+            </section>
+            <section class="card p-6" aria-label="Score de completude">
+              ${progressHTML(sc, 100, { sm: true, label: 'Score de completude', sublabel: sc + '%' })}
+              <div class="font-mono text-10 text-ink-mute mt-2">Perfil mais completo, ranking melhor. Vídeos e foto contam pontos.</div>
+            </section>
           </div>
-          ${progressHTML(sc, 100, { sm: true })}
-          <div class="font-mono text-10 text-ink-mute mt-2">Você pode completar o perfil depois, pela sua área. Cada campo adicional sobe o score.</div>
         </div>
+
         <div class="btn-row btn-row--even gap-2 mt-8 max-w-form">
-          <a href="${loginHref}" class="btn btn--accent btn--lg">Entrar para acompanhar →</a>
-          <a href="peneiras.html" class="btn btn--ghost btn--lg">Ver outras peneiras</a>
+          <a href="peneiras.html" class="btn btn--accent btn--lg">Ver outras peneiras →</a>
+          <a href="index.html" class="btn btn--ghost btn--lg">Voltar ao início</a>
         </div>
       </div>`;
+
     const title = screenEl.querySelector('[data-done-title]');
     window.scrollTo(0, 0);
     title.focus({ preventScroll: true });
-    if (envio === 'enviado') toast('Inscrição enviada! Perfil criado com ' + sc + '% de completude.', { type: 'success', duration: 6000 });
-    else toast('Sem conexão: a inscrição foi guardada e será enviada assim que a internet voltar.', { type: 'info', duration: 8000 });
+    if (naFila) toast('Sem conexão: a inscrição ficou guardada neste aparelho e será enviada quando a internet voltar.', { type: 'info', duration: 8000 });
+    else toast(`Inscrição recebida. Resposta da equipe em até ${prazo} dias úteis.`, { type: 'success', duration: 6000 });
+
+    // Copiar: Clipboard API quando há contexto seguro; senão, seleciona o texto
+    // (o select-all também ajuda quem toca no código no celular).
+    screenEl.querySelector('[data-copiar]').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(codigo);
+        toast('Código copiado.', { type: 'success' });
+      } catch (e) {
+        const sel = getSelection(), range = document.createRange();
+        range.selectNodeContents(screenEl.querySelector('[data-codigo]'));
+        sel.removeAllRanges(); sel.addRange(range);
+        toast('Não deu para copiar sozinho: o código ficou selecionado, use Ctrl+C.', { type: 'info' });
+      }
+    };
+
+    if (!naFila) return;
+    // Fila offline: quando o envio.js conseguir mandar ESTA inscrição, a tela
+    // vira a confirmação de recebida — sem recarregar e sem fingir antes.
+    const onFila = e => {
+      if (!e.detail.enviados.includes(codigo)) return;
+      window.removeEventListener('peneiras:fila', onFila);
+      renderDone({ situacao: 'enviado', codigo });
+    };
+    window.addEventListener('peneiras:fila', onFila);
+    const retry = screenEl.querySelector('[data-reenviar]');
+    const status = screenEl.querySelector('[data-fila-status]');
+    retry.onclick = async () => {
+      const restore = UI.busyButton(retry, 'Enviando…');
+      const done = UI.busy(screenEl.querySelector('[data-fila]'), 'Tentando enviar a inscrição guardada.');
+      const r = await Envio.reenviarAgora();
+      if (r.enviados.includes(codigo)) return;   // onFila já redesenhou a tela
+      done('Ainda sem conexão. A inscrição continua guardada neste aparelho.');
+      restore();
+      status.textContent = 'Ainda sem conexão. Continua guardada; tentamos de novo sozinhos quando a internet voltar.';
+    };
+  }
+
+  /* Prazo em dias úteis: pula sábado e domingo (feriados não entram — a tela
+     avisa). Exibido como "quinta-feira, 23/10". */
+  function addDiasUteis(data, n) {
+    const d = new Date(data);
+    while (n > 0) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() !== 0 && d.getDay() !== 6) n--;
+    }
+    return d;
+  }
+  function fmtDiaUtil(d) {
+    return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
   }
 
   /* Idade calculada sem redesenhar o passo: redesenhar recriava o <input type="date">
@@ -293,4 +407,14 @@ function renderCadastro() {
   render();
 }
 
-renderCadastro();
+Dados.iniciar(() => {
+  const pedido = MOCK.EVENTS.find(e => e.id === params.get('evento')) || null;
+  if (pedido && eventStatus(pedido) === 'encerrada') eventoEncerrado = pedido;
+  else evento = pedido;
+  nearest = evento || MOCK.SEASON.nextEvent;
+  renderCadastro();
+}, {
+  vitrine: screenEl,
+  mensagem: 'Preparando o formulário…',
+  erro: 'O formulário de inscrição não carregou.',
+});

@@ -37,13 +37,28 @@ const cfg = ROLES[role];
    inscrição exige conta, então o caminho passa por aqui. Só nesse caso a tela
    explica o porquê e oferece o cadastro — quem abre o login direto não vê nada
    disso. Id inválido ou ausente cai no login normal. */
-const evento = MOCK.EVENTS.find(e => e.id === params.get('evento'));
+/* Sprint 4: os dados vêm por fetch (data.js). O login em si não depende
+   deles — só este aviso. Enquanto carrega, o aviso diz isso; se falhar, diz
+   também, e o formulário segue funcionando. */
+const eventoId = params.get('evento');
 const ctx = document.querySelector('[data-event-context]');
-if (evento && role === 'jogador' && ctx) {
-  ctx.innerHTML = `<span class="event-note__icon" aria-hidden="true">◆</span>
-    <span><strong>Para se inscrever em ${esc(eventShortName(evento))} (${fmtDotDate(evento.date, 'full')}) você precisa de uma conta.</strong>
-    Entre abaixo ou <a href="cadastro.html?evento=${esc(evento.id)}">crie a sua em 4 minutos</a>. A inscrição é gratuita.</span>`;
+if (eventoId && role === 'jogador' && ctx) {
+  ctx.innerHTML = `<span class="event-note__icon" aria-hidden="true">◆</span><span>Carregando a peneira escolhida…</span>`;
   ctx.hidden = false;
+  const done = UI.busy(ctx, 'Carregando a peneira escolhida.');
+  Dados.carregar().then(() => {
+    done();
+    const evento = MOCK.EVENTS.find(e => e.id === eventoId);
+    if (!evento) { ctx.hidden = true; return; }   // id inválido: login normal, como antes
+    ctx.innerHTML = `<span class="event-note__icon" aria-hidden="true">◆</span>
+      <span><strong>Para se inscrever em ${esc(eventShortName(evento))} (${fmtDotDate(evento.date, 'full')}) você precisa de uma conta.</strong>
+      Entre abaixo ou <a href="cadastro.html?evento=${esc(evento.id)}">crie a sua em 4 minutos</a>. A inscrição é gratuita.</span>`;
+  }, () => {
+    done();
+    ctx.innerHTML = `<span class="event-note__icon" aria-hidden="true">◆</span>
+      <span><strong>Não conseguimos carregar os dados da peneira escolhida agora.</strong>
+      Você pode entrar normalmente; para se inscrever, é preciso ter uma conta: <a href="cadastro.html?evento=${esc(eventoId)}">crie a sua</a>.</span>`;
+  });
 }
 
 // preencher lado
@@ -104,7 +119,7 @@ if (togglePwdBtn && pwd) togglePwdBtn.addEventListener('click', function() {
 const bottom = document.querySelector('[data-bottom-row]');
 if (role === 'jogador') {
   bottom.innerHTML = `<span class="text-13 text-ink-soft">Ainda não se inscreveu?</span>
-    <a href="cadastro.html${evento ? '?evento=' + encodeURIComponent(evento.id) : ''}" class="py-1 -my-1 font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Inscreva-se grátis →</a>`;
+    <a href="cadastro.html${eventoId ? '?evento=' + encodeURIComponent(eventoId) : ''}" class="py-1 -my-1 font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Inscreva-se grátis →</a>`;
 } else {
   const alts = Object.keys(ROLES).filter(r => r !== role);
   bottom.innerHTML = `<span class="text-13 text-ink-soft">É outro perfil?</span>

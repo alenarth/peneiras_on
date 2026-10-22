@@ -7,7 +7,7 @@
 mountSiteHeader('peneiras.html');
 mountSiteFooter();
 
-const season = MOCK.SEASON;
+let season = null;   // MOCK.SEASON, preenchido quando os dados chegam (data.js)
 const seasonLine = document.querySelector('[data-season-line]');
 const highlight = document.querySelector('[data-highlight]');
 const rows = document.querySelector('[data-rows]');
@@ -20,13 +20,13 @@ if (!seasonLine || !highlight || !rows || !count || !stateFilter || !statusFilte
 }
 const filters = { status: 'all', state: 'all' };
 
-/* ---------- Linha da temporada ---------- */
-document.querySelector('[data-season-line]').textContent =
-  `${season.events} peneiras · ${season.states} estados · inscrição gratuita`;
 
 /* ---------- Destaque: próxima peneira + contagem regressiva ---------- */
 function renderHighlight() {
   const e = season.nextEvent;
+  /* o destaque é montado de novo quando a peneira encerra com a página aberta
+     (onClose dos cronômetros), por isso a contagem antiga é desligada antes */
+  if (renderHighlight.stop) renderHighlight.stop();
   const status = eventStatus(e);
   const closed = status === 'encerrada';
   const cta = closed
@@ -60,7 +60,7 @@ function renderHighlight() {
         Convocados recebem SMS com local e horário. Chegue com 30 minutos de antecedência e leve documento com foto.
       </div>
     </div>`;
-  startCountdown(new Date(e.date + 'T08:00:00'), document);
+  renderHighlight.stop = startCountdown(new Date(e.date + 'T08:00:00'), document);
 }
 
 /* ---------- Mapa interativo ----------
@@ -134,8 +134,11 @@ function mountMap() {
 /* ---------- Filtros + grade ---------- */
 function paint(announceResult) {
   const data = filterEvents(MOCK.EVENTS, filters);
-  document.querySelector('[data-rows]').innerHTML =
+  // cronômetros dos cards antigos são limpos ANTES de trocar a lista (components.js)
+  EventTimers.stop(rows);
+  rows.innerHTML =
     data.length ? data.map((e, i) => eventCardHTML(e, 'publico').replace('<article ', `<article style="--i:${i}" `)).join('') : eventsEmptyHTML();
+  EventTimers.watch(rows, MOCK.EVENTS, onEventClosed);
   document.querySelector('[data-count]').textContent = `${data.length} de ${MOCK.EVENTS.length} peneiras`;
   document.querySelectorAll('[data-status]').forEach(b => {
     const on = b.dataset.status === filters.status;
@@ -148,18 +151,40 @@ function paint(announceResult) {
   if (announceResult) announce(`${data.length} peneiras na lista`);
 }
 
-document.querySelector('[data-status-filters]').innerHTML = EVENT_STATUS_FILTERS
-  .map(([k, label]) => `<button type="button" class="btn btn--ghost btn--sm font-mono tracking-label" data-status="${k}" aria-pressed="false">${label}</button>`)
-  .join('');
-document.querySelector('[data-state-filter]').innerHTML =
-  `<option value="all">Todos os estados</option>` +
-  eventStates(MOCK.EVENTS).map(uf => `<option value="${uf}">${uf}</option>`).join('');
+/* Uma peneira encerrou com a página aberta: o card já virou sozinho; se era
+   a do destaque, o destaque troca o botão; os números do mapa ficam como
+   estão até a próxima interação (o mapa mostra a temporada, não o segundo). */
+function onEventClosed(e) {
+  if (season.nextEvent.id === e.id) renderHighlight();
+}
 
-document.querySelectorAll('[data-status]').forEach(b => b.onclick = () => { filters.status = b.dataset.status; paint(true); });
-document.querySelector('[data-state-filter]').onchange = e => setState(e.target.value, true);
+/* ---------- Início: só depois que os dados chegam (data.js → fetch) ---------- */
+function iniciarPeneiras() {
+  season = MOCK.SEASON;
+  document.querySelector('[data-season-line]').textContent =
+    `${season.events} peneiras · ${season.states} estados · inscrição gratuita`;
 
-renderHighlight();
-mountMap();
-// ?uf=RJ (link vindo de outra tela) já chega com o estado escolhido
-const ufParam = (new URLSearchParams(location.search).get('uf') || '').toUpperCase();
-setState(eventStates(MOCK.EVENTS).includes(ufParam) ? ufParam : 'all', false);
+  document.querySelector('[data-status-filters]').innerHTML = EVENT_STATUS_FILTERS
+    .map(([k, label]) => `<button type="button" class="btn btn--ghost btn--sm font-mono tracking-label" data-status="${k}" aria-pressed="false">${label}</button>`)
+    .join('');
+  document.querySelector('[data-state-filter]').innerHTML =
+    `<option value="all">Todos os estados</option>` +
+    eventStates(MOCK.EVENTS).map(uf => `<option value="${uf}">${uf}</option>`).join('');
+
+  document.querySelectorAll('[data-status]').forEach(b => b.onclick = () => { filters.status = b.dataset.status; paint(true); });
+  document.querySelector('[data-state-filter]').onchange = e => setState(e.target.value, true);
+
+  renderHighlight();
+  mountMap();
+  // ?uf=RJ (link vindo de outra tela) já chega com o estado escolhido
+  const ufParam = (new URLSearchParams(location.search).get('uf') || '').toUpperCase();
+  setState(eventStates(MOCK.EVENTS).includes(ufParam) ? ufParam : 'all', false);
+}
+
+Dados.iniciar(iniciarPeneiras, {
+  // a 1ª vitrine recebe o aviso completo com 'Tentar de novo': o mapa, que abre a página
+  vitrine: [document.querySelector('[data-map]'), highlight, rows],
+  ocupado: document.querySelector('main'),
+  mensagem: 'Carregando o calendário de peneiras…',
+  erro: 'O calendário de peneiras não chegou.',
+});

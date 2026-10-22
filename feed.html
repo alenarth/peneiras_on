@@ -87,9 +87,18 @@
   <script>
     mountSiteHeader('feed.html');
     mountSiteFooter();
-    document.querySelector('[data-feed-line]').textContent =
-      `${MOCK.ATHLETES.length} atletas · ${new Set(MOCK.ATHLETES.map(a => a.state)).size} estados · ${MOCK.SEASON.events} peneiras`;
-    Feed.mount(document.getElementById('mural'));
+    // Sprint 4: atletas e peneiras chegam por fetch (data.js). O mural mostra
+    // o carregando no lugar dos cards e, se falhar, o erro com "Tentar de novo".
+    Dados.iniciar(() => {
+      document.querySelector('[data-feed-line]').textContent =
+        `${MOCK.ATHLETES.length} atletas · ${new Set(MOCK.ATHLETES.map(a => a.state)).size} estados · ${MOCK.SEASON.events} peneiras`;
+      Feed.mount(document.getElementById('mural'));
+    }, {
+      vitrine: document.querySelector('[data-feed-grid]'),
+      ocupado: document.getElementById('mural'),
+      mensagem: 'Carregando os destaques…',
+      erro: 'Os destaques da temporada não chegaram.',
+    });
   </script>
 </body>
 </html>

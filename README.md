@@ -3,7 +3,7 @@
 ## Identificação
 
 **Projeto:** Peneiras On — Challenge Pelé Academia · FIAP · Engenharia de Software · 1º ano ·
-Semi-presencial Rio de Janeiro · Sprint 3 · 2º semestre de 2026
+Semi-presencial Rio de Janeiro · Sprint 4 · 2º semestre de 2026
 
 **Disciplinas desta entrega:** Front-End Design (FED) e Web Development (WD)
 
@@ -16,6 +16,9 @@ Semi-presencial Rio de Janeiro · Sprint 3 · 2º semestre de 2026
 - João Thees Castro Santiago — RM 572829
 
 **Deploy:** [https://peneirason.vercel.app](https://peneirason.vercel.app)
+
+**Styleguide (Design System):** [https://peneirason.vercel.app/design-system.html](https://peneirason.vercel.app/design-system.html)
+— tokens e componentes em todos os estados, publicado na própria aplicação (link no rodapé).
 
 **Protótipo / Figma:** este projeto não tem Figma. O enunciado define o entregável-âncora da
 Sprint 3 como "protótipo navegável (ex.: Figma interativo) **ou** interface implementada" — esta
@@ -60,9 +63,10 @@ npm run build:site   # build + monta dist/ (páginas + assets) — é o que a Ve
 | `privacidade.html` | Política de Privacidade (LGPD/ECA) | — |
 | `login.html` | Login (3 perfis) | `?tipo=jogador\|olheiro\|academia` · `?evento=<id>` (contexto vindo de `peneiras.html`; id inválido cai no login normal) |
 | `recuperar.html` | Recuperação de senha (4 passos) | — |
-| `atleta.html` | Área do atleta | `?tela=status\|perfil\|peneiras` (`?tela=cadastro` redireciona para `cadastro.html`) |
-| `olheiro.html` | Painel do olheiro | `?tela=lista\|checkin\|avaliacao` · `?tela=perfil&id=<id>` |
+| `atleta.html` | Área do atleta | `?tela=status\|perfil\|peneiras\|mensagens` (`?tela=cadastro` redireciona para `cadastro.html`) |
+| `olheiro.html` | Painel do olheiro | `?tela=lista\|checkin\|avaliacao` · `?tela=perfil&id=<id>` · `?tela=mensagens[&id=<id>]` |
 | `gestora.html` | Painel da gestão | `?tela=dashboard\|mapa\|pipeline\|eventos` |
+| `design-system.html` | Styleguide: tokens (cores com contraste medido, tipografia, espaços, raios, breakpoints) e componentes em todos os estados, forçados lado a lado | — |
 
 O wizard de cadastro é público (`cadastro.html`), alcançado pelos CTAs "Quero me inscrever";
 o link antigo `atleta.html?tela=cadastro` redireciona para lá preservando `?evento=`. O perfil
@@ -87,11 +91,18 @@ assets/
   css/input.css                  → entrada do Tailwind: @theme (tokens) + base + componentes (@apply)
   css/residual.css               → CSS autoral residual, justificado bloco a bloco (ver abaixo)
   css/tailwind.css               → SAÍDA compilada (gerada pelo build, fora do git)
+  data/mock.json                 → dados mockados (atletas, peneiras com prazo de inscrição, regiões,
+                                   conversas do chat) — lidos por fetch, copiados para dist/
   js/
-    data.js                      → dados mockados (atletas, eventos, regiões)
+    data.js                      → carregador: fetch + async/await de data/mock.json, monta MOCK e
+                                   Dados.iniciar() (carregando → tela | erro com "Tentar de novo")
     ui.js                        → camada de interface genérica: toasts, announce() (aria-live),
-                                   helpers de DOM, localStorage defensivo, revelação por rolagem
-                                   ([data-reveal]) e números que contam ([data-countup]) — carregado antes dos demais
+                                   estado de carregando (busy/busyButton/loadingHTML), helpers de DOM,
+                                   localStorage defensivo, revelação por rolagem ([data-reveal]) e
+                                   números que contam ([data-countup]) — carregado antes dos demais
+    envio.js                     → envio da inscrição para a planilha (Apps Script) com fila offline
+    foto.js                      → foto com pré-visualização (FileReader), validação de tipo/tamanho
+    chat.js                      → chat intermediado olheiro ↔ atleta + regra de proteção ao menor
     components.js                → header, footer, dropdown, helpers de markup (tagHTML, statHTML…)
     hero.js                      → carrossel de fundo do hero da landing (crossfade, indicadores,
                                    pausa em hover/foco/aba oculta, respeita prefers-reduced-motion)
@@ -106,10 +117,12 @@ assets/
     radar.js                     → radar tático (SVG) + classificador de posição
     privacidade.js               → conteúdo da política
     peneiras.js                  → calendário público (filtros, destaque, sincronia com o mapa)
-    cadastro.js                  → wizard de cadastro de 5 passos
+    cadastro.js                  → wizard de cadastro de 5 passos e tela de confirmação do concierge
     login.js, recuperar.js       → lógica das telas de acesso
     atleta.js, olheiro.js,
     gestora.js                   → lógica de cada persona
+apps-script/Code.gs              → cópia versionada do Web App que grava a inscrição na planilha
+python/CONTRATO.md               → contrato de colunas site ↔ planilha ↔ CLI em Python
 ```
 
 ## Manual de Interatividade
@@ -117,8 +130,14 @@ assets/
 Todo o comportamento é **JavaScript vanilla com manipulação direta do DOM** — sem framework,
 sem runtime além do navegador. Os módulos são carregados por `<script>` na ordem
 `data.js → ui.js → components.js → (módulos auxiliares) → (módulo da tela)` — os auxiliares
-são `hero.js` na landing, `brazil-map.js` + `mapa.js` em `peneiras.html` e `brazil-map.js` +
-`mapa-calor.js` em `gestora.html`. Quem controla o quê:
+são `hero.js` na landing, `brazil-map.js` + `mapa.js` em `peneiras.html`, `brazil-map.js` +
+`mapa-calor.js` em `gestora.html`, `validation.js` + `envio.js` + `foto.js` no cadastro,
+`foto.js` + `chat.js` na área do atleta e `chat.js` no painel do olheiro.
+
+**Consumo assíncrono (Sprint 4).** Dois `fetch` com `async/await`: `data.js` busca
+`assets/data/mock.json` (GET, com tempo-limite) e `envio.js` manda a inscrição para o Web App do
+Apps Script (POST `text/plain`, com tempo-limite e fila offline). Os módulos de tela só leem `MOCK`
+depois que `Dados.iniciar()` resolve. Quem controla o quê:
 
 | Tela | Funcionalidade | Arquivo(s) |
 |---|---|---|
@@ -138,12 +157,39 @@ são `hero.js` na landing, `brazil-map.js` + `mapa.js` em `peneiras.html` e `bra
 | `gestora.html` | Dashboard, pipeline, eventos; na tela do mapa, os filtros e o painel da região selecionada | `gestora.js` |
 | `gestora.html?tela=mapa` | **Mapa de calor da demanda**: cada estado pintado por faixa (baixa/média/alta/crítica) com legenda; cobertura (peneira aberta) como contorno + ponto; filtros "Demanda alta", "Com peneira" e "Demanda reprimida" atenuam o que está fora do recorte em vez de esconder; tooltip no mouse e no foco; clique/Enter/Espaço seleciona a região e clicar de novo limpa | `mapa-calor.js` (desenho, legenda e interação) + `gestora.js` (filtros e painel) |
 | `privacidade.html` | Sumário com rolagem e foco, conteúdo da política | `privacidade.js` |
+| Todas as telas com dados | **Dados por `fetch` + `async/await`**: `assets/data/mock.json` é buscado uma vez por página; enquanto não chega, a área que depende dele mostra "Carregando…" (`aria-busy`, frase na região `aria-live`); se falhar (rede, 404, 10 s sem resposta), mostra o erro com **"Tentar de novo"** — nenhuma tela fica em branco; o login funciona mesmo sem os dados | `data.js` (`Dados.carregar`, `Dados.iniciar`) |
+| Todas | **Estado de carregando** padronizado: container com `aria-busy="true"`, giro + texto (sob `prefers-reduced-motion`, só texto), anúncio na região `aria-live` e o controle que disparou travado até terminar | `ui.js` (`busy`, `busyButton`, `loadingHTML`) |
+| `cadastro.html` | **Envio da inscrição** para a planilha da equipe (Apps Script, MVP concierge): o botão trava com "Enviando…" e o formulário fica `aria-busy`; sem rede, a inscrição vai para uma fila no `localStorage` e é reenviada sozinha (ao abrir o site ou quando a internet volta) | `envio.js` + `cadastro.js` |
+| `cadastro.html` | **Tela de confirmação** do concierge: o que aconteceu, o que vem e em quanto tempo (2 dias úteis, com a data), por onde a pessoa será procurada, o que fazer sem retorno e o **código da inscrição** (com "Copiar código"). Se caiu na fila offline, diz que está guardada no aparelho, oferece "Tentar enviar agora" e vira "Recebemos sua inscrição" sozinha quando o reenvio dá certo | `cadastro.js` (+ evento `peneiras:fila` de `envio.js`) |
+| `cadastro.html` (passo 4), `atleta.html?tela=perfil` | **Foto com pré-visualização (FileReader)**: valida tipo (JPG, PNG, WebP) e tamanho (5 MB) antes de ler; estado de carregando durante a leitura; erro se o arquivo não abrir; prévia com `alt`; input nativo (Tab, rótulo e anel de foco). A foto **não** vai com a inscrição — a planilha recebe só `foto: S/N` (contrato em `python/CONTRATO.md`) | `foto.js` |
+| `peneiras.html`, `atleta.html?tela=peneiras` | **Cronômetro de encerramento** em cada card aberto (`setInterval`, reaproveitando `countdownParts()` da contagem regressiva): atualiza a cada segundo; nas últimas 24 h, destaque de urgência sem piscar; ao zerar, o card vira "encerrada" e o botão desabilita sem recarregar (anúncio na região `aria-live`). Um intervalo por card **só enquanto ele está na tela** (IntersectionObserver), limpo ao sair da tela e antes de cada refiltro. Sob `prefers-reduced-motion`, o número fica parado com aviso, e um único `setTimeout` encerra o card na hora. A peneira de Porto Alegre (`e-11`) tem `demoEncerraEmMinutos: 3` no JSON, para a demonstração em vídeo | `components.js` (`EventTimers`, `eventTimerHTML`) |
+| `olheiro.html?tela=mensagens`, `atleta.html?tela=mensagens` | **Chat intermediado com proteção ao menor**: lista de mensagens em região `aria-live="polite"`, campo com rótulo, Enter envia e Shift+Enter quebra linha. Mensagem com telefone (em qualquer formato, inclusive por extenso ou com separadores estranhos), `@usuario`, e-mail, link externo, nome de rede social ou pedido de contato **não é enviada**: o campo fica `aria-invalid`, o aviso (`role="alert"`) explica por quê em tom acolhedor e o que fazer no lugar, e um toast confirma. "Pedir contato pela Academia" registra o pedido na conversa. A regra completa, com exemplos do que barra e do que passa, está no topo do arquivo | `chat.js` (+ `olheiro.js`, `atleta.js`) |
+| `design-system.html` | **Styleguide**: tokens e componentes com os estados hover/focus/active forçados por classes `ds-*` (só desta página) e disabled/error pelos atributos reais; a primeira amostra de cada linha é interativa | `design-system.html` + bloco "styleguide" em `input.css` |
 
 **Padrões de acessibilidade das interações:** estado de alternância em `aria-pressed`;
 contadores com texto para leitor de tela (`sr-only`); toasts em região `aria-live="polite"`
 (erros com `role="alert"`), sem roubar foco e com botão de fechar; mensagens de validação
 ligadas ao campo por `aria-describedby` + `aria-invalid="true"` e `role="alert"`; filtros
-anunciados por `announce()`; nada de animação sob `prefers-reduced-motion`.
+anunciados por `announce()`; espera real marcada com `aria-busy="true"` e o controle travado;
+cronômetros com `role="timer"` (sem falar cada segundo, só o encerramento); nada de animação
+sob `prefers-reduced-motion`.
+
+## Modelo de MVP adotado: concierge
+
+A inscrição do jogador é um **MVP concierge**: o site parece um produto pronto, mas a análise é
+feita à mão pela equipe.
+
+- **Automático (o site):** o wizard valida os dados e `envio.js` grava uma linha na aba
+  `Inscricoes` de uma planilha Google, por um Web App do Apps Script (`apps-script/Code.gs`).
+  Sem rede, a inscrição fica numa fila no navegador e é reenviada sozinha. O contrato das
+  colunas está em `python/CONTRATO.md`.
+- **Manual (a equipe):** a equipe baixa a planilha, processa no **CLI em Python** (`python/`) —
+  valida de novo, calcula ranking e escolhe a peneira — e **responde ao atleta**; para menores,
+  por SMS no celular do responsável. Nesta fase o resultado não volta para o site.
+- **O que o usuário ouve:** o formulário diz que a triagem é feita por pessoas, e a tela de
+  confirmação promete resposta **em até 2 dias úteis** (com a data calculada), explica por onde
+  vem o contato, o que fazer se nada chegar e entrega o código da inscrição. Nada de
+  "instantâneo": o prazo é o da equipe (`Envio.PRAZO_DIAS_UTEIS`, fonte única do número).
 
 ## Tecnologia / decisões
 
@@ -233,12 +279,14 @@ animado na navegação e FAQ com "+" que gira — tudo desligado sob `prefers-re
 > texto: texto claro com transparência é `text-ink/NN`, borda clara é `border-ink/NN`, e o
 > preenchimento neutro "cheio" (barra, ponto de linha do tempo, toggle selecionado, botão
 > primário) é `bg-ink` com `text-bg`. Razões medidas: `--ink` 17:1 sobre `--bg`;
-> `--ink-soft` 10,4:1 e `--ink-mute` 6,8:1 sobre `--card`; `--accent-text` 6,4:1;
-> `--gold-deep` 9,6:1; `--danger` 5,6:1; `--success` 6,8:1. Erro é vermelho, não laranja —
+> `--ink-soft` 10,4:1 e `--ink-mute` 6,8:1 sobre `--card`; `--accent-text` 6,8:1;
+> `--gold-deep` 9,2:1; `--danger` 5,6:1; `--success` 6,8:1. Erro é vermelho, não laranja —
 > laranja é CTA e destaque e não pode significar "problema" ao mesmo tempo. Hierarquia dos
 > botões: `--accent` (laranja) > `--primary` (claro) > `--ghost` (card com borda). Hover, todos
-> AA com o texto que carregam: `--color-ink-hover` #E2E8F0 (14:1), `--color-accent-hover`
-> #EA580C (6,5:1), `--color-gold-hover` #F59E0B (9,6:1), `--color-danger-hover` #EF4444 (5,9:1).
+> AA com o texto que carregam: `--color-ink-hover` #E2E8F0 (15,0:1), `--color-accent-hover`
+> #EA580C (5,4:1), `--color-gold-hover` #F59E0B (8,9:1), `--color-danger-hover` #EF4444 (4,9:1).
+> Valores recalculados na Sprint 4 pela fórmula WCAG 2.1 — os mesmos publicados em
+> `design-system.html`.
 > As cores de posição do radar (`POS_COLORS`, em `data.js`) são sete matizes distintas — uma
 > paleta categórica, não a paleta de interface.
 

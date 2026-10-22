@@ -252,7 +252,7 @@ function mountSiteFooter(opts = {}) {
     // Links mínimos: a Política saiu da nav e o compacto não tem a coluna Legal.
     // A página atual não aparece na própria lista.
     const here = location.pathname.split('/').pop() || 'index.html';
-    const links = [['index.html', 'Início'], ['sobre.html', 'Sobre'], ['peneiras.html', 'Peneiras'], ['privacidade.html', 'Política de Privacidade']]
+    const links = [['index.html', 'Início'], ['sobre.html', 'Sobre'], ['peneiras.html', 'Peneiras'], ['privacidade.html', 'Política de Privacidade'], ['design-system.html', 'Design System']]
       .filter(([href]) => href !== here)
       .map(([href, label]) => `<a href="${href}">${label}</a>`).join(' · ');
     host.innerHTML = `
@@ -298,6 +298,7 @@ function mountSiteFooter(opts = {}) {
             <a href="index.html#faq">FAQ</a>
             <a href="index.html#planos">Planos</a>
             <a href="feed.html">Destaques</a>
+            <a href="design-system.html">Design System</a>
           </div>
         </div>
         <div>
@@ -401,27 +402,29 @@ function countdownParts(target) {
 /* Atualiza a contagem a cada segundo dentro de `root` ([data-countdown] e
    [data-countdown-state]). Respeita prefers-reduced-motion: com movimento
    reduzido, renderiza uma vez, não fica piscando números e avisa no rótulo
-   que a atualização automática está desligada. */
+   que a atualização automática está desligada. Devolve a função que para o
+   intervalo (Sprint 4: quem redesenha a contagem desliga a anterior). */
 function startCountdown(target, root) {
   const scope = root || document;
   const host = scope.querySelector('[data-countdown]');
   const state = scope.querySelector('[data-countdown-state]');
-  if (!host) return;
+  if (!host) return () => {};
   const paint = () => {
     const { over, cells } = countdownParts(target);
     host.innerHTML = cells.map(c => `<div class="text-center p-3 bg-bg-alt border border-line-soft"><div class="display text-36">${c[0]}</div><div class="font-mono text-10 text-ink-soft uppercase mt-1">${c[1]}</div></div>`).join('');
     if (state) state.innerHTML = over ? tagHTML('encerrada', 'outline') : '';
     return over;
   };
-  if (paint()) return;
+  if (paint()) return () => {};
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     if (state) {
       state.innerHTML = tagHTML('atualização automática desligada', 'outline');
       state.title = 'Contagem congelada porque o sistema pede movimento reduzido. Recarregue a página para atualizar.';
     }
-    return;
+    return () => {};
   }
   const id = setInterval(() => { if (paint()) clearInterval(id); }, 1000);
+  return () => clearInterval(id);
 }
 
 /* Filtros de status: chave usada no estado da tela + rótulo do botão. */
@@ -432,11 +435,16 @@ const EVENT_STATUS_FILTERS = [
   ['encerrada', 'Encerradas'],
 ];
 
+/* Encerrada = a peneira já aconteceu OU o prazo de inscrição (encerraEm,
+   montado em data.js) passou. É recalculado a cada chamada, então o
+   cronômetro ao vivo pode virar o card sem recarregar a página. */
 function eventStatus(event) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const date = new Date(event.date + 'T00:00:00');
-  return date <= today ? 'encerrada' : event.status;
+  if (date <= today) return 'encerrada';
+  if (event.encerraEm && event.encerraEm.getTime() <= Date.now()) return 'encerrada';
+  return event.status;
 }
 
 /* Filtra por status ('all' ou um e.status) e, opcionalmente, por estado (UF). */
@@ -466,9 +474,13 @@ function eventCardHTML(e, mode, opts = {}) {
   else if (mode === 'atleta' && registered) cta = `<a href="atleta.html?tela=status" class="btn btn--ghost btn--sm btn--full">Ver comprovante</a>`;
   else if (mode === 'atleta') cta = `<button type="button" class="btn btn--primary btn--sm btn--full" data-register="${esc(e.id)}">Inscrever-se</button>`;
   else cta = `<a href="login.html?tipo=jogador&evento=${esc(e.id)}" class="btn btn--primary btn--sm btn--full">Quero participar</a>`;
-  return `<article class="card card--flush card--hover" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
+  // Cronômetro de encerramento (Sprint 4): só em peneira com inscrição aberta e
+  // prazo conhecido. O texto já sai calculado no HTML; EventTimers o mantém vivo.
+  const timer = !closed && e.encerraEm ? eventTimerHTML(e) : '';
+  const urgent = timer && isUrgent(e);
+  return `<article class="card card--flush card--hover${urgent ? ' card--urgent' : ''}" data-event="${esc(e.id)}" aria-labelledby="ev-${esc(e.id)}">
     <div class="py-3.5 px-5 border-b border-b-line flex justify-between items-center gap-2 flex-wrap">
-      <span class="flex gap-1.5 flex-wrap">${tagHTML('● ' + status, EVENT_STATUS_TONE[status] || 'outline')}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
+      <span class="flex gap-1.5 flex-wrap" data-status-tags>${tagHTML('● ' + status, EVENT_STATUS_TONE[status] || 'outline')}${urgent ? tagHTML('⏱ últimas horas', 'accent') : ''}${registered ? tagHTML('Inscrito', 'ink') : ''}</span>
       <span class="font-mono text-10 text-ink-mute">${e.age.replace('-', ' – ')} anos</span>
     </div>
     <div class="p-6">
@@ -479,10 +491,128 @@ function eventCardHTML(e, mode, opts = {}) {
         ${statHTML('Vagas', e.capacity)}
       </div>
       <div class="mt-4">${progressHTML(Math.min(e.registered, e.capacity * 5), e.capacity * 5, { sm: true, tone: closed ? 'ink' : 'accent' })}</div>
+      ${timer}
     </div>
-    <div class="p-3 border-t border-t-line-soft">${cta}</div>
+    <div class="p-3 border-t border-t-line-soft" data-event-cta>${cta}</div>
   </article>`;
 }
+
+/* ---------- Cronômetro de encerramento nos cards (Sprint 4) ----------
+   Reaproveita countdownParts() — a mesma conta da contagem regressiva grande.
+   · nas últimas 24 h o card ganha destaque de urgência (borda e texto em
+     laranja + tag "últimas horas"); nada pisca
+   · role="timer" (aria-live off): o leitor de tela não ouve cada segundo; só
+     o encerramento é anunciado, por announce()
+   · sob prefers-reduced-motion o número fica parado e o card avisa que a
+     atualização está pausada — mas o encerramento ainda acontece na hora. */
+const URGENT_MS = 24 * 3600000;
+function isUrgent(e) {
+  const ms = e.encerraEm.getTime() - Date.now();
+  return ms > 0 && ms <= URGENT_MS;
+}
+function fmtRemaining(target, withSeconds) {
+  const [[d], [h], [m], [s]] = countdownParts(target).cells;
+  const head = +d ? `${+d}d ${h}h ${m}min` : +h ? `${h}h ${m}min` : `${m}min`;
+  return withSeconds ? `${head} ${s}s` : head;
+}
+function eventTimerHTML(e) {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return `<div class="event-timer" data-timer="${esc(e.id)}">
+    <span class="event-timer__label">Inscrições encerram em</span>
+    <span class="event-timer__value" role="timer" aria-label="Tempo até encerrar as inscrições" data-timer-value>${fmtRemaining(e.encerraEm, !reduced)}</span>
+    ${reduced ? '<span class="event-timer__note">Contagem pausada: seu sistema pede movimento reduzido. Recarregue para atualizar.</span>' : ''}
+  </div>`;
+}
+
+/* Liga os cronômetros dos cards de uma lista. Um intervalo por card, e só
+   enquanto o card está na tela (IntersectionObserver): saiu da tela, o
+   intervalo é limpo; voltou, recomeça. Quem repinta a lista chama
+   EventTimers.stop(lista) ANTES de trocar o innerHTML — senão os intervalos
+   dos cards antigos ficariam órfãos, rodando sobre nós que já não existem.
+   onClose(evento) avisa a tela quando uma peneira encerra. */
+const EventTimers = (() => {
+  const lists = new Map();   // lista → { io, intervals: Map(card → id), timeouts: [] }
+
+  function closeCard(card, e, onClose, state) {
+    // uma vez só: um card já encerrado que volte à tela não anuncia de novo
+    if (card.dataset.encerrado) return;
+    card.dataset.encerrado = '1';
+    if (state && state.io) state.io.unobserve(card);
+    // vira "encerrada" no lugar: sem recriar o card, o foco e a rolagem ficam
+    const hadFocus = card.contains(document.activeElement);
+    card.classList.remove('card--urgent');
+    card.querySelector('[data-status-tags]').innerHTML = tagHTML('● encerrada', 'outline') +
+      (card.querySelector('.tag--ink') ? tagHTML('Inscrito', 'ink') : '');
+    const timer = card.querySelector('[data-timer]');
+    if (timer) timer.outerHTML = `<div class="event-timer event-timer--closed"><span class="event-timer__label">Inscrições encerradas</span></div>`;
+    const fill = card.querySelector('.progress__fill');
+    if (fill) fill.classList.add('progress__fill--ink');
+    card.querySelector('[data-event-cta]').innerHTML = `<button class="btn btn--ghost btn--sm btn--full" disabled>Encerrada</button>`;
+    if (hadFocus) { card.setAttribute('tabindex', '-1'); card.focus({ preventScroll: true }); }
+    announce(`Inscrições encerradas para ${e.name}.`);
+    if (onClose) onClose(e);
+  }
+
+  function paint(card, e, state, onClose) {
+    if (eventStatus(e) === 'encerrada') { stopCard(card, state); closeCard(card, e, onClose, state); return; }
+    const value = card.querySelector('[data-timer-value]');
+    if (value) value.textContent = fmtRemaining(e.encerraEm, true);
+    // entrou nas últimas 24 h com a página aberta: destaque aparece sem recarregar
+    if (isUrgent(e) && !card.classList.contains('card--urgent')) {
+      card.classList.add('card--urgent');
+      card.querySelector('[data-status-tags] .tag').insertAdjacentHTML('afterend', tagHTML('⏱ últimas horas', 'accent'));
+    }
+  }
+  function stopCard(card, state) {
+    clearInterval(state.intervals.get(card));
+    state.intervals.delete(card);
+  }
+
+  function watch(list, events, onClose) {
+    stop(list);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const state = { io: null, intervals: new Map(), timeouts: [] };
+    lists.set(list, state);
+    const cards = [...list.querySelectorAll('[data-event]')]
+      .map(card => ({ card, e: events.find(x => x.id === card.dataset.event) }))
+      .filter(x => x.e && x.card.querySelector('[data-timer]'));
+
+    if (reduced) {
+      // sem atualização por segundo; um único timeout vira o card na hora certa
+      cards.forEach(({ card, e }) => {
+        const ms = e.encerraEm.getTime() - Date.now();
+        if (ms < 2147483647) state.timeouts.push(setTimeout(() => closeCard(card, e, onClose, state), Math.max(0, ms)));
+      });
+      return;
+    }
+    const byCard = new Map(cards.map(x => [x.card, x.e]));
+    state.io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        const e = byCard.get(en.target);
+        if (en.isIntersecting && !state.intervals.has(en.target)) {
+          paint(en.target, e, state, onClose);
+          if (eventStatus(e) !== 'encerrada') state.intervals.set(en.target, setInterval(() => paint(en.target, e, state, onClose), 1000));
+        } else if (!en.isIntersecting && state.intervals.has(en.target)) {
+          stopCard(en.target, state);
+        }
+      });
+    });
+    cards.forEach(({ card }) => state.io.observe(card));
+  }
+
+  function stop(list) {
+    const state = lists.get(list);
+    if (!state) return;
+    if (state.io) state.io.disconnect();
+    state.intervals.forEach(id => clearInterval(id));
+    state.timeouts.forEach(id => clearTimeout(id));
+    lists.delete(list);
+  }
+
+  // para a verificação (console/teste): quantos intervalos estão vivos agora
+  const active = () => [...lists.values()].reduce((n, s) => n + s.intervals.size, 0);
+  return { watch, stop, active };
+})();
 
 /* "Peneira Rio · Caxias" → "Rio · Caxias" (rótulo curto, usado em kickers e cards).
    Aceita tanto o separador atual (·) quanto o travessão dos dados antigos. */

@@ -15,7 +15,12 @@ document.querySelectorAll('.nav-item').forEach(n => {
   if (n.getAttribute('data-nav') === tela) n.classList.add('is-active');
 });
 
-SCREENS[tela]();
+// Os dados chegam por fetch (data.js); a tela só é montada depois.
+Dados.iniciar(() => SCREENS[tela](), {
+  vitrine: screenEl,
+  mensagem: 'Carregando o painel da gestão…',
+  erro: 'Os números da temporada não chegaram.',
+});
 
 /* ---------------- helpers de gráfico ---------------- */
 function sparkline(data, w=140, h=28, color='var(--color-ink)') {
@@ -274,6 +279,7 @@ function renderEventos() {
   screenEl.innerHTML = `
     <div class="page-head"><div><div class="kicker uppercase">Operação</div><h1 class="display h2 my-1.5 mx-0">Peneiras</h1></div><button class="btn btn--primary">+ Nova peneira</button></div>
     <div class="g g-3 pad gap-4">
+      ${MOCK.EVENTS.length ? '' : `<div class="card state-card col-span-full"><p class="state-card__title">Nenhuma peneira cadastrada.</p><p class="state-card__text">Crie a primeira pelo botão "+ Nova peneira".</p></div>`}
       ${MOCK.EVENTS.map(e=>{
         const tone=e.status==='aberta'?'success':e.status==='encerrada'?'outline':'accent';
         return `<div class="card card--flush">

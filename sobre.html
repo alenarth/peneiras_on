@@ -113,13 +113,19 @@
       'FIAP / ENGENHARIA DE SOFTWARE · SEMI-PRESENCIAL RJ',
     ] });
 
-    // stats
-    document.querySelector('[data-stats]').innerHTML = [
-      statHTML('Fundado em','2026',{sub:'FIAP · 1º ano'}),
-      statHTML('Equipe','5',{sub:'estudantes'}),
-      statHTML('Estados atingidos',MOCK.SEASON.states,{delta:'meta 2027: '+MOCK.SEASON.statesGoal}),
-      statHTML('Inscritos · campanha','18.4k',{delta:'+412 hoje'}),
-    ].join('');
+    // stats — "Estados atingidos" vem dos dados (fetch em data.js)
+    Dados.iniciar(() => {
+      document.querySelector('[data-stats]').innerHTML = [
+        statHTML('Fundado em','2026',{sub:'FIAP · 1º ano'}),
+        statHTML('Equipe','5',{sub:'estudantes'}),
+        statHTML('Estados atingidos',MOCK.SEASON.states,{delta:'meta 2027: '+MOCK.SEASON.statesGoal}),
+        statHTML('Inscritos · campanha','18.4k',{delta:'+412 hoje'}),
+      ].join('');
+    }, {
+      vitrine: document.querySelector('[data-stats]'),
+      mensagem: 'Carregando os números da temporada…',
+      erro: 'Os números da temporada não chegaram.',
+    });
 
     // Equipe: todos contribuíram em tudo, então só nome e RM — e os cartões
     // seguem a mesma altura e o mesmo alinhamento, sem função por pessoa.

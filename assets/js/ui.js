@@ -5,6 +5,7 @@
      · storage: localStorage com try/catch (vazio ou corrompido → fallback)
      · announce(): região aria-live global para leitores de tela
      · toast(): avisos dinâmicos (sucesso / erro / informação)
+     · loadingHTML() / busy() / busyButton(): estado de carregando (Sprint 4)
    Carregar ANTES de components.js e dos módulos de tela.
    Nenhuma dependência: JavaScript vanilla, manipulação direta do DOM.
    ============================================================ */
@@ -109,16 +110,67 @@ const UI = (() => {
     return { close, el };
   }
 
+  /* ---------- estado de carregando ----------
+     Toda espera real (envio, busca de dados, leitura de arquivo) segue o mesmo
+     contrato, para nenhuma tela ficar em branco ou aceitar clique duplo:
+       · o container que espera recebe aria-busy="true" (leitor de tela sabe
+         que o conteúdo ainda vai mudar);
+       · a frase vai para a região aria-live via announce();
+       · o controle que disparou fica travado (disabled) até terminar;
+       · visual: giro + texto; sob prefers-reduced-motion o giro some (CSS:
+         motion-reduce:hidden) e fica só o texto.
+     busy() devolve done(msgFinal?) — chame sempre, no sucesso ou no erro. */
+  function loadingHTML(msg, opts = {}) {
+    return `<div class="loading${opts.block ? ' loading--block' : ''}">` +
+      `<span class="loading__spinner" aria-hidden="true"></span><span>${msg}</span></div>`;
+  }
+  function busy(container, msg, opts = {}) {
+    const controls = (opts.controls || []).filter(Boolean);
+    const was = controls.map(c => c.disabled);
+    if (container) {
+      container.setAttribute('aria-busy', 'true');
+      if (opts.render) container.innerHTML = loadingHTML(msg, { block: opts.block !== false });
+    }
+    controls.forEach(c => { c.disabled = true; });
+    if (msg) announce(msg);
+    let finished = false;
+    return function done(finalMsg) {
+      if (finished) return;
+      finished = true;
+      if (container) container.removeAttribute('aria-busy');
+      // o controle pode ter sido recriado pelo render; só destrava se ainda existe
+      controls.forEach((c, i) => { if (c.isConnected) c.disabled = was[i]; });
+      if (finalMsg) announce(finalMsg);
+    };
+  }
+  /* Botão que dispara a espera: trava, troca o rótulo por "Enviando…" com o
+     giro e devolve a função que restaura tudo. */
+  function busyButton(btn, label) {
+    if (!btn) return () => {};
+    const html = btn.innerHTML;
+    btn.disabled = true;
+    btn.classList.add('is-busy');
+    btn.innerHTML = `<span class="loading__spinner" aria-hidden="true"></span>${label}`;
+    return () => {
+      if (!btn.isConnected) return;
+      btn.disabled = false;
+      btn.classList.remove('is-busy');
+      btn.innerHTML = html;
+    };
+  }
+
   /* ---------- revelação por rolagem ----------
      Marca com [data-reveal] os blocos de conteúdo das páginas públicas (filhos
      diretos dos .wrap de cada seção, cards, planos, artigos) e liga a classe
      html.js-reveal — só então o CSS os esconde. Um IntersectionObserver adiciona
      .is-in quando 12% do bloco entra na tela; --i escalona irmãos. Dispensado
-     sob prefers-reduced-motion e sem IntersectionObserver. */
+     sob prefers-reduced-motion e sem IntersectionObserver. Uma área marcada com
+     [data-no-reveal] fica de fora (o styleguide precisa dos cards parados, para
+     o estado forçado não brigar com o deslocamento da revelação). */
   const REVEAL_SEL = 'main section > .wrap > *, main section > .wrap > .g > *, .plan, .card, article.card, .faq details, .site-footer__cols > *';
   function reveal(root = document) {
     if (reducedMotion() || !('IntersectionObserver' in window)) return;
-    const els = qsa(REVEAL_SEL, root).filter(el => !el.closest('.hero') && !el.hasAttribute('data-reveal'));
+    const els = qsa(REVEAL_SEL, root).filter(el => !el.closest('.hero') && !el.closest('[data-no-reveal]') && !el.hasAttribute('data-reveal'));
     if (!els.length) return;
     document.documentElement.classList.add('js-reveal');
     const io = reveal._io || (reveal._io = new IntersectionObserver(entries => {
@@ -194,7 +246,7 @@ const UI = (() => {
   }
 
   document.addEventListener('DOMContentLoaded', () => { liveRegion(); reveal(); countup(); spotlight(); });
-  return { qs, qsa, setPressed, debounce, reducedMotion, storage, announce, toast, reveal, countup, spotlight };
+  return { qs, qsa, setPressed, debounce, reducedMotion, storage, announce, toast, loadingHTML, busy, busyButton, reveal, countup, spotlight };
 })();
 
 /* Atalhos globais — os módulos de tela chamam announce()/toast() direto. */

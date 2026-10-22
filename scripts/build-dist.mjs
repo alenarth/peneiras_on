@@ -9,6 +9,12 @@ if (!existsSync(join(root, 'assets', 'css', 'tailwind.css'))) {
   console.error('assets/css/tailwind.css não existe — rode `npm run build` antes.');
   process.exit(1);
 }
+// Sprint 4: as telas leem os dados por fetch de assets/data/mock.json. Sem ele
+// o site publicaria só o estado de erro — melhor o build falhar aqui.
+if (!existsSync(join(root, 'assets', 'data', 'mock.json'))) {
+  console.error('assets/data/mock.json não existe — as telas não teriam dados.');
+  process.exit(1);
+}
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 // páginas + arquivos de raiz que o navegador pede pelo caminho fixo (favicon, manifest)
