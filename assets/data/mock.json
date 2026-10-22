@@ -1,5 +1,5 @@
 {
-  "_sobre": "Dados mockados do Peneiras On (Sprint 4). Lido por assets/js/data.js via fetch. inscricoesAte = fim das inscrições (ISO, horário de Brasília). demoEncerraEmMinutos = SÓ PARA DEMONSTRAÇÃO: a peneira encerra N minutos depois de a página abrir, para o cronômetro ao vivo aparecer zerando.",
+  "_sobre": "Dados mockados do Peneiras On (Sprint 4). Lido por assets/js/data.js via fetch. inscricoesAte = fim das inscrições (ISO, horário de Brasília). A peneira de demonstração (encerra minutos depois de a página abrir) fica em DEMO_ENCERRA_EM_MINUTOS, no topo de assets/js/data.js.",
   "ATHLETES": [
     {"id":"a-001","name":"Lucas Oliveira","age":15,"city":"Duque de Caxias","state":"RJ","position":"Ponta","side":"Direita","foot":"Direito","height":172,"weight":64,"club":"Escolinha Vila Operária","yearsPlaying":3,"score":87,"completeness":92,"status":"convocado","present":true,"favorite":true,"notes":"Pé direito letal, drible curto. Falta marcação.","attrs":{"Velocidade":18,"Finalização":14,"Passe":12,"Drible":17,"Defesa":6,"Cabeceio":9,"Físico":13,"Reflexo":4},"videos":3,"region":"Baixada Fluminense","plan":"premium","registrations":["e-01","e-06"]},
     {"id":"a-002","name":"Matheus Pereira","age":16,"city":"Manaus","state":"AM","position":"Atacante","foot":"Direito","height":178,"weight":71,"club":"Liga Amazonas Sub-17","yearsPlaying":5,"score":91,"completeness":88,"status":"convocado","present":true,"favorite":true,"notes":"Físico acima da média. Boa cabeçada.","attrs":{"Velocidade":17,"Finalização":18,"Passe":11,"Drible":13,"Defesa":5,"Cabeceio":16,"Físico":17,"Reflexo":3},"videos":2,"region":"Norte","plan":"premium"},
@@ -25,7 +25,7 @@
     {"id":"e-08","name":"Peneira Minas · BH","city":"Belo Horizonte","state":"MG","date":"2026-10-24","capacity":120,"registered":296,"called":0,"present":0,"approved":0,"status":"inscrições","age":"12-16","inscricoesAte":"2026-10-21T23:59:00-03:00"},
     {"id":"e-09","name":"Peneira Nordeste · Fortaleza","city":"Fortaleza","state":"CE","date":"2026-11-07","capacity":120,"registered":187,"called":0,"present":0,"approved":0,"status":"aberta","age":"13-17","inscricoesAte":"2026-11-04T23:59:00-03:00"},
     {"id":"e-10","name":"Peneira Centro-Oeste · Brasília","city":"Brasília","state":"DF","date":"2026-11-21","capacity":100,"registered":142,"called":0,"present":0,"approved":0,"status":"inscrições","age":"13-17","inscricoesAte":"2026-11-18T23:59:00-03:00"},
-    {"id":"e-11","name":"Peneira Sul · Porto Alegre","city":"Porto Alegre","state":"RS","date":"2026-12-05","capacity":120,"registered":98,"called":0,"present":0,"approved":0,"status":"aberta","age":"13-17","inscricoesAte":"2026-12-02T23:59:00-03:00","demoEncerraEmMinutos":3}
+    {"id":"e-11","name":"Peneira Sul · Porto Alegre","city":"Porto Alegre","state":"RS","date":"2026-12-05","capacity":120,"registered":98,"called":0,"present":0,"approved":0,"status":"aberta","age":"13-17","inscricoesAte":"2026-12-02T23:59:00-03:00"}
   ],
   "REGIONS": [
     {"id":"sp","label":"SP / Capital","state":"SP","x":0.48,"y":0.72,"value":1124,"demand":0.92},

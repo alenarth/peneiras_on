@@ -838,9 +838,6 @@
   .attr-tag[aria-pressed="true"] { @apply bg-accent text-accent-ink border-accent hover:bg-accent-hover motion-safe:animate-pop; }
    .attr-tag__icon { @apply inline-flex items-center justify-center w-4 font-display text-14 leading-none; }
   .attr-tag__count { @apply font-display font-extrabold text-12 tracking-normal; }
-   .vote-control { @apply inline-flex items-center gap-1; }
-   .vote-control .btn { @apply size-8 p-0; }
-   .vote-control__count { @apply min-w-8 text-center font-display font-extrabold text-13; }
 
   /* --- cronômetro de encerramento no card de peneira (components.js: EventTimers) ---
      Últimas 24 h: borda e número em laranja, fundo laranja translúcido. Sem

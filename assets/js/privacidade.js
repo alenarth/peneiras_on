@@ -81,7 +81,7 @@ document.querySelector('[data-body]').innerHTML = [
   block('finalidades','03','Para que usamos seus dados',
     bullets([
       '<strong>Inscrição e elegibilidade:</strong> validar idade (07–19), CPF único, residência.',
-      '<strong>Alocação geográfica:</strong> calcular a peneira mais próxima com vaga (PostGIS).',
+      '<strong>Alocação geográfica:</strong> ajudar a equipe a achar a peneira mais próxima com vaga (cálculo de distância com PostGIS); quem decide é uma pessoa.',
       '<strong>Comunicação:</strong> SMS/e-mail de confirmação, convocação, lembrete e resultado.',
       '<strong>Avaliação no campo:</strong> registrar notas e parecer do olheiro pós-peneira.',
       '<strong>Pipeline de talentos:</strong> manter histórico de aprovados para sustentar o revenue share (mecanismo de solidariedade FIFA).',

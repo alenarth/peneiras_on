@@ -50,7 +50,7 @@ function renderHighlight() {
           ${statHTML('Faixa etária', e.age.replace('-', '–'))}
         </div>
         ${progressHTML(Math.min(e.registered, e.capacity * 5), e.capacity * 5, { sm: true, tone: closed ? 'ink' : 'accent', label: 'Lotação', sublabel: `${fmtNum(e.registered)} / ${fmtNum(e.capacity * 5)}` })}
-        <div class="mt-auto">${cta}</div>
+        <div class="mt-auto flex gap-2 flex-wrap">${cta}${closed ? '' : shareButtonHTML(e, { lg: true })}</div>
       </div>
     </div>
     <div class="card p-7 flex flex-col gap-5">
@@ -177,8 +177,23 @@ function iniciarPeneiras() {
   renderHighlight();
   mountMap();
   // ?uf=RJ (link vindo de outra tela) já chega com o estado escolhido
-  const ufParam = (new URLSearchParams(location.search).get('uf') || '').toUpperCase();
-  setState(eventStates(MOCK.EVENTS).includes(ufParam) ? ufParam : 'all', false);
+  const query = new URLSearchParams(location.search);
+  const ufParam = (query.get('uf') || '').toUpperCase();
+  // ?evento=e-09 (link compartilhado): o estado vem do próprio evento
+  const shared = MOCK.EVENTS.find(e => e.id === query.get('evento'));
+  setState(shared ? shared.state : eventStates(MOCK.EVENTS).includes(ufParam) ? ufParam : 'all', false);
+  if (shared) showSharedEvent(shared);
+}
+
+/* Quem abre um link compartilhado cai direto no card da peneira: rola até
+   ele e leva o foco para lá (o leitor de tela lê o nome da cidade). */
+function showSharedEvent(e) {
+  const card = rows.querySelector(`[data-event="${e.id}"]`);
+  if (!card) return;
+  card.setAttribute('tabindex', '-1');
+  card.scrollIntoView({ behavior: UI.reducedMotion() ? 'auto' : 'smooth', block: 'center' });
+  card.focus({ preventScroll: true });
+  announce(`Peneira de ${e.city}, ${fmtDate(e.date, { day: 'numeric', month: 'long' }).toLowerCase()}.`);
 }
 
 Dados.iniciar(iniciarPeneiras, {

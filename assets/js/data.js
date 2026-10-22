@@ -15,6 +15,16 @@
    derivados (SEASON, encerraEm).
    Carregar ANTES de ui.js; Dados.iniciar usa UI.busy/announce na chamada.
    ============================================================ */
+
+/* ⚠ PENEIRA DE DEMONSTRAÇÃO — RETIRAR ANTES DA ENTREGA FINAL (25/10) ⚠
+   Só para a gravação do vídeo: a peneira e-11 (Porto Alegre) encerra as
+   inscrições N minutos depois de a página abrir, para o cronômetro dos cards
+   aparecer zerando. Para retirar, apague a linha 'e-11' abaixo e deixe o
+   objeto vazio; a e-11 volta a encerrar pela data real (inscricoesAte). */
+const DEMO_ENCERRA_EM_MINUTOS = {
+  'e-11': 3,
+};
+
 const MOCK = {};
 
 const Dados = (() => {
@@ -42,13 +52,14 @@ const Dados = (() => {
   }
 
   /* JSON → MOCK. Datas de encerramento viram Date; a peneira de demonstração
-     (demoEncerraEmMinutos) encerra N minutos depois de a página abrir. */
+     (DEMO_ENCERRA_EM_MINUTOS, no topo do arquivo) encerra N minutos depois de
+     a página abrir. */
   function montar(json) {
     const agora = Date.now();
     const EVENTS = json.EVENTS.map(e => ({
       ...e,
-      encerraEm: e.demoEncerraEmMinutos != null
-        ? new Date(agora + e.demoEncerraEmMinutos * 60000)
+      encerraEm: DEMO_ENCERRA_EM_MINUTOS[e.id] != null
+        ? new Date(agora + DEMO_ENCERRA_EM_MINUTOS[e.id] * 60000)
         : (e.inscricoesAte ? new Date(e.inscricoesAte) : null),
     }));
     // Números da temporada derivados de EVENTS — fonte única para landing,

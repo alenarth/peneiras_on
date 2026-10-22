@@ -1,7 +1,7 @@
 {
   "name": "Peneiras On",
   "short_name": "Peneiras On",
-  "description": "Plataforma de captação de talentos no futebol: inscrição gratuita, alocação automática na peneira mais próxima e avaliação por olheiros credenciados.",
+  "description": "Peneiras de futebol perto de quem joga: inscrição gratuita, uma pessoa da equipe escolhe a peneira mais próxima com vaga e olheiros credenciados avaliam no campo.",
   "lang": "pt-BR",
   "start_url": "index.html",
   "display": "standalone",

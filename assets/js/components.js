@@ -464,7 +464,8 @@ const EVENT_STATUS_TONE = { aberta: 'success', 'inscrições': 'accent', encerra
 /* Card de peneira.
    mode 'publico'  → CTA "Quero participar" (login com ?evento=), sem dado pessoal.
    mode 'atleta'   → opts.registered decide entre "Ver comprovante" e "Inscrever-se".
-   Encerrada em qualquer modo → botão desabilitado "Encerrada". */
+   Encerrada em qualquer modo → botão desabilitado "Encerrada".
+   Aberta em qualquer modo → botão "Compartilhar" ao lado (Compartilhar, abaixo). */
 function eventCardHTML(e, mode, opts = {}) {
   const status = eventStatus(e);
   const closed = status === 'encerrada';
@@ -493,7 +494,7 @@ function eventCardHTML(e, mode, opts = {}) {
       <div class="mt-4">${progressHTML(Math.min(e.registered, e.capacity * 5), e.capacity * 5, { sm: true, tone: closed ? 'ink' : 'accent' })}</div>
       ${timer}
     </div>
-    <div class="p-3 border-t border-t-line-soft" data-event-cta>${cta}</div>
+    <div class="p-3 border-t border-t-line-soft${closed ? '' : ' flex flex-wrap gap-2'}" data-event-cta>${closed ? cta : `<div class="grow-[2] basis-40">${cta}</div>${shareButtonHTML(e)}`}</div>
   </article>`;
 }
 
@@ -547,7 +548,9 @@ const EventTimers = (() => {
     if (timer) timer.outerHTML = `<div class="event-timer event-timer--closed"><span class="event-timer__label">Inscrições encerradas</span></div>`;
     const fill = card.querySelector('.progress__fill');
     if (fill) fill.classList.add('progress__fill--ink');
-    card.querySelector('[data-event-cta]').innerHTML = `<button class="btn btn--ghost btn--sm btn--full" disabled>Encerrada</button>`;
+    const ctaBox = card.querySelector('[data-event-cta]');
+    ctaBox.classList.remove('flex', 'flex-wrap', 'gap-2');   // sai o "Compartilhar": peneira encerrada não se divulga
+    ctaBox.innerHTML = `<button class="btn btn--ghost btn--sm btn--full" disabled>Encerrada</button>`;
     if (hadFocus) { card.setAttribute('tabindex', '-1'); card.focus({ preventScroll: true }); }
     announce(`Inscrições encerradas para ${e.name}.`);
     if (onClose) onClose(e);
@@ -628,3 +631,97 @@ function eventsEmptyHTML() {
     <button type="button" class="btn btn--ghost btn--sm" data-clear-filters>Limpar filtros</button>
   </div>`;
 }
+
+/* ---------- Compartilhar peneira (Sprint 4, teste com usuários) ----------
+   A plataforma existe para a informação chegar longe: cada peneira aberta tem
+   um botão que divulga nome, cidade, data e o link direto para ela.
+     1. Web Share API (navigator.share, conferido com canShare) — abre a folha
+        de compartilhar do sistema (WhatsApp, Instagram…) no celular;
+     2. sem suporte, ou se o sistema recusar → Clipboard API (writeText);
+     3. sem Clipboard API → document.execCommand('copy') numa <textarea> fora da tela;
+     4. nada funcionou → toast com o link num campo, já selecionado, para copiar à mão.
+   Cancelar a folha de compartilhar (AbortError) não é erro: nada aparece.
+   O link é montado com URL + URLSearchParams e abre o calendário público já
+   no estado e no card da peneira (peneiras.js lê ?evento=).
+   Um listener só, no document, para todos os botões [data-share] — servem os
+   cards montados agora e os que forem repintados pelos filtros. */
+function shareButtonHTML(e, opts = {}) {
+  // no card, os dois botões dividem a linha e quebram para baixo quando não
+  // cabem (celular); o nome acessível começa pelo texto visível (WCAG 2.5.3) e diz qual peneira:
+  // numa lista, vários "Compartilhar" idênticos não diriam nada
+  return `<button type="button" class="btn btn--ghost ${opts.lg ? 'btn--lg' : 'btn--sm grow'}" data-share="${esc(e.id)}" aria-label="Compartilhar a peneira de ${esc(e.city)}">` +
+    `<span aria-hidden="true">↗</span> Compartilhar</button>`;
+}
+
+const Compartilhar = (() => {
+  function link(e) {
+    const url = new URL('peneiras.html', location.href);
+    url.search = new URLSearchParams({ evento: e.id, uf: e.state }).toString();
+    url.hash = '';
+    return url.toString();
+  }
+  function texto(e) {
+    const data = fmtDate(e.date, { day: 'numeric', month: 'long', year: 'numeric' }).toLowerCase();
+    return `${e.name}: ${e.city}/${e.state}, ${data}. Para quem tem de ${e.age.replace('-', ' a ')} anos. A inscrição é de graça.`;
+  }
+
+  // execCommand está obsoleto, mas é o único caminho em navegador antigo ou
+  // em página sem HTTPS (onde a Clipboard API não existe)
+  function copiaAntiga(valor) {
+    const ta = document.createElement('textarea');
+    ta.value = valor;
+    ta.setAttribute('readonly', '');
+    ta.className = 'fixed -left-[9999px] top-0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+    ta.remove();
+    return ok;
+  }
+  async function copiar(valor) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try { await navigator.clipboard.writeText(valor); return true; } catch (err) { /* permissão negada → tenta o antigo */ }
+    }
+    return copiaAntiga(valor);
+  }
+
+  function linkManual(url, btn) {
+    const t = toast(`Não deu para copiar sozinho. Copie o link abaixo:<input type="text" readonly class="input block mt-2 h-9 text-12 font-mono" value="${esc(url)}" aria-label="Link da peneira">`, { type: 'info', duration: 0 });
+    const campo = t.el.querySelector('input');
+    campo.focus();
+    campo.select();
+    // fechar o aviso devolve o foco ao botão que abriu
+    t.el.querySelector('.toast__close').addEventListener('click', () => { if (btn.isConnected) btn.focus(); });
+  }
+
+  async function compartilhar(e, btn) {
+    const url = link(e);
+    const text = texto(e);
+    const dados = { title: e.name, text, url };
+    if (navigator.share && (!navigator.canShare || navigator.canShare(dados))) {
+      try {
+        await navigator.share(dados);
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;   // a pessoa fechou a folha: não é erro
+        // NotAllowedError e afins: segue para a cópia
+      }
+    }
+    if (await copiar(`${text}\n${url}`)) {
+      toast(`Link da peneira de ${esc(e.city)} copiado. É só colar no WhatsApp ou onde quiser.`, { type: 'success' });
+      if (btn.isConnected) btn.focus();
+    } else {
+      linkManual(url, btn);
+    }
+  }
+
+  document.addEventListener('click', ev => {
+    const btn = ev.target.closest('[data-share]');
+    if (!btn || typeof MOCK === 'undefined' || !MOCK.EVENTS) return;
+    const e = MOCK.EVENTS.find(x => x.id === btn.dataset.share);
+    if (e) compartilhar(e, btn);
+  });
+
+  return { link, texto, compartilhar };
+})();

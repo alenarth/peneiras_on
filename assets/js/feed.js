@@ -3,7 +3,9 @@
    Feed de destaques (feed.html) e as interações que ele compartilha com o
    perfil do atleta (atleta.html?tela=perfil):
      · confirmação de tags de atributo (aria-pressed + contador)
-     · votos (um voto por pessoa; votar de novo desfaz)
+     · apoio (Sprint 4, teste com usuários): endosso só positivo — um por
+       pessoa, apoiar de novo desfaz. Substitui o voto ↑/↓: os atletas são
+       menores de idade e um placar de votos negativos no perfil é dano real
      · seguir / deixar de seguir (contador de seguidores)
      · filtros em tempo real por posição e por estado, sem reload
      · persistência em localStorage (sobrevive a F5) e reset para demonstração
@@ -13,24 +15,39 @@
    components.js (esc, avatarHTML, tagHTML). Não usa framework.
    ============================================================ */
 const Feed = (() => {
-  const KEY = 'peneiras-on.feed.v1';
-  const EMPTY = () => ({ votes: {}, tags: {}, follows: {} });
+  const KEY = 'peneiras-on.feed.v2';
+  const LEGACY_KEY = 'peneiras-on.feed.v1';   // até a Sprint 4: votos ↑/↓ em `votes`
+  const EMPTY = () => ({ supports: {}, tags: {}, follows: {} });
 
   /* ---------- estado persistido ---------- */
   let state = load();
   function load() {
     const s = UI.storage.get(KEY, null);
-    if (!s || typeof s !== 'object') return EMPTY();
-    // formato inesperado (corrompido / versão antiga) → cada parte cai no vazio
-    return {
-      votes: s.votes && typeof s.votes === 'object' ? s.votes : {},
-      tags: s.tags && typeof s.tags === 'object' ? s.tags : {},
-      follows: s.follows && typeof s.follows === 'object' ? s.follows : {},
-    };
+    if (s && typeof s === 'object') return clean(s);
+    // Quem usou o feed antes do apoio tem a v1 salva. O voto positivo vira
+    // apoio; o negativo é descartado em silêncio (não existe mais). A v1 é
+    // apagada depois de migrar, para a conversão não rodar de novo.
+    const old = UI.storage.get(LEGACY_KEY, null);
+    if (!old || typeof old !== 'object') return EMPTY();
+    const supports = {};
+    if (old.votes && typeof old.votes === 'object') {
+      Object.keys(old.votes).forEach(id => { if (old.votes[id] === 1 || old.votes[id] === true) supports[id] = true; });
+    }
+    const migrated = clean({ ...old, supports });
+    UI.storage.set(KEY, migrated);
+    UI.storage.remove(LEGACY_KEY);
+    return migrated;
+  }
+  // formato inesperado (corrompido / editado à mão) → cada parte cai no vazio;
+  // em `supports` só vale true, então nenhum valor estranho vira número na tela
+  function clean(s) {
+    const obj = v => v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+    const supports = {};
+    Object.keys(obj(s.supports)).forEach(id => { if (s.supports[id] === true) supports[id] = true; });
+    return { supports, tags: obj(s.tags), follows: obj(s.follows) };
   }
   function save() { UI.storage.set(KEY, state); }
-  const voteValue = id => state.votes[id] === -1 ? -1 : (state.votes[id] ? 1 : 0);
-  const hasVote = id => voteValue(id) !== 0;
+  const supports = id => !!state.supports[id];
   const follows = id => !!state.follows[id];
   const tagOn = (id, attr) => Array.isArray(state.tags[id]) && state.tags[id].includes(attr);
 
@@ -39,10 +56,11 @@ const Feed = (() => {
      próprio atleta para o feed não nascer zerado. O que a pessoa faz soma
      em cima e é o que fica no localStorage. */
   const idx = a => MOCK.ATHLETES.indexOf(a);
-  const baseVotes = a => Math.round(a.score * 2.4) + (idx(a) % 7);
+  const baseSupports = a => Math.round(a.score * 2.4) + (idx(a) % 7);
   const baseFollowers = a => a.score * 11 + a.videos * 37 + (idx(a) % 5) * 3;
   const baseTag = (a, attr) => (a.attrs[attr] || 0) * 6 + ((attr.length + idx(a)) % 5);
-  const votesOf = a => baseVotes(a) + voteValue(a.id);
+  const supportsOf = a => baseSupports(a) + (supports(a.id) ? 1 : 0);
+  const supportsText = n => `${n} ${n === 1 ? 'apoio' : 'apoios'}`;
   const followersOf = a => baseFollowers(a) + (follows(a.id) ? 1 : 0);
   const tagCountOf = (a, attr) => baseTag(a, attr) + (tagOn(a.id, attr) ? 1 : 0);
 
@@ -51,19 +69,19 @@ const Feed = (() => {
     const icons = { Velocidade:'⚡', Finalização:'◎', Passe:'↗', Drible:'◌', Defesa:'⬟', Cabeceio:'⌃', Físico:'✚', Reflexo:'◒' };
     return Object.keys(a.attrs).map(attr => {
       const on = tagOn(a.id, attr);
+      // nome acessível "Confirmar Velocidade 103 confirmações": diz o que o toque faz
       return `<button type="button" class="attr-tag" data-tag="${esc(attr)}" data-athlete="${esc(a.id)}" aria-pressed="${on}">` +
-        `<span class="attr-tag__icon" aria-hidden="true">${icons[attr] || '•'}</span><span>${esc(attr)}</span><span class="attr-tag__count" data-count>${tagCountOf(a, attr)}</span>` +
-        `<span class="sr-only">confirmações</span></button>`;
+        `<span class="attr-tag__icon" aria-hidden="true">${icons[attr] || '•'}</span><span class="sr-only">Confirmar </span><span>${esc(attr)}</span><span class="attr-tag__count" data-count>${tagCountOf(a, attr)}</span>` +
+        `<span class="sr-only"> confirmações</span></button>`;
     }).join('');
   }
-  function voteButtonHTML(a) {
-    const value = voteValue(a.id);
-    return `<div class="vote-control" role="group" aria-label="Votar em ${esc(a.name)}">` +
-      `<button type="button" class="btn btn--sm ${value === 1 ? 'btn--accent' : 'btn--ghost'}" data-vote data-direction="1" data-athlete="${esc(a.id)}" aria-pressed="${value === 1}" aria-label="Voto positivo">` +
-      `<span aria-hidden="true">↑</span></button>` +
-      `<span class="vote-control__count" data-vote-count>${votesOf(a)}</span>` +
-      `<button type="button" class="btn btn--sm ${value === -1 ? 'btn--danger' : 'btn--ghost'}" data-vote data-direction="-1" data-athlete="${esc(a.id)}" aria-pressed="${value === -1}" aria-label="Voto negativo">` +
-      `<span aria-hidden="true">↓</span></button><span class="sr-only">votos</span></div>`;
+  /* Apoio: botão de alternância. O rótulo fica fixo ("Apoiar") e o estado vem
+     de aria-pressed + visual (cor e ✓); o leitor de tela ouve "Apoiar Fulano,
+     219 apoios, botão de alternância, pressionado". */
+  function supportButtonHTML(a) {
+    const on = supports(a.id);
+    return `<button type="button" class="btn btn--sm ${on ? 'btn--accent' : 'btn--ghost'}" data-support data-athlete="${esc(a.id)}" aria-pressed="${on}">` +
+      `<span aria-hidden="true" data-support-icon>${on ? '✓' : '+'}</span> Apoiar<span class="sr-only"> ${esc(a.name)},</span><span aria-hidden="true"> · </span><span data-support-count>${supportsText(supportsOf(a))}</span></button>`;
   }
   function followButtonHTML(a) {
     const on = follows(a.id);
@@ -85,11 +103,12 @@ const Feed = (() => {
         </div>
       </header>
       <div class="p-5 flex-1">
-        <div class="kicker uppercase mb-2">Confirme os atributos</div>
+        <div class="kicker uppercase mb-2">Viu jogar? Toque no que você confirma</div>
         <div class="flex flex-wrap gap-1.5" data-tags>${attrTagsHTML(a)}</div>
       </div>
-      <footer class="flex items-center gap-2 p-3 border-t border-line-soft">
-        ${voteButtonHTML(a)}
+      <footer class="flex items-center gap-x-3 gap-y-1.5 flex-wrap p-3 border-t border-line-soft">
+        ${supportButtonHTML(a)}
+        <span class="font-mono text-10 text-ink-mute">Toque de novo para desfazer.</span>
       </footer>
     </article>`;
   }
@@ -104,14 +123,13 @@ const Feed = (() => {
       UI.setPressed(b, tagOn(id, attr));
       UI.qs('[data-count]', b).textContent = tagCountOf(a, attr);
     });
-    UI.qsa(`[data-vote][data-athlete="${id}"]`, root).forEach(b => {
-      const on = voteValue(id) === Number(b.dataset.direction);
+    UI.qsa(`[data-support][data-athlete="${id}"]`, root).forEach(b => {
+      const on = supports(id);
       UI.setPressed(b, on);
-      b.classList.toggle('btn--accent', on && b.dataset.direction === '1');
-      b.classList.toggle('btn--danger', on && b.dataset.direction === '-1');
-      b.classList.toggle('btn--ghost', !on);
+      b.classList.toggle('btn--accent', on); b.classList.toggle('btn--ghost', !on);
+      UI.qs('[data-support-icon]', b).textContent = on ? '✓' : '+';
+      UI.qs('[data-support-count]', b).textContent = supportsText(supportsOf(a));
     });
-    UI.qsa('[data-vote-count]', root).forEach(count => { count.textContent = votesOf(a); });
     UI.qsa(`[data-follow][data-athlete="${id}"]`, root).forEach(b => {
       const on = follows(id);
       UI.setPressed(b, on);
@@ -124,7 +142,7 @@ const Feed = (() => {
     if (!root || root.dataset.feedBound) return;
     root.dataset.feedBound = '1';
     root.addEventListener('click', e => {
-      const btn = e.target.closest('[data-tag],[data-vote],[data-follow]');
+      const btn = e.target.closest('[data-tag],[data-support],[data-follow]');
       if (!btn || !root.contains(btn)) return;
       const id = btn.dataset.athlete;
       const a = MOCK.ATHLETES.find(x => x.id === id);
@@ -138,12 +156,11 @@ const Feed = (() => {
         save(); updateCounts(root, id);
         // o toast é lido pelo leitor de tela (região polite) — sem announce() duplicado
         toast(on ? `${attr} confirmada para ${first}: ${tagCountOf(a, attr)} confirmações.` : `Confirmação de ${attr} desfeita para ${first}.`, { type: on ? 'success' : 'info' });
-      } else if (btn.hasAttribute('data-vote')) {
-        const direction = Number(btn.dataset.direction);
-        const on = voteValue(id) === direction;
-        if (on) delete state.votes[id]; else state.votes[id] = direction;
+      } else if (btn.hasAttribute('data-support')) {
+        const on = !supports(id);
+        if (on) state.supports[id] = true; else delete state.supports[id];
         save(); updateCounts(root, id);
-        toast(on ? `Voto em ${first} desfeito.` : `Voto registrado para ${first}: ${votesOf(a)} votos.`, { type: on ? 'info' : 'success' });
+        toast(on ? `Você apoiou ${first}. Agora são ${supportsText(supportsOf(a))}.` : `Você tirou seu apoio a ${first}.`, { type: on ? 'success' : 'info' });
       } else if (btn.hasAttribute('data-follow')) {
         const on = !follows(id);
         if (on) state.follows[id] = true; else delete state.follows[id];
@@ -156,9 +173,9 @@ const Feed = (() => {
   /* ---------- reset (demonstração) ---------- */
   function reset(root = document) {
     state = EMPTY();
-    UI.storage.remove(KEY);
+    UI.storage.remove(KEY); UI.storage.remove(LEGACY_KEY);
     MOCK.ATHLETES.forEach(a => updateCounts(root, a.id));
-    toast('Interações zeradas: votos, confirmações e seguidores voltaram ao início.', { type: 'info' });
+    toast('Interações zeradas: apoios, confirmações e seguidores voltaram ao início.', { type: 'info' });
   }
 
   /* ---------- página feed.html ---------- */
@@ -200,5 +217,5 @@ const Feed = (() => {
     applyFilters(false);
   }
 
-  return { attrTagsHTML, voteButtonHTML, followButtonHTML, cardHTML, bind, updateCounts, reset, mount, hasVote, follows, tagOn, followersOf, votesOf };
+  return { attrTagsHTML, supportButtonHTML, followButtonHTML, cardHTML, bind, updateCounts, reset, mount, supports, follows, tagOn, followersOf, supportsOf };
 })();
