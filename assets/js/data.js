@@ -16,14 +16,11 @@
    Carregar ANTES de ui.js; Dados.iniciar usa UI.busy/announce na chamada.
    ============================================================ */
 
-/* ⚠ PENEIRA DE DEMONSTRAÇÃO — RETIRAR ANTES DA ENTREGA FINAL (25/10) ⚠
-   Só para a gravação do vídeo: a peneira e-11 (Porto Alegre) encerra as
-   inscrições N minutos depois de a página abrir, para o cronômetro dos cards
-   aparecer zerando. Para retirar, apague a linha 'e-11' abaixo e deixe o
-   objeto vazio; a e-11 volta a encerrar pela data real (inscricoesAte). */
-const DEMO_ENCERRA_EM_MINUTOS = {
-  'e-11': 3,
-};
+/* Peneira de demonstração: { 'id-da-peneira': N } faz aquela peneira encerrar
+   as inscrições N minutos depois de a página abrir, para o cronômetro dos
+   cards aparecer zerando numa gravação. Vazio = todas encerram pela data
+   real (inscricoesAte). A demo da e-11 usada no vídeo foi retirada. */
+const DEMO_ENCERRA_EM_MINUTOS = {};
 
 const MOCK = {};
 

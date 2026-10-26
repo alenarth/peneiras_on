@@ -60,13 +60,10 @@ function renderCadastro() {
     if(form.videos)s+=18; if(form.photo)s+=8; if(form.consent)s+=8;
     return Math.min(100,s);
   }
+  // mesma conta da validação (validation.js): 'aaaa-mm-dd' lido como data
+  // local — new Date('aaaa-mm-dd') seria UTC e, em BRT, cairia um dia antes
   function age() {
-    if(!form.dob) return null;
-    const d=new Date(form.dob), now=new Date();
-    let a=now.getFullYear()-d.getFullYear();
-    const m=now.getMonth()-d.getMonth();
-    if(m<0||(m===0&&now.getDate()<d.getDate()))a--;
-    return isNaN(a)?null:a;
+    return form.dob ? Validation.ageFromISO(form.dob) : null;
   }
 
   /* Bloco do score — montado uma vez por passo; a cada tecla só a largura da
@@ -169,6 +166,10 @@ function renderCadastro() {
     // é lenta (o envio espera até 15 s), então a espera é real e precisa aparecer.
     if(finish) finish.onclick=async()=>{
       if (!validator.validateAll(true)) return;
+      // quem preencheu o responsável e depois corrigiu a data para 18+ não
+      // pode mandar esses dados: envio.js e a confirmação tratam como menor
+      // qualquer cadastro com responsável preenchido
+      if (!needs) Object.assign(form, { responsible: '', responsiblePhone: '', consent: false });
       const restore = UI.busyButton(finish, 'Enviando…');
       const done = UI.busy(screenEl, 'Enviando sua inscrição para a equipe. Aguarde.', { controls: [back] });
       const resultado = await Envio.enviar(form, evento);

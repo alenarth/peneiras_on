@@ -22,11 +22,24 @@ const Envio = (() => {
   const CHAVE_FILA = 'peneiras-on.fila-envio.v1';
   const TEMPO_LIMITE = 15000; // ms — rede de evento é lenta
 
+  /* Código da inscrição. crypto.randomUUID só existe em contexto seguro
+     (HTTPS ou localhost): aberto pelo IP da rede local (teste no celular),
+     ele não existe e o envio quebraria com o botão travado em "Enviando…".
+     O fallback monta um UUID v4 com getRandomValues, que existe em qualquer contexto. */
+  function novoCodigo() {
+    if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    b[6] = (b[6] & 0x0f) | 0x40;   // versão 4
+    b[8] = (b[8] & 0x3f) | 0x80;   // variante RFC 4122
+    const h = [...b].map(x => x.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+  }
+
   /* Objeto do cadastro (cadastro.js) → linha do contrato. */
   function montarLinha(form, evento) {
     const menor = !!form.responsible; // passo 5 só é preenchido por menor de 18
     return {
-      codigo: crypto.randomUUID(),
+      codigo: novoCodigo(),
       nome: form.name,
       nascimento: form.dob,
       cpf: form.cpf,

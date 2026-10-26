@@ -89,7 +89,8 @@ function renderStatus() {
           ['02·MAI','Inscrição realizada','completed'],
           ['04·MAI','Score consolidado em 92%','completed'],
           ['10·MAI','Convocação confirmada via SMS','completed'],
-          ['15·JUN','Peneira presencial · Caxias','next'],
+          // a mesma peneira do card acima (MOCK.SEASON.nextEvent), nunca chumbada
+          [fmtDotDate(nextEvent.date),'Peneira presencial · '+nextEvent.city,'next'],
           ['—','Avaliação do olheiro','future'],
           ['—','Resposta final','future'],
         ].map((e,i)=>`<div class="g g-row-time gap-3 py-3.5 px-0 items-center ${i?'border-t border-line-soft':''}">

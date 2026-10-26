@@ -49,7 +49,7 @@ function renderLista() {
     </td></tr>`;
     return data.map((a,idx)=>`<tr class="${a.favorite?'is-fav':''}" data-go="${a.id}">
       <td class="font-mono text-11 text-ink-mute">${String(idx+1).padStart(3,'0')}</td>
-      <td><div class="flex items-center gap-2.5">${avatarHTML(a.name,{size:32,gold:a.favorite})}<div><div class="font-semibold">${a.name} ${a.favorite?'<span class="gold">★</span>':''}</div><div class="font-mono text-10 text-ink-soft">${a.foot} · ${a.height||'—'}cm · ${a.weight||'—'}kg</div></div></div></td>
+      <td><div class="flex items-center gap-2.5">${avatarHTML(a.name,{size:32,gold:a.favorite})}<div><div class="font-semibold"><a href="olheiro.html?tela=perfil&id=${esc(a.id)}" class="text-ink no-underline">${a.name}</a> ${a.favorite?'<span class="gold">★</span>':''}</div><div class="font-mono text-10 text-ink-soft">${a.foot} · ${a.height||'—'}cm · ${a.weight||'—'}kg</div></div></div></td>
       <td>${tagHTML(MOCK.posLabel(a),'outline')}</td>
       <td class="font-mono">${a.age}</td>
       <td>${a.city}/${a.state}</td>
@@ -336,7 +336,7 @@ function renderAvaliacao() {
       <div class="page-head items-start"><div><div class="kicker uppercase">Pós-peneira · Caxias · 15·JUN</div><h1 class="display h-panel my-1 mx-0">Avaliação no campo</h1></div></div>
       <div class="g g-aside-sm min-h-[calc(100vh-116px)]">
         <div class="border-r border-r-line bg-card overflow-auto">
-          ${list.map((p,i)=>{ const done=evalState[p.id]&&evalState[p.id].decision; return `<button class="av-item w-full flex items-center gap-2.5 py-3.5 px-4 cursor-pointer border-0 text-ink text-left ${active===p.id?'bg-accent':'bg-transparent'} ${i?'border-t border-line-soft':''}" data-id="${p.id}">${avatarHTML(p.name,{size:32})}<div class="flex-1"><div class="font-semibold text-13">${p.name}</div><div class="font-mono text-10 text-ink-soft">${MOCK.posLabel(p)}</div></div>${done?tagHTML(done==='aprovado'?'✓':'✗', done==='aprovado'?'success':'outline'):''}</button>`; }).join('')}
+          ${list.map((p,i)=>{ const done=evalState[p.id]&&evalState[p.id].decision; return `<button class="av-item w-full flex items-center gap-2.5 py-3.5 px-4 cursor-pointer border-0 text-ink text-left ${active===p.id?'bg-accent':'bg-transparent'} ${i?'border-t border-line-soft':''}" data-id="${p.id}">${avatarHTML(p.name,{size:32})}<div class="flex-1"><div class="font-semibold text-13">${p.name}</div><div class="font-mono text-10 text-ink-soft">${MOCK.posLabel(p)}</div></div>${done?tagHTML(done==='aprovado'?'✓':done==='observar'?'◐':'✗', done==='aprovado'?'success':'outline'):''}</button>`; }).join('')}
         </div>
         <div class="pad overflow-auto">
           <div class="flex gap-4 items-end mb-6">
@@ -370,14 +370,17 @@ function renderAvaliacao() {
         </div>
       </div>`;
 
+    // sempre parte do estado ATUAL: `ev` é a foto do render, e as observações
+    // digitadas depois dele se perdiam ao clicar numa nota ou numa decisão
+    const atual = () => evalState[active] || ev;
     screenEl.querySelectorAll('.av-item').forEach(b=>b.onclick=()=>{ active=b.dataset.id; render(); });
-    screenEl.querySelectorAll('.crit').forEach(b=>b.onclick=()=>{ evalState[active]={...ev,[b.dataset.k]:+b.dataset.v}; render(); });
+    screenEl.querySelectorAll('.crit').forEach(b=>b.onclick=()=>{ evalState[active]={...atual(),[b.dataset.k]:+b.dataset.v}; render(); });
     screenEl.querySelectorAll('[data-dec]').forEach(b=>b.onclick=()=>{
-      evalState[active]={...ev,decision:b.dataset.dec};
+      evalState[active]={...atual(),decision:b.dataset.dec};
       render();
       toast(`${a.name}: avaliação registrada como "${b.dataset.dec}".`, { type: b.dataset.dec === 'descartar' ? 'info' : 'success' });
     });
-    const cm = screenEl.querySelector('#comments'); if(cm) cm.oninput=()=>{ evalState[active]={...ev,comments:cm.value}; };
+    const cm = screenEl.querySelector('#comments'); if(cm) cm.oninput=()=>{ evalState[active]={...atual(),comments:cm.value}; };
   }
   render();
 }

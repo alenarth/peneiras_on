@@ -52,7 +52,12 @@ function timelineChart() {
 
 /* ---------------- DASHBOARD ---------------- */
 function renderDashboard() {
-  const active = ['SP','RJ','PE','PR','AM'];
+  // estados com peneira aberta: a mesma conta do mapa de calor (mapa-calor.js)
+  const active = MapaCalor.coveredStates(MOCK.EVENTS);
+  // próximas = ainda não encerradas, por data; sem nenhuma, as últimas da temporada
+  const porData = MOCK.EVENTS.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const abertas = porData.filter(e => eventStatus(e) !== 'encerrada');
+  const proximas = abertas.length ? abertas.slice(0, 4) : porData.slice(-4);
   screenEl.innerHTML = `
     <div class="page-head">
       <div><div class="kicker uppercase">Boa tarde, Marina</div><h1 class="display h2 my-1.5 mx-0">Dashboard</h1></div>
@@ -94,7 +99,7 @@ function renderDashboard() {
           <thead><tr>${['Região','Inscritos','Peneira ativa?','Demanda','Sugestão'].map(h=>`<th>${h}</th>`).join('')}</tr></thead>
           <tbody>
             ${MOCK.REGIONS.slice().sort((a,b)=>b.value-a.value).slice(0,8).map(r=>{
-              const act=active.includes(r.state);
+              const act=active.has(r.state);
               const sug=!act&&r.demand>0.6?'Abrir peneira':act?'—':'Monitorar';
               return `<tr class="cursor-default">
                 <td class="font-semibold">${r.label} <span class="font-mono text-10 text-ink-soft">(${r.state})</span></td>
@@ -109,7 +114,7 @@ function renderDashboard() {
       </div>
       <div class="card p-6">
         <div class="section-label"><span class="section-label__title">Próximas peneiras</span></div>
-        ${MOCK.EVENTS.slice(0,4).map((e,i)=>`<div class="py-3 px-0 ${i?'border-t border-line-soft':''}">
+        ${proximas.map((e,i)=>`<div class="py-3 px-0 ${i?'border-t border-line-soft':''}">
           <div class="flex justify-between items-baseline"><span class="font-display font-extrabold text-14 uppercase">${e.city}</span><span class="font-mono text-11 text-ink-soft">${fmtDate(e.date,{day:'2-digit',month:'short'})}</span></div>
           <div class="mt-1.5">${progressHTML(Math.min(e.registered,e.capacity*5),e.capacity*5,{xs:true,tone:e.registered/e.capacity>3?'accent':'ink'})}</div>
           <div class="mt-1 font-mono text-10 text-ink-soft flex justify-between"><span>${fmtNum(e.registered)} insc.</span><span>${e.capacity} vagas</span></div>
@@ -281,9 +286,10 @@ function renderEventos() {
     <div class="g g-3 pad gap-4">
       ${MOCK.EVENTS.length ? '' : `<div class="card state-card col-span-full"><p class="state-card__title">Nenhuma peneira cadastrada.</p><p class="state-card__text">Crie a primeira pelo botão "+ Nova peneira".</p></div>`}
       ${MOCK.EVENTS.map(e=>{
-        const tone=e.status==='aberta'?'success':e.status==='encerrada'?'outline':'accent';
+        // eventStatus (components.js): data e prazo de inscrição encerram, como no site público
+        const status=eventStatus(e);
         return `<div class="card card--flush">
-          <div class="py-3.5 px-4 border-b border-b-line flex justify-between items-center">${tagHTML('● '+e.status,tone)}<span class="font-mono text-10 text-ink-mute">${e.id.toUpperCase()}</span></div>
+          <div class="py-3.5 px-4 border-b border-b-line flex justify-between items-center">${tagHTML('● '+status,EVENT_STATUS_TONE[status]||'outline')}<span class="font-mono text-10 text-ink-mute">${e.id.toUpperCase()}</span></div>
           <div class="p-5">
             <div class="display text-24 tracking-display">${e.city}</div>
             <div class="font-mono text-11 text-ink-soft mt-1">${fmtDate(e.date)} · ${e.age}</div>

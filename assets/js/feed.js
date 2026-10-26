@@ -86,7 +86,7 @@ const Feed = (() => {
   function followButtonHTML(a) {
     const on = follows(a.id);
     return `<button type="button" class="btn btn--sm ${on ? 'btn--primary' : 'btn--ghost'}" data-follow data-athlete="${esc(a.id)}" aria-pressed="${on}">` +
-      `<span data-follow-label>${on ? 'Seguindo' : '+ Seguir'}</span> · <span data-count>${followersOf(a)}</span><span class="sr-only">seguidores</span></button>`;
+      `<span data-follow-label>${on ? 'Seguindo' : '+ Seguir'}</span> · <span data-count>${followersOf(a)}</span><span class="sr-only"> seguidores</span></button>`;
   }
   function cardHTML(a) {
     return `<article class="card card--flush flex flex-col" data-athlete-card="${esc(a.id)}" data-position="${esc(a.position)}" data-state="${esc(a.state)}" aria-labelledby="fd-${esc(a.id)}">

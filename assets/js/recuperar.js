@@ -49,7 +49,7 @@ function renderStep1(focusField) {
     <h1 class="display h3 text-44 mt-1.5 mb-4 mx-0">Esqueceu<br>a senha?</h1>
     <p class="text-15 leading-copy text-ink-soft mb-8">Sem problema. Digite o CPF ou e-mail que você cadastrou e enviamos um código de verificação.</p>
     <div class="flex flex-col gap-4">
-      <label class="field"><div class="field__label"><span>CPF ou e-mail</span></div><input class="input" id="ident" placeholder="000.000.000-00 ou seu@email.com"></label>
+      <label class="field"><div class="field__label"><span>CPF ou e-mail</span></div><input class="input" id="ident" placeholder="000.000.000-00 ou seu@email.com" value="${esc(state.ident || '')}"></label>
       <div>
         <div class="mono text-soft mb-2">Receber código por</div>
         <div class="flex gap-2" id="channels">
@@ -63,12 +63,13 @@ function renderStep1(focusField) {
         <a href="login.html?tipo=jogador" class="py-1 -my-1 font-mono text-12 font-bold uppercase tracking-label text-ink no-underline">Entrar →</a>
       </div>
     </div>`;
+  const ident = contentEl.querySelector('#ident');
   // estilo dos botões de canal
   contentEl.querySelectorAll('.ch-btn').forEach(b => {
     b.className = 'ch-btn flex-1 p-3.5 cursor-pointer border border-line text-left font-display font-extrabold text-14 uppercase ' + (b.dataset.ch === state.channel ? 'bg-ink text-bg' : 'bg-card text-ink');
-    b.addEventListener('click', () => { state.channel = b.dataset.ch; render(); });
+    // trocar o canal redesenha o passo: guarda antes o que já foi digitado
+    b.addEventListener('click', () => { state.ident = ident.value; state.channel = b.dataset.ch; render(); });
   });
-  const ident = contentEl.querySelector('#ident');
   const send = contentEl.querySelector('#send');
   // validation.js: CPF (11 dígitos) ou e-mail válido; erro no blur ou ao enviar
   const v1 = Validation.bind(null, [{ el: ident, validate: v => Validation.rules.emailOrCpf(v) }]);
