@@ -33,6 +33,9 @@ COLUNAS_RESULTADO = ['codigo', 'nome', 'posicao', 'uf', 'score', 'status', 'rank
 
 ARQUIVO_RESULTADOS = 'resultados.csv'
 
+# inicio de celula que planilha le como formula (CSV injection, OWASP)
+PREFIXOS_FORMULA = ('=', '+', '-', '@', '\t', '\r')
+
 # formato de um atleta depois de carregado e processado (exemplo):
 # {'codigo': '3f2a...', 'nome': 'Kaua Ferreira', 'nascimento': '2008-03-12',
 #  'cpf': '11111111111', 'uf': 'RJ', 'cidade': 'Duque de Caxias',
@@ -318,6 +321,20 @@ def mostrar_consulta(aprovados: list, recusados: list, codigo: str) -> None:
         print('Codigo nao encontrado.')
 
 
+def proteger_formula(valor) -> str:
+    """Neutraliza um valor que o Excel/Sheets executaria como formula.
+
+    O carregar_inscricoes tira o ' do Apps Script; aqui ele volta antes de exportar.
+
+    valor: conteudo de uma celula (str ou int).
+    retorno (str): o valor como texto, com ' na frente se comecar como formula.
+    """
+    texto = str(valor)
+    if texto.startswith(PREFIXOS_FORMULA):
+        return "'" + texto
+    return texto
+
+
 def exportar_resultados(atletas: list, caminho: str) -> None:
     """Grava o resultados.csv que a equipe devolve ao jogador.
 
@@ -326,10 +343,12 @@ def exportar_resultados(atletas: list, caminho: str) -> None:
     retorno (None): so grava o arquivo.
     """
     with open(caminho, 'w', encoding='utf-8', newline='') as arquivo:
-        # extrasaction='ignore': nao grava as outras chaves, como o CPF
-        escritor = csv.DictWriter(arquivo, fieldnames=COLUNAS_RESULTADO, extrasaction='ignore')
+        escritor = csv.DictWriter(arquivo, fieldnames=COLUNAS_RESULTADO)
         escritor.writeheader()
-        escritor.writerows(atletas)
+        for atleta in atletas:
+            # so as colunas do resultado (sem CPF), cada uma protegida
+            linha = {coluna: proteger_formula(atleta[coluna]) for coluna in COLUNAS_RESULTADO}
+            escritor.writerow(linha)
 
 
 def main():

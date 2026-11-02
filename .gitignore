@@ -22,6 +22,9 @@ assets/css/tailwind.css
 # Pasta de deploy montada por `npm run build:site` (Vercel)
 dist/
 
+# CSV do back-office: tem dados pessoais (CPF, menores) e nunca vai para o GitHub
+*.csv
+
 # Uploads e temporarios
 uploads/
 tmp/
