@@ -47,3 +47,41 @@ Prompt: "gravou sim. prepare somente o commit, NAO E PARA DAR MERGE. prepare
 o PR tambem que o arthur ira revisar"
 Uso: a IA fez o commit na branch back-office e preparou o Pull Request para
 revisao, sem merge.
+
+====================================================================
+4. Back-office em Python (desenvolvimento em dupla)
+====================================================================
+Prompt: "releia o leia-me.md e siga suas regras para o desenvolvimento"
+Uso: a IA refez o checklist da Sprint 4 de CTWP a partir do PDF.
+
+Prompt: "eles adiaram para o dia 3. a completude devera ser de acordo com o
+site (0-100). peso o video e 25. [...] qual a vantagem de reaproveitar os
+modulos ao inves de backoffice do zero?"
+Uso: a IA comparou reaproveitar os modulos da Sprint 3 x comecar do zero.
+Decisao do aluno: arquivo novo (backoffice.py) reaproveitando so as regras.
+
+Prompt: "pode ser, mas como voce vai reaproveitar os modulos? eles estao em
+outra pasta" / "pode seguir"
+Uso: a IA montou o esqueleto de python/backoffice.py (assinaturas,
+docstrings e TODOs, sem a logica). O aluno escreve o corpo das funcoes.
+
+Prompts de duvida durante a escrita de carregar_inscricoes (o aluno escreveu,
+a IA explicou): qual arquivo ler; parametros do with open; modos r/w/a;
+tratamento de dados (strip e o ' do Apps Script); fatiamento [1:];
+atribuicao em dicionario.
+
+Prompt: "revise e corrija o que estiver de errado"
+Uso: a IA corrigiu carregar_inscricoes: faltava strip() e return, nomes
+c/lista trocados por arquivo/inscricoes, protecao para celula vazia (None),
+remocao do pass e dos comentarios de TODO.
+
+Prompt: "estou na funcao calcular idade. faca pra mim o topico 1"
+Uso: a IA escreveu so a conversao da data (datetime.strptime com %Y-%m-%d).
+O aluno escreve o calculo da idade.
+
+Prompt: "converta tbm, topico 2"
+Uso: a IA escreveu a subtracao dos anos (hoje.year - data_nascimento.year).
+O aluno escreve o ajuste do aniversario e o return.
+
+Prompt: "faca o resto dessa funcao"
+Uso: a IA terminou calcular_idade (ajuste do aniversario com tupla e return).
